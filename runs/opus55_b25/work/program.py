@@ -80,7 +80,10 @@ def pred_upair(k, q):
 
 # ---------- neighbour multiset prototypes ----------
 CATS = ['E', 'P', 'X', 'O1', 'Om']
-def catof(v): return 'X' if v in ('X1', 'Xm') else v
+def catof(v):
+    if v in ('X1s', 'X1b', 'Xm'): return 'X'
+    if v in ('O1s', 'O1b'): return 'O1'
+    return v
 PROTOS = [t for t in itertools.product(range(5), repeat=5) if sum(t) == 4 and t[1] <= 2]
 C1 = 2.0
 def labelA(t):
@@ -103,7 +106,10 @@ def pred_yes(target):
     return p
 
 PROTOS_B = [t for t in itertools.product(range(5), repeat=4) if sum(t) == 4]
-def catB(v): return v if v in ('O2', 'X2', 'X3') else 'R'
+def catB(v):
+    if v in ('O2s', 'O2b'): return 'O2'
+    if v in ('X2s', 'X2b'): return 'X2'
+    return v if v == 'X3' else 'R'
 CATSB = ['O2', 'X2', 'X3', 'R']
 def pred_protoB(k, q):
     if k > len(PROTOS_B): return None
@@ -114,6 +120,25 @@ def pred_protoB(k, q):
 def labelB(k):
     t = PROTOS_B[k] if k < len(PROTOS_B) else (0, 0, 0, 4)
     return (int(t[0] >= 1), int(t[1] >= 1), int(t[2] >= 1))
+
+def mkproto(cats, catfn, labfn, default):
+    protos = [t for t in itertools.product(range(5), repeat=len(cats)) if sum(t) == 4]
+    def pred(k, q):
+        if k > len(protos): return None
+        t = protos[k] if k < len(protos) else default
+        m = [x / 4 for x in t]
+        sq = sum(x * x for x in m)
+        return C1 * (2 * m[cats.index(catfn(q))] - sq) + 0.5
+    def lab(k):
+        t = protos[k] if k < len(protos) else default
+        return labfn(t)
+    return pred, lab, len(protos)
+def _catAb(v):
+    return v if v in ('X1s', 'X1b', 'O1b') else 'R'
+pred_protoAb, labelAb, NPAb = mkproto(['X1s', 'X1b', 'O1b', 'R'], _catAb, lambda t: (int(t[0] + t[1] >= 1), int(t[1] >= 1), int(t[2] >= 1)), (0, 0, 0, 4))
+def _catBb(v):
+    return v if v in ('X2b', 'O2b') else 'R'
+pred_protoBb, labelBb, NPBb = mkproto(['X2b', 'O2b', 'R'], _catBb, lambda t: (int(t[0] >= 1), int(t[1] >= 1)), (0, 0, 4))
 
 ZCENT = [-0.3, -0.13, 0.0, 0.13, 0.3]
 ZNAMES = ['pS', 'pW', 'neu', 'oW', 'oS']
@@ -130,7 +155,8 @@ def LV(i):
     e = min(r, c, 8 - r, 8 - c)
     return 10.0 + [-2.0, -0.5, 0.5, 0.7, 1.0][e]
 
-TAC_CAP1, TAC_CAP2, TAC_EYE, TAC_SA, TAC_ESC, TAC_ATK, TAC_DEF = 20, 26, -25, -20, 14, 2, 3
+TAC_CAP1, TAC_CAP2, TAC_EYE, TAC_SA, TAC_ESC, TAC_ATK, TAC_DEF = 14, 18, -25, -20, 6, 1, 2
+BIG_CAP, BIG_ESC, BIG_DEF, BIG_ATK = 10, 14, 6, 4
 PASSV = 0.0
 GAINW = 8.0
 DANGW = 20.0
@@ -153,6 +179,8 @@ def program():
     rvu = cat(rasp.Map(lambda k: 'lo' if k < NPAIR else 'hi', idx)).named('rvu')
     labmap = cat(rasp.Map(lambda k: labelA(PROTOS[k]) if k < len(PROTOS) else (0, 0, 0, 2), idx)).named('labmap')
     labBmap = cat(rasp.Map(lambda k: labelB(k) if k <= len(PROTOS_B) else (0, 0, 0), idx)).named('labBmap')
+    labAbmap = cat(rasp.Map(lambda k: labelAb(k) if k <= NPAb else (0, 0, 0), idx)).named('labAbmap')
+    labBbmap = cat(rasp.Map(lambda k: labelBb(k) if k <= NPBb else (0, 0), idx)).named('labBbmap')
     ynmap = cat(rasp.Map(lambda k: 'yes' if k == 0 else 'no', idx)).named('ynmap')
     zmap = cat(rasp.Map(lambda k: ZNAMES[k] if k < len(ZNAMES) else 'neu', idx)).named('zmap')
     linev = num(rasp.Map(LV, idx)).named('linev')
@@ -203,21 +231,43 @@ def program():
     FR2 = cat(rasp.Aggregate(mksel(idx, G2, pred_flag), ynmap)).named('FR2')
     FR3 = cat(rasp.Aggregate(mksel(idx, G3, pred_flag), ynmap)).named('FR3')
 
-    def fstA(kd, r):
-        if kd == 'X': return 'Xm' if r == 'yes' else 'X1'
-        if kd == 'O': return 'Om' if r == 'yes' else 'O1'
+    # ---- chain size >= 3 detection (local, 2-hop) ----
+    KH = cat(rasp.Aggregate(sel_hist(), kind)).named('KH')
+    same = cat(rasp.SequenceMap(lambda kd, v: 'S' if (kd in ('X', 'O') and v == kd) else 'D', kind, KH)).named('same')
+    def pred_deg2(k, q):
+        if k == 0: return (0.1 + 3.2 * 0.75) if q == 'S' else (0.1 - 3.2 * 0.25)
+        if k == 1: return 0.6
+        return None
+    d2 = cat(rasp.Aggregate(mksel(idx, same, pred_deg2), ynmap)).named('d2')
+    flagD = cat(rasp.SequenceMap(lambda kd, y: (kd, 'D') if (kd in ('X', 'O') and y == 'yes') else 'n', kind, d2)).named('flagD')
+    FD = cat(rasp.Aggregate(sel_closed(), flagD)).named('FD')
+    FDm = cat(rasp.SequenceMap(lambda kd, v: 'F' if (v != 'n' and v[0] == kd) else 'n', kind, FD)).named('FDm')
+    def pred_big(k, q):
+        if k == 0: return (0.1 + 2.0) if q == 'F' else 0.1
+        if k == 1: return 0.6
+        return None
+    bigR = cat(rasp.Aggregate(mksel(idx, FDm, pred_big), ynmap)).named('bigR')
+    def fkb(kd, y):
+        if kd in ('X', 'O'): return kd + ('b' if y == 'yes' else 's')
         return kd
-    def fstB(kd, r):
-        if kd == 'X': return 'X3' if r == 'yes' else 'X2'
-        if kd == 'O': return 'O3' if r == 'yes' else 'O2'
-        return kd
-    stA = cat(rasp.SequenceMap(fstA, kind, FR2)).named('stA')
-    stB = cat(rasp.SequenceMap(fstB, kind, FR3)).named('stB')
+    kbig = cat(rasp.SequenceMap(fkb, kind, bigR)).named('kbig')
+
+    def fstA(kb, r):
+        if kb[0] == 'X' and len(kb) == 2: return 'Xm' if r == 'yes' else 'X1' + kb[1]
+        if kb[0] == 'O' and len(kb) == 2: return 'Om' if r == 'yes' else 'O1' + kb[1]
+        return kb
+    def fstB(kb, r):
+        if kb[0] == 'X' and len(kb) == 2: return 'X3' if r == 'yes' else 'X2' + kb[1]
+        if kb[0] == 'O' and len(kb) == 2: return 'O3' if r == 'yes' else 'O2' + kb[1]
+        return kb
+    stA = cat(rasp.SequenceMap(fstA, kbig, FR2)).named('stA')
+    stB = cat(rasp.SequenceMap(fstB, kbig, FR3)).named('stB')
     HA = cat(rasp.Aggregate(sel_hist(), stA)).named('HA')
     HB = cat(rasp.Aggregate(sel_hist(), stB)).named('HB')
     labA = cat(rasp.Aggregate(mksel(idx, HA, pred_proto), labmap)).named('labA')
-    escO = cat(rasp.Aggregate(mksel(idx, HA, pred_yes('X1')), ynmap)).named('escO')
+    labAb = cat(rasp.Aggregate(mksel(idx, HA, pred_protoAb), labAbmap)).named('labAb')
     ox2 = cat(rasp.Aggregate(mksel(idx, HB, pred_protoB), labBmap)).named('ox2')
+    labBb = cat(rasp.Aggregate(mksel(idx, HB, pred_protoBb), labBbmap)).named('labBb')
 
     def ftab1(lab, ru):
         capc, xn, eye, nEc = lab
@@ -227,7 +277,8 @@ def program():
         else: la = max(1, min(nEc, 2))
         return (la, int(nEc >= 2), xn)
     tab1 = cat(rasp.SequenceMap(ftab1, labA, RU)).named('tab1')
-    EO = cat(rasp.SequenceMap(lambda a, b: (int(a == 'yes'),) + tuple(b), escO, ox2)).named('EO')
+    EO = cat(rasp.SequenceMap(lambda a, b: (a[0],) + tuple(b), labAb, ox2)).named('EO')
+    bigbits = cat(rasp.SequenceMap(lambda a, b: (a[1], a[2], b[0], b[1]), labAb, labBb)).named('bigbits')
     def ftab2(s, eo):
         esc, o2, x2, x3 = eo
         if s[0] == 'cap': return TAC_CAP2 if s[1] >= 2 else TAC_CAP1
@@ -237,6 +288,15 @@ def program():
         if la <= 1: return TAC_SA
         return TAC_ESC * esc + TAC_ATK * o2 + TAC_DEF * int(x2 and ne2 and not esc)
     tab2 = cat(rasp.SequenceMap(ftab2, tab1, EO)).named('tab2')
+    def fbig(s, bb):
+        escB, capB, defB, atkB = bb
+        if s[0] == 'cap': return BIG_CAP * capB
+        if s[0] == 'eye': return 0
+        la, ne2, xn = s
+        if la <= 1: return 0
+        return BIG_ESC * escB + BIG_DEF * int(defB and ne2 and not escB) + BIG_ATK * atkB
+    bigt = cat(rasp.SequenceMap(fbig, tab1, bigbits)).named('bigt')
+    bigR2 = num(rasp.Map(lambda v: float(v), bigt)).named('bigR2')
     tacP = num(rasp.Map(lambda s: float(max(s, 0)), tab2)).named('tacP')
     tacN = num(rasp.Map(lambda s: float(max(-s, 0)), tab2)).named('tacN')
 
@@ -260,7 +320,8 @@ def program():
     a1 = num(rasp.LinearSequenceMap(tacP, tacN, 1.0, -1.0)).named('a1')
     a2 = num(rasp.LinearSequenceMap(gainR, zpen, GAINW, -1.0)).named('a2')
     a3 = num(rasp.LinearSequenceMap(linev, dang, 1.0, -DANGW)).named('a3')
-    b0 = num(rasp.LinearSequenceMap(a1, zsaR, 1.0, 1.0)).named('b0')
+    b00 = num(rasp.LinearSequenceMap(a1, bigR2, 1.0, 1.0)).named('b00')
+    b0 = num(rasp.LinearSequenceMap(b00, zsaR, 1.0, 1.0)).named('b0')
     b1 = num(rasp.LinearSequenceMap(b0, a2, 1.0, 1.0)).named('b1')
     out = num(rasp.LinearSequenceMap(b1, a3, SCALE, SCALE)).named('logit')
     return out
