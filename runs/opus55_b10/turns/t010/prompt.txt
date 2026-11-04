@@ -1,0 +1,192 @@
+OUTPUT of Python run 10 of at most 120:
+```
+--- compiler/assemble.py:155
+def _make_embedding_modules(
+    residual_space: bases.VectorSpaceWithBasis,
+    tokens_space: bases.VectorSpaceWithBasis,
+    indices_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis) -> EmbeddingModules:
+  """Creates embedding and unembedding modules from vector spaces.
+
+  Args:
+    residual_space: Full residual space of the model.
+    tokens_space: Subspace to embed tokens to.
+    indices_space: Subspace to embed indices/position embeddings to.
+    output_space: Subspace to unembed outputs from.
+
+  Returns:
+    EmbeddingModules containing modules for token embeddings, position
+      embeddings and unembeddings.
+  """
+  tokens_to_res = vectorspace_fns.project(tokens_space, residual_space)
+
+  # If we use the 'one' direction, make sure all inputs have a 1 here
+  one_dir = bases.BasisDirection("one")
+  if one_dir in residual_space:
+    one_to_res = vectorspace_fns.Linear.from_action(
+        tokens_space, residual_space,
+        lambda x: residual_space.vector_from_basis_direction(one_dir))
+    tokens_to_res = vectorspace_fns.Linear.combine_in_parallel(
+        [tokens_to_res, one_to_res])
+
+  # Token embeddings.
+  res_to_out = vectorspace_fns.project(residual_space, output_space)
+  token_embed = hk.Embed(  # pytype: disable=wrong-arg-types  # jax-ndarray
+      embedding_matrix=tokens_to_res.matrix, name="token_embed")
+
+  # Positional embeddings.
+  index_to_res = vectorspace_fns.project(indices_space, residual_space)
+  # The zeroth position should not have any positional embeddings,
+  # so we add one line of padding at the zeroth position.
+  pos_matrix = np.concatenate(
+      [np.zeros((1, residual_space.num_dims)), index_to_res.matrix], axis=0)
+  pos_embed = hk.Embed(embedding_matrix=pos_matrix, name="pos_embed")
+
+  def unembed(x, use_unembed_argmax):
+    out = x @ res_to_out.matrix
+    if use_unembed_argmax:
+      return jnp.argmax(out, axis=-1)
+    elif out.shape[-1] == 1:
+      return out.squeeze(-1)
+    return out
+
+  unembed_mod = hk.to_module(unembed)()
+  return EmbeddingModules(
+      token_embed=token_embed, pos_embed=pos_embed, unembed=unembed_mod)
+
+
+def assemble_craft_model(
+    craft_model: transformers.SeriesWithResiduals,
+    tokens_space: bases.VectorSpaceWithBasis,
+    indices_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis,
+    categorical_output: bool,
+--- compiler/assemble.py:209
+def assemble_craft_model(
+    craft_model: transformers.SeriesWithResiduals,
+    tokens_space: bases.VectorSpaceWithBasis,
+    indices_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis,
+    categorical_output: bool,
+    causal: bool = False,
+) -> AssembledTransformerModel:
+  """Assembles the given components into a Haiku model with parameters.
+
+  Args:
+    craft_model: Model to assemble weights for.
+    tokens_space: Vectorspace to embed the input tokens to.
+    indices_space: Vectorspace to embed the indices to (position encodings).
+    output_space: Vectorspace that the model will write outputs to that should
+      be unembedded.
+    categorical_output: Whether the output is categorical. If True, we take an
+      argmax when unembedding.
+    causal: Whether to output a causally-masked model.
+
+  Returns:
+    An AssembledTransformerModel that contains the model and parameters of the
+      assembled transformer.
+  """
+  # TODO(b/255936413): Make embeddings only retain the tokens and indices that
+  #   are actually used.
+  # TODO(b/255936496): Think about enabling layer norm and reversing it somehow
+
+  model_config, module_names = _get_model_config_and_module_names(craft_model)
+  model_config.causal = causal
+
+  residual_space = bases.join_vector_spaces(craft_model.residual_space,
+                                            tokens_space, indices_space,
+                                            output_space)
+  residual_labels = [str(basis_dir) for basis_dir in residual_space.basis]
+
+  # Build model with embedding and unembedding layers
+  def get_compiled_model():
+    transformer = model.Transformer(model_config)
+    embed_modules = _make_embedding_modules(
+        residual_space=residual_space,
+        tokens_space=tokens_space,
+        indices_space=indices_space,
+        output_space=output_space)
+    return model.CompiledTransformerModel(
+        transformer=transformer,
+        token_embed=embed_modules.token_embed,
+        position_embed=embed_modules.pos_embed,
+        unembed=embed_modules.unembed,
+        use_unembed_argmax=categorical_output)
+
+  @hk.without_apply_rng
+  @hk.transform
+  def forward(emb):
+    compiled_model = get_compiled_model()
+    return compiled_model(emb, use_dropout=False)
+
+  params = forward.init(jax.random.PRNGKey(0), jnp.array([[1, 2, 3]]))
+  params = {k: dict(v) for k, v in params.items()}
+
+--- craft/bases.py:48
+      return str(self.name)
+    return f"{self.name}:{self.value}"
+
+  def __lt__(self, other: "BasisDirection") -> bool:
+    try:
+      return (self.name, self.value) < (other.name, other.value)
+    except TypeError:
+      return str(self) < str(other)
+
+  def __eq__(self, other):
+    return (self.name, self.value) == (other.name, other.value)
+
+
+@dataclasses.dataclass
+class VectorInBasis:
+--- compiler/expr_to_craft_graph.py:62
+    bos_dir: bases.BasisDirection = bases.BasisDirection("tokens", "bos"),
+    one_dir: bases.BasisDirection = bases.BasisDirection("one"),
+    causal: bool = False,
+    mlp_exactness: float = 100,
+) -> None:
+  """Translates expressions to craft blocks and attaches them to the graph.
+
+  Sets the `MODEL_BLOCK` attribute for all nodes in `graph`.
+
+--- compiler/expr_to_craft_graph.py:73
+    bos_dir: Basis direction representing beginning of sequence (bos) token.
+    one_dir: Auxiliary basis direction that must contain 1.
+    causal: If True, marks attention blocks as causal.
+    mlp_exactness: Controls the approximation of the MLP layers.
+
+  Raises:
+    ValueError: On invalid input (if `MODEL_BLOCK` is set already, or
+      `VALUE_SET` is not set already)
+    NotImplementedError: If the graph contains an unsupported expression.
+--- compiler/expr_to_craft_graph.py:122
+            input_value_set=inner_node[nodes.VALUE_SET],
+            one_space=one_space,
+            hidden_name=f"_hidden_{expr.label}_",
+            large_number=mlp_exactness)
+      elif rasp.is_numerical(inner_expr) and rasp.is_numerical(expr):
+        block = numerical_mlp.map_numerical_mlp(
+            f=expr.f,
+            input_space=input_space,
+            output_space=output_space,
+--- compiler/expr_to_craft_graph.py:131
+            input_value_set=inner_node[nodes.VALUE_SET],
+            one_space=one_space,
+            hidden_name=f"_hidden_{expr.label}_",
+            large_number=mlp_exactness)
+      else:
+        raise NotImplementedError("Map does no support "
+                                  f"in_type '{inner_expr.type}' and"
+                                  f" out_type '{expr.type}'!")
+
+--- compiler/expr_to_craft_graph.py:277
+          categorical_output=rasp.is_categorical(expr),
+          causal=False,
+          softmax_coldness=100,
+          mlp_large_number=mlp_exactness,
+          label=expr.label)
+    else:
+      raise NotImplementedError(f"Expression {expr} cannot be translated to "
+                                "a model component.")
+
+
+```
