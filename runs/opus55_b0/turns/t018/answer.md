@@ -1,0 +1,101 @@
+```python
+import re
+s = open('/work/gotmpl.py').read()
+s = s.replace('if ed == 4: return -5.0', 'if ed == 4: return 7.0   # pass: total = A0 + B(-12) + 7 = -5')
+open('/work/gotmpl.py','w').write(s)
+
+code = r'''
+import math
+from tracr.rasp import rasp
+from gocore import *
+from gotmpl import *
+
+MLP_EXACTNESS = 100
+
+def program():
+    tok, idx = rasp.tokens, rasp.indices
+    isx = rasp.Map(lambda t: 1 if t == "x" else 0, tok)
+    iso = rasp.Map(lambda t: 1 if t == "o" else 0, tok)
+    ise = rasp.Map(lambda t: 1 if t == "." else 0, tok)
+    clsx = rasp.Map(lambda t: "s" if t == "x" else ("P" if t in ("B", "W") else "n"), tok)
+    clso = rasp.Map(lambda t: "s" if t == "o" else ("P" if t in ("B", "W") else "n"), tok)
+    atval = rasp.Map(lambda t: "A" if t == "." else "S", tok)
+    tvx = rasp.Map(lambda t: "x2" if t == "." else "n", tok)
+    tvo = rasp.Map(lambda t: "o2" if t == "." else "n", tok)
+    vYx = rasp.Map(lambda t: "y" if t == "x" else "n", tok)
+    vYo = rasp.Map(lambda t: "y" if t == "o" else "n", tok)
+    Lft = rasp.Aggregate(rasp.Select(idx, idx, P_left), tok)
+
+    f0 = lambda b, i: i if (b == 1 and i < 81) else 81
+    Lx0 = rasp.SequenceMap(f0, isx, idx)
+    Lo0 = rasp.SequenceMap(f0, iso, idx)
+    Ie = rasp.SequenceMap(f0, ise, idx)
+    rsx = rasp.SequenceMap(lambda t, l: 1 if (t == "x" and l != "x") else 0, tok, Lft)
+    rso = rasp.SequenceMap(lambda t, l: 1 if (t == "o" and l != "o") else 0, tok, Lft)
+    RSx = rasp.SequenceMap(f0, rsx, idx)
+    RSo = rasp.SequenceMap(f0, rso, idx)
+
+    sel_self = rasp.Select(idx, idx, P_selfw)
+    sel_open = rasp.Select(idx, idx, P_open_proxy)
+    E = rasp.Aggregate(sel_open, Ie)
+
+    Lx = rasp.Aggregate(rasp.Select(RSx, Lx0, P_run), RSx)
+    Lo = rasp.Aggregate(rasp.Select(RSo, Lo0, P_run), RSo)
+    for k in range(2):
+        Hx = rasp.Aggregate(sel_self, Lx)
+        Ho = rasp.Aggregate(sel_self, Lo)
+        Lx = rasp.Aggregate(rasp.Select(idx, Hx, P_argmin), Lx)
+        Lo = rasp.Aggregate(rasp.Select(idx, Ho, P_argmin), Lo)
+
+    fk = lambda l, c: (l if (c == "s" and l != 81) else ("P" if c == "P" else "n"))
+    Kx = rasp.SequenceMap(fk, Lx, clsx)
+    Ko = rasp.SequenceMap(fk, Lo, clso)
+    GLx = rasp.Aggregate(rasp.Select(Kx, Lx, P_group2), E)
+    GLo = rasp.Aggregate(rasp.Select(Ko, Lo, P_group2), E)
+
+    AtX = rasp.Aggregate(rasp.Select(idx, GLx, P_atari), atval)
+    AtO = rasp.Aggregate(rasp.Select(idx, GLo, P_atari), atval)
+    M1x = rasp.Aggregate(rasp.Select(idx, GLx, P_minlib), idx)
+    M1o = rasp.Aggregate(rasp.Select(idx, GLo, P_minlib), idx)
+
+    I1x = rasp.Aggregate(rasp.Select(M1x, idx, P_eqm), vYx)
+    I1o = rasp.Aggregate(rasp.Select(M1o, idx, P_eqm), vYo)
+    fe2 = lambda p, y: 81 if y == "y" else p
+    Ie2x = rasp.SequenceMap(fe2, Ie, I1x)
+    Ie2o = rasp.SequenceMap(fe2, Ie, I1o)
+    E2x = rasp.Aggregate(sel_open, Ie2x)
+    E2o = rasp.Aggregate(sel_open, Ie2o)
+    GL2x = rasp.Aggregate(rasp.Select(Kx, Lx, P_group2), E2x)
+    GL2o = rasp.Aggregate(rasp.Select(Ko, Lo, P_group2), E2o)
+    T2x = rasp.Aggregate(rasp.Select(idx, GL2x, P_atari), tvx)
+    T2o = rasp.Aggregate(rasp.Select(idx, GL2o, P_atari), tvo)
+
+    def f1(t, a):
+        if t == "x": return "x1" if a == "A" else "xS"
+        if t == "o": return "o"
+        if t == ".": return "e"
+        return "edge"
+    st1 = rasp.SequenceMap(f1, tok, AtX)
+    st2 = rasp.SequenceMap(lambda s, a: ("o1" if a == "A" else "oS") if s == "o" else s, st1, AtO)
+    T2xo = rasp.SequenceMap(lambda a, b: "x2" if a == "x2" else ("o2" if b == "o2" else "n"), T2x, T2o)
+    def f3(s, t):
+        if s == "xS": return "x2" if t == "x2" else "x3"
+        if s == "oS": return "o2" if t == "o2" else "o3"
+        return s
+    st = rasp.SequenceMap(f3, st2, T2xo)
+    hist = rasp.Aggregate(sel_open, st)
+
+    vals = []
+    for h in "ABC":
+        tc = rasp.Map(make_tlevel(h), idx)
+        T = rasp.Aggregate(rasp.Select(idx, hist, make_tpred(h)), tc)
+        vals.append(rasp.numerical(rasp.Map(lambda c: (c + OFF) * SCALE, T)))
+    Pn = rasp.numerical(rasp.Map(lambda i: (prior(i) + 2.0) * SCALE, idx))
+    S1 = rasp.numerical(rasp.LinearSequenceMap(vals[0], vals[1], 1.0, 1.0))
+    S2 = rasp.numerical(rasp.LinearSequenceMap(vals[2], Pn, 1.0, 1.0))
+    return rasp.numerical(rasp.LinearSequenceMap(S1, S2, 1.0, 1.0))
+'''
+open('/work/prog_v2.py','w').write(code)
+res = compile_program('/work/prog_v2.py')
+print({k: v for k, v in res.items() if k != 'residual_labels'})
+```

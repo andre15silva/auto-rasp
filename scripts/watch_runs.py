@@ -5,7 +5,8 @@ import os
 import sys
 import time
 
-seen = {}
+STATE = "/tmp/autorasp_watch_state.json"  # remembers what was already printed across restarts
+seen = json.load(open(STATE)) if os.path.exists(STATE) else {}
 runs = sys.argv[1:] or sorted(glob.glob(os.path.join(os.path.dirname(__file__), "..", "runs", "opus55_*")))
 while True:
     for r in runs:
@@ -33,6 +34,7 @@ while True:
                 elif any(w in line for w in ("final", "WARNING", "failed", "stopped", "Traceback")):
                     print(f"{name} | {line[:300]}", flush=True)
             seen[path] = len(lines)
+    json.dump(seen, open(STATE, "w"))
     if all(os.path.exists(os.path.join(r, "final", "compile.json")) for r in runs):
         print("ALL RUNS FINISHED", flush=True)
         break
