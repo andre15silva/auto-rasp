@@ -1,0 +1,17 @@
+{
+ "ok": true,
+ "pass": 6,
+ "kind": "positions",
+ "n": 100,
+ "network": {
+  "layers": 27,
+  "heads": 4,
+  "key_size": 85,
+  "mlp_hidden_size": 416,
+  "residual_dims": 1556,
+  "dense_params": 92353140,
+  "nonzero_params": 27803
+ },
+ "files": "/work/pass_6/",
+ "readme": "inputs.json: the positions as given, each with its board (9 strings: X Black, O White), to_move and its 82 input tokens (after BOS); legal.npy (n, 82) bool; logits.npy (n, 82): the network's output at positions 1..82 (move row*9+col, 81 = pass); probs.npy (n, 82): softmax over the legal moves. compiled.npz (if activations): for every SOp of your program, keyed by its label, its value at each of the 82 input positions as read from the compiled network's residual stream (numerical SOps: their coordinate; categorical SOps: the value whose dimension is largest), plus 'residual' (n, 83, D) when D <= 2048 and 'residual_labels'. rasp.npz (if rasp): rasp.evaluate's value of every SOp on the same inputs ('None' / nan where RASP gives None)."
+}

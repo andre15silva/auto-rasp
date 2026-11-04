@@ -1,0 +1,78 @@
+OUTPUT of Python run 66 of at most 120:
+```
+ply 69 by opponent move 13 we lost 3
+ our previous move 65 top5 [[65, 0.9952], [14, 0.0009], [71, 0.0006], [61, 0.0006], [75, 0.0006]]
+before      after ours   after capture
+.XXOOOXX.   .XXOOOXX.   .XXOOOXX.
+O.OX..XXX   O.OX..XXX   O.O.o.XXX
+..OXXO..X   ..OXXO..X   ..O..O..X
+OO.OOOOOX   OO.OOOOOX   OO.OOOOOX
+.O.XXXOOO   .O.XXXOOO   .O.XXXOOO
+X.XXOXO.X   X.XXOXO.X   X.XXOXO.X
+.XXXOOO.X   .XXXOOO.X   .XXXOOO.X
+Xo.XO.OX.   X.xXO.OX.   X.XXO.OX.
+XXX.XXOXX   XXX.XXOXX   XXX.XXOXX
+ply 87 by opponent move 68 we lost 21
+ our previous move 4 top5 [[4, 0.9971], [21, 0.0009], [13, 0.0006], [10, 0.0006], [3, 0.0001]]
+before      after ours   after capture
+.XX..oXX.   .XX.x.XX.   .XX.X.XX.
+O.OX.XXXX   O.OX.XXXX   O.OX.XXXX
+.XO.XOOOX   .XO.XOOOX   .XO.XOOOX
+OOOOOOOOX   OOOOOOOOX   OOOOOOOOX
+OOOXXXOOO   OOOXXXOOO   OOO...OOO
+XOXXOXO.X   XOXXOXO.X   .O..O.O.X
+XXXXOOOXX   XXXXOOOXX   ....OOOXX
+XXXXO.OX.   XXXXO.OX.   ....OoOX.
+XXXXXXOXX   XXXXXXOXX   ......OXX
+ply 115 by opponent move 71 we lost 6
+ our previous move 76 top5 [[76, 0.9993], [56, 0.0002], [40, 0.0001], [41, 0.0001], [73, 0.0001]]
+before      after ours   after capture
+OXXXXXXX.   OXXXXXXX.   OXXXXXXX.
+OOOXXXXXX   OOOXXXXXX   OOOXXXXXX
+.XOXXOOOX   .XOXXOOOX   .XOXXOOOX
+OOOOOOOOX   OOOOOOOOX   OOOOOOOOX
+OOOO..OOO   OOOO..OOO   OOOO..OOO
+XOOOOOOOX   XOOOOOOOX   XOOOOOOO.
+XX.OOOOXX   XX.OOOOXX   XX.OOOO..
+XXXXOOOX.   XXXXOOOX.   XXXXOOO.o
+X.Xo.OOXX   X.X.xOOXX   X.X.XOO..
+ply 129 by opponent move 8 we lost 17
+ our previous move 76 top5 [[76, 0.9973], [71, 0.0025], [80, 0.0001], [81, 0.0001]]
+before      after ours   after capture
+OXXXXXXX.   OXXXXXXX.   O.......o
+OOOXXXXXX   OOOXXXXXX   OOO......
+.XOXXOOOX   .XOXXOOOX   .XO..OOO.
+OOOOOOOOX   OOOOOOOOX   OOOOOOOO.
+OOOO.OOOO   OOOO.OOOO   OOOO.OOOO
+XOOOOOOOX   XOOOOOOOX   XOOOOOOOX
+XXOOOOOoX   XXOOOOOOX   XXOOOOOOX
+XXXXOOOX.   XXXXOOOX.   XXXXOOOX.
+X.XO.OOX.   X.X.xOOX.   X.X.XOOX.
+ply 155 by opponent move 75 we lost 11
+ our previous move 81 top5 [[81, 1.0]]
+before      after ours   after capture
+O.XXXXXOO   O.XXXXXOO   O.XXXXXOO
+OOOXXXOOO   OOOXXXOOO   OOOXXXOOO
+o.OOOOOOO   O.OOOOOOO   O.OOOOOOO
+OOOOOOOOO   OOOOOOOOO   OOOOOOOOO
+OOOO.OOOO   OOOO.OOOO   OOOO.OOOO
+XOOOOOOOX   XOOOOOOOX   .OOOOOOOX
+XXOOOOOOX   XXOOOOOOX   ..OOOOOOX
+XXXXOOOXX   XXXXOOOXX   ....OOOXX
+XXX.XOOX.   XXX.XOOX.   ...o.OOX.
+ply 157 by opponent move 1 we lost 8
+ our previous move 45 top5 [[54, 0.0909], [55, 0.0909], [63, 0.0909], [45, 0.0909], [72, 0.0909]]
+before      after ours   after capture
+O.XXXXXOO   O.XXXXXOO   Oo.....OO
+OOOXXXOOO   OOOXXXOOO   OOO...OOO
+O.OOOOOOO   O.OOOOOOO   O.OOOOOOO
+OOOOOOOOO   OOOOOOOOO   OOOOOOOOO
+OOOO.OOOO   OOOO.OOOO   OOOO.OOOO
+.OOOOOOOX   xOOOOOOOX   XOOOOOOOX
+..OOOOOOX   ..OOOOOOX   ..OOOOOOX
+....OOOXX   ....OOOXX   ....OOOXX
+...o.OOX.   ...O.OOX.   ...O.OOX.
+22 {'ply': 22, 'by': 'net', 'move': 81, 'top5': [[24, 0.023], [31, 0.023], [30, 0.023], [29, 0.023], [23, 0.023]]}
+64 {'ply': 64, 'by': 'net', 'move': 81, 'top5': [[15, 0.5737], [23, 0.0776], [31, 0.0776], [38, 0.0286], [17, 0.0173]]}
+
+```

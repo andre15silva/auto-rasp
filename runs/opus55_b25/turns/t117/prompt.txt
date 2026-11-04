@@ -1,0 +1,8 @@
+OUTPUT of Python run 95 of at most 120:
+```
+Counter({('two_passes', 'black'): 14, ('two_passes', 'white'): 4, ('repetition', 'white'): 3})
+[-15.5, -14.5, -14.5, -12.5, -12.5, -11.5, -10.5, -10.5, -8.5, -7.5, -6.5, -5.5, -5.5, -4.5, -4.5, -3.5, -1.5, -0.5, 17.5, 28.5, 34.5]
+lost 16.2 capt 8.1
+wins: margin<60 17 blowouts 58
+
+```

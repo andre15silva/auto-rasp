@@ -1,0 +1,7 @@
+OUTPUT of Python run 64 of at most 120:
+```
+cnt3 mismatch vs bundle-sim 0 vs ideal 0 of 2032  region mismatch 0  min bundle value 8.680555555555556e-05
+tiny residual values: 0
+[np.str_('bund6_55:0'), np.str_('bund6_55:1'), np.str_('bund6_55:2'), np.str_('bund6_55:3'), np.str_('bund6_55:4'), np.str_('bund6_55:5'), np.str_('bund6_55:6'), np.str_('bund6_55:7'), np.str_('bund6_55:D'), np.str_('bund6_55:O'), np.str_('bund6_55:S'), np.str_('bund6_55:X')]
+
+```

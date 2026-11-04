@@ -1,0 +1,7 @@
+OUTPUT of Python run 97 of at most 120:
+```
+['TAC_CAP1, TAC_CAP2, TAC_EYE, TAC_SA, TAC_ESC, TAC_ATK, TAC_DEF = 20, 26, -25, -20, 14, 2, 3', 'BIG_CAP, BIG_ESC, BIG_DEF, BIG_ATK = 6, 8, 4, 3']
+['TAC_CAP1, TAC_CAP2, TAC_EYE, TAC_SA, TAC_ESC, TAC_ATK, TAC_DEF = 20, 26, -25, -20, 14, 2, 4', 'BIG_CAP, BIG_ESC, BIG_DEF, BIG_ATK = 6, 8, 8, 5']
+compiled: {'layers': 27, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 471, 'residual_dims': 829, 'dense_params': 51326847, 'nonzero_params': 174536, 'mlp_exactness': 100, 'compile_seconds': 12.2, 'seconds_per_1000_positions': 19.29, 'output_label': 'logit_1'}
+
+```

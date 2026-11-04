@@ -1,0 +1,8 @@
+OUTPUT of Python run 78 of at most 120:
+```
+layers 27 max mlp 416 max heads 4
+[(2, 4), (4, 4), (6, 4), (8, 2), (12, 2), (14, 3), (16, 3), (18, 3), (20, 3), (22, 3), (24, 3), (30, 1), (42, 4)]
+compiled: {'layers': 27, 'heads': 4, 'key_size': 85, 'mlp_hidden_size': 416, 'residual_dims': 1556, 'dense_params': 92353140, 'nonzero_params': 27803, 'mlp_exactness': 1000000, 'compile_seconds': 164.2, 'seconds_per_1000_positions': 54.21, 'output_label': 'logit_220'}
+{'layers': 27, 'heads': 4, 'key_size': 85, 'mlp_hidden_size': 416, 'residual_dims': 1556, 'dense_params': 92353140, 'nonzero_params': 27803, 'mlp_exactness': 1000000, 'compile_seconds': 164.2, 'seconds_per_1000_positions': 54.21, 'output_label': 'logit_220'}
+
+```

@@ -1,0 +1,28 @@
+OUTPUT of Python run 65 of at most 120:
+```
+game 97 net black margin -57.5 end move_limit len 162 cap 25 lost 112
+40          81          121         161      
+.XX.O.X..   .XXOOOXX.   OXXXXXXX.   OO..X..OO
+O.OX..XXX   O.OXO.XXX   OOOXXXXXX   OOO...OOO
+..O.XO..X   .XO..OOOX   .XOXXOOOX   O.OOOOOOO
+OO..O..OX   OOOOOOOOX   OOOOOOOOX   OOOOOOOOO
+...X.XO.O   OOOXXXOOO   OOOO.OOOO   OOOO.OOOO
+......O..   XOXXOXO.X   XOOOOOOOX   XOOOOOOOX
+O.XXOO..X   XXXXOOOXX   XXOOOOO..   X.OOOOOOX
+...XO.OX.   XXXXO.OX.   XXXXOOO.O   .O.OOOOXX
+.XX..X..X   XXXXXXOXX   X.X.XOO.O   ...O.OOX.
+passes [(83, 'opponent'), (91, 'opponent'), (120, 'net'), (123, 'opponent'), (145, 'opponent'), (152, 'net'), (154, 'net')]
+game 104 net black margin -7.5 end two_passes len 66 cap 2 lost 0
+16          33          49          65       
+.........   .O.O..O..   .O.OO.O..   .O.OOXO..
+.........   ..O......   ..O......   O.OO.X.O.
+.OOX....O   .OOXX...O   OOOXX.X.O   OOOXX.XOO
+.........   ..X....O.   ..X....O.   ..XX.XOO.
+....X..O.   X...X..OX   XO.XX.OOX   XO.XXOOOX
+.O.X.X...   .OOX.XXX.   .OOXOXXXX   OOOXOXXXX
+.O..O....   .OOOO...X   .OOOO...X   .OOOOXX.X
+X..X.OX..   X..X.OX..   X..XOOXXX   X.XXOOXXX
+.XX......   .XX......   .XXX.OXX.   .XXX.OXX.
+passes [(22, 'net'), (64, 'net'), (65, 'opponent')]
+
+```

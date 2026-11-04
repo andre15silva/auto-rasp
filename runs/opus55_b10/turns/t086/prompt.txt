@@ -1,0 +1,14 @@
+OUTPUT of Python run 80 of at most 120:
+```
+liberty class confusion (exp, got): [((1, 1), 122), ((2, 1), 7), ((2, 2), 435), ((3, 2), 2), ((3, 3), 3482)]
+phase mismatches 0
+cut mismatches 0 of 4052
+region exp/got/size ((0, 1), (0, 1), 'big') 14
+region exp/got/size ((0, 1), (0, 1), 'small') 507
+region exp/got/size ((0, 1), (1, 1), 'small') 1
+region exp/got/size ((1, 0), (1, 0), 'small') 450
+region exp/got/size ((1, 1), (1, 0), 'big') 4
+region exp/got/size ((1, 1), (1, 1), 'big') 2725
+region exp/got/size ((1, 1), (1, 1), 'small') 351
+
+```

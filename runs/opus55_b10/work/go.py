@@ -211,8 +211,8 @@ def program():
     # ---- runs (exact start flags -> exact SelectorWidth counts)
     ltok = rasp.Aggregate(rasp.Select(idx, qA, GT), tok)
     utok = rasp.Aggregate(rasp.Select(idx, qA, LT), tok)
-    srow = clean_bool(smap(lambda t, l: t != l, tok, ltok))
-    scol = clean_bool(smap(lambda t, u: t != u, tok, utok))
+    srow = clean_bool(smap(lambda t, l: (t != l) or (t in ('B', 'W')), tok, ltok))
+    scol = clean_bool(smap(lambda t, u: (t != u) or (t in ('B', 'W')), tok, utok))
     ksr = smap(lambda i, s: i if s else 999, idx, srow)
     ksc = smap(lambda i, s: i if s else -1, idx, scol)
     ridr = rasp.SelectorWidth(rasp.Select(ksr, idx, LEQ)).named('ridr')
@@ -236,12 +236,13 @@ def program():
     def clean(x): return smap(cleanf, x, nearone)
     stonly = lambda v, t: v if t in ('x', 'o') else 'D'
     nq2 = cmap(lambda q: NEAR_N2, qA)
-    nearone2 = rasp.Aggregate(rasp.Select(idx, nq2, LT), constc).named('nearone2')
+    constc_d = cmap(lambda c: c, cmap(lambda c: c, cmap(lambda c: c, constc)))      # delay to depth 4
+    nearone2 = rasp.Aggregate(rasp.Select(idx, nq2, LT), constc_d).named('nearone2')
     def clean2(x): return smap(cleanf, x, nearone2)
     def gEf(v, t):
         if v == 'P': return 'D' if t in ('B', 'W') else 'Z'
         return 'X' if t == 'x' else ('O' if t == 'o' else None)
-    gE = smap(gEf, rowv, tok)
+    gE = cmap(lambda v: v, cmap(lambda v: v, smap(gEf, rowv, tok)))              # delay to depth 4
     emonly = lambda v, t: v if t == '.' else 'D'
     sg = clean2(smap(emonly, rasp.Aggregate(seedsel, gE), tok)).named('seed_g')
     sr = clean(smap(stonly, rasp.Aggregate(seedsel, rowE), tok)).named('seed_r')

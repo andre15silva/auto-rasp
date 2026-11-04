@@ -1,0 +1,108 @@
+Positions pass 6 of 10 done.
+```
+{"ok": true, "pass": 6, "kind": "positions", "n": 100, "network": {"layers": 27, "heads": 4, "key_size": 85, "mlp_hidden_size": 416, "residual_dims": 1556, "dense_params": 92353140, "nonzero_params": 27803}, "files": "/work/pass_6/", "readme": "inputs.json: the positions as given, each with its board (9 strings: X Black, O White), to_move and its 82 input tokens (after BOS); legal.npy (n, 82) bool; logits.npy (n, 82): the network's output at positions 1..82 (move row*9+col, 81 = pass); probs.npy (n, 82): softmax over the legal moves. compiled.npz (if activations): for every SOp of your program, keyed by its label, its value at each of the 82 input positions as read from the compiled network's residual stream (numerical SOps: their coordinate; categorical SOps: the value whose dimension is largest), plus 'residual' (n, 83, D) when D <= 2048 and 'residual_labels'. rasp.npz (if rasp): rasp.evaluate's value of every SOp on the same inputs ('None' / nan where RASP gives None)."}
+```
+Top 3 moves per position:
+```
+#0 black to move: 41 (4,5) p=0.328 logit=52.394, 49 (5,4) p=0.313 logit=52.348, 15 (1,6) p=0.141 logit=51.548
+#1 black to move: 1 (0,1) p=0.859 logit=57.994, 7 (0,7) p=0.140 logit=56.180, 6 (0,6) p=0.000 logit=49.872
+#2 white to move: 35 (3,8) p=0.960 logit=55.275, 61 (6,7) p=0.016 logit=51.210, 17 (1,8) p=0.006 logit=50.167
+#3 black to move: 3 (0,3) p=0.591 logit=50.220, 6 (0,6) p=0.405 logit=49.841, 5 (0,5) p=0.004 logit=45.203
+#4 white to move: 42 (4,6) p=0.572 logit=52.421, 50 (5,5) p=0.349 logit=51.927, 47 (5,2) p=0.014 logit=48.702
+#5 white to move: 34 (3,7) p=0.748 logit=56.670, 8 (0,8) p=0.251 logit=55.580, 71 (7,8) p=0.000 logit=46.858
+#6 white to move: 19 (2,1) p=0.323 logit=49.657, 50 (5,5) p=0.122 logit=48.685, 12 (1,3) p=0.097 logit=48.461
+#7 white to move: 72 (8,0) p=0.620 logit=56.072, 80 (8,8) p=0.380 logit=55.583, pass p=0.000 logit=41.819
+#8 black to move: 69 (7,6) p=0.966 logit=55.151, 64 (7,1) p=0.027 logit=51.557, 55 (6,1) p=0.002 logit=49.079
+#9 white to move: 44 (4,8) p=1.000 logit=55.627, 51 (5,6) p=0.000 logit=39.735, 49 (5,4) p=0.000 logit=39.651
+#10 white to move: 14 (1,5) p=0.229 logit=49.297, 56 (6,2) p=0.128 logit=48.712, 50 (5,5) p=0.121 logit=48.656
+#11 black to move: 31 (3,4) p=0.478 logit=51.558, 41 (4,5) p=0.473 logit=51.548, 30 (3,3) p=0.014 logit=48.012
+#12 black to move: 76 (8,4) p=0.936 logit=53.066, 12 (1,3) p=0.009 logit=48.402, 13 (1,4) p=0.009 logit=48.399
+#13 black to move: 26 (2,8) p=1.000 logit=59.145, 12 (1,3) p=0.000 logit=42.807, 3 (0,3) p=0.000 logit=41.772
+#14 black to move: 74 (8,2) p=0.992 logit=55.251, 24 (2,6) p=0.001 logit=48.595, 42 (4,6) p=0.001 logit=48.472
+#15 white to move: 7 (0,7) p=0.999 logit=53.595, 26 (2,8) p=0.001 logit=46.247, 3 (0,3) p=0.000 logit=38.156
+#16 white to move: 38 (4,2) p=0.998 logit=57.625, 9 (1,0) p=0.000 logit=49.916, 21 (2,3) p=0.000 logit=49.305
+#17 black to move: 69 (7,6) p=0.981 logit=51.810, 66 (7,3) p=0.019 logit=47.874, pass p=0.000 logit=34.765
+#18 white to move: 21 (2,3) p=0.326 logit=50.157, 29 (3,2) p=0.326 logit=50.157, 22 (2,4) p=0.076 logit=48.699
+#19 white to move: 26 (2,8) p=0.507 logit=49.880, 53 (5,8) p=0.463 logit=49.788, 2 (0,2) p=0.024 logit=46.838
+#20 black to move: 60 (6,6) p=0.135 logit=48.264, 19 (2,1) p=0.126 logit=48.192, 56 (6,2) p=0.117 logit=48.120
+#21 black to move: 80 (8,8) p=1.000 logit=55.504, 64 (7,1) p=0.000 logit=46.372, 69 (7,6) p=0.000 logit=46.370
+#22 black to move: 21 (2,3) p=0.180 logit=49.528, 23 (2,5) p=0.174 logit=49.497, 24 (2,6) p=0.078 logit=48.693
+#23 black to move: pass p=0.901 logit=34.765, 15 (1,6) p=0.036 logit=31.534, 55 (6,1) p=0.026 logit=31.218
+#24 white to move: 12 (1,3) p=0.368 logit=51.566, 37 (4,1) p=0.368 logit=51.565, 2 (0,2) p=0.066 logit=49.849
+#25 black to move: 24 (2,6) p=0.618 logit=51.399, 14 (1,5) p=0.377 logit=50.905, 25 (2,7) p=0.004 logit=46.301
+#26 black to move: 70 (7,7) p=0.601 logit=51.636, 62 (6,8) p=0.062 logit=49.359, 58 (6,4) p=0.031 logit=48.680
+#27 black to move: 35 (3,8) p=0.991 logit=55.666, 9 (1,0) p=0.004 logit=50.260, 74 (8,2) p=0.004 logit=50.259
+#28 white to move: 50 (5,5) p=0.754 logit=53.510, 58 (6,4) p=0.212 logit=52.239, 21 (2,3) p=0.007 logit=48.803
+#29 black to move: 54 (6,0) p=0.763 logit=46.433, 63 (7,0) p=0.212 logit=45.153, 72 (8,0) p=0.016 logit=42.552
+#30 white to move: 62 (6,8) p=0.904 logit=55.261, 68 (7,5) p=0.088 logit=52.937, 78 (8,6) p=0.004 logit=49.853
+#31 white to move: 40 (4,4) p=0.307 logit=51.457, 48 (5,3) p=0.307 logit=51.456, 55 (6,1) p=0.261 logit=51.295
+#32 white to move: 32 (3,5) p=0.614 logit=52.430, 38 (4,2) p=0.268 logit=51.602, 23 (2,5) p=0.070 logit=50.258
+#33 white to move: 56 (6,2) p=1.000 logit=60.197, pass p=0.000 logit=41.819, 63 (7,0) p=0.000 logit=39.482
+#34 black to move: 65 (7,2) p=0.521 logit=52.957, 22 (2,4) p=0.179 logit=51.890, 14 (1,5) p=0.137 logit=51.622
+#35 black to move: 11 (1,2) p=0.685 logit=47.879, 3 (0,3) p=0.237 logit=46.819, 0 (0,0) p=0.076 logit=45.685
+#36 white to move: 53 (5,8) p=0.712 logit=52.594, 70 (7,7) p=0.160 logit=51.100, 62 (6,8) p=0.046 logit=49.854
+#37 white to move: 23 (2,5) p=0.295 logit=48.681, 20 (2,2) p=0.289 logit=48.658, 13 (1,4) p=0.144 logit=47.963
+#38 black to move: 24 (2,6) p=0.899 logit=53.506, 14 (1,5) p=0.035 logit=50.271, 42 (4,6) p=0.017 logit=49.556
+#39 white to move: 67 (7,4) p=0.755 logit=56.784, 44 (4,8) p=0.245 logit=55.657, pass p=0.000 logit=34.765
+#40 white to move: 42 (4,6) p=0.244 logit=50.383, 58 (6,4) p=0.182 logit=50.089, 34 (3,7) p=0.156 logit=49.937
+#41 white to move: 60 (6,6) p=1.000 logit=58.734, 67 (7,4) p=0.000 logit=47.727, 70 (7,7) p=0.000 logit=47.549
+#42 white to move: 35 (3,8) p=0.300 logit=49.859, 38 (4,2) p=0.089 logit=48.647, 56 (6,2) p=0.088 logit=48.638
+#43 white to move: 7 (0,7) p=1.000 logit=61.066, 26 (2,8) p=0.000 logit=46.259, 75 (8,3) p=0.000 logit=43.761
+#44 black to move: 75 (8,3) p=0.988 logit=55.249, 56 (6,2) p=0.003 logit=49.305, 29 (3,2) p=0.002 logit=48.889
+#45 black to move: pass p=1.000 logit=41.819, 69 (7,6) p=0.000 logit=31.511, 32 (3,5) p=0.000 logit=30.961
+#46 black to move: 55 (6,1) p=0.994 logit=57.336, 19 (2,1) p=0.003 logit=51.582, 11 (1,2) p=0.002 logit=51.092
+#47 black to move: 61 (6,7) p=0.524 logit=47.446, 71 (7,8) p=0.290 logit=46.853, 44 (4,8) p=0.184 logit=46.401
+#48 white to move: 39 (4,3) p=0.679 logit=51.729, 51 (5,6) p=0.150 logit=50.216, 23 (2,5) p=0.036 logit=48.783
+#49 black to move: 6 (0,6) p=1.000 logit=55.784, 5 (0,5) p=0.000 logit=45.419, pass p=0.000 logit=41.819
+#50 black to move: 58 (6,4) p=0.111 logit=48.876, 47 (5,2) p=0.101 logit=48.775, 57 (6,3) p=0.096 logit=48.733
+#51 black to move: 1 (0,1) p=0.432 logit=50.736, 79 (8,7) p=0.295 logit=50.356, 77 (8,5) p=0.264 logit=50.245
+#52 white to move: 42 (4,6) p=0.984 logit=57.849, 59 (6,5) p=0.012 logit=53.435, 43 (4,7) p=0.001 logit=51.162
+#53 black to move: 49 (5,4) p=0.231 logit=48.372, 57 (6,3) p=0.227 logit=48.358, 65 (7,2) p=0.203 logit=48.246
+#54 black to move: 68 (7,5) p=0.218 logit=48.412, 10 (1,1) p=0.166 logit=48.140, 51 (5,6) p=0.134 logit=47.925
+#55 white to move: 76 (8,4) p=0.851 logit=49.866, 44 (4,8) p=0.055 logit=47.121, 67 (7,4) p=0.039 logit=46.789
+#56 black to move: 15 (1,6) p=0.356 logit=51.670, 25 (2,7) p=0.356 logit=51.670, 14 (1,5) p=0.049 logit=49.693
+#57 white to move: 53 (5,8) p=0.512 logit=55.614, 8 (0,8) p=0.488 logit=55.566, 25 (2,7) p=0.000 logit=40.483
+#58 white to move: 58 (6,4) p=0.176 logit=48.700, 56 (6,2) p=0.163 logit=48.620, 12 (1,3) p=0.131 logit=48.403
+#59 white to move: pass p=0.989 logit=41.819, 72 (8,0) p=0.010 logit=37.232, 64 (7,1) p=0.001 logit=34.680
+#60 black to move: 24 (2,6) p=0.375 logit=52.175, 34 (3,7) p=0.230 logit=51.685, 68 (7,5) p=0.131 logit=51.121
+#61 black to move: 2 (0,2) p=0.998 logit=55.791, 29 (3,2) p=0.001 logit=48.500, 21 (2,3) p=0.000 logit=48.027
+#62 black to move: 51 (5,6) p=0.258 logit=49.322, 23 (2,5) p=0.170 logit=48.901, 22 (2,4) p=0.142 logit=48.723
+#63 white to move: 0 (0,0) p=1.000 logit=55.580, 23 (2,5) p=0.000 logit=39.664, pass p=0.000 logit=36.529
+#64 black to move: 47 (5,2) p=0.117 logit=48.995, 58 (6,4) p=0.099 logit=48.835, 38 (4,2) p=0.089 logit=48.725
+#65 black to move: 63 (7,0) p=1.000 logit=56.603, pass p=0.000 logit=41.819, 21 (2,3) p=0.000 logit=35.871
+#66 black to move: 55 (6,1) p=0.998 logit=57.448, 67 (7,4) p=0.001 logit=50.000, 66 (7,3) p=0.000 logit=49.312
+#67 white to move: 56 (6,2) p=0.369 logit=47.882, 64 (7,1) p=0.247 logit=47.481, 46 (5,1) p=0.226 logit=47.391
+#68 white to move: 12 (1,3) p=0.609 logit=51.064, 28 (3,1) p=0.079 logit=49.016, 33 (3,6) p=0.068 logit=48.867
+#69 black to move: pass p=0.513 logit=36.529, 16 (1,7) p=0.283 logit=35.933, 4 (0,4) p=0.101 logit=34.907
+#70 black to move: 23 (2,5) p=0.212 logit=48.686, 64 (7,1) p=0.160 logit=48.405, 12 (1,3) p=0.132 logit=48.212
+#71 white to move: pass p=0.636 logit=36.529, 17 (1,8) p=0.133 logit=34.961, 72 (8,0) p=0.123 logit=34.886
+#72 white to move: 56 (6,2) p=0.134 logit=48.742, 23 (2,5) p=0.131 logit=48.720, 59 (6,5) p=0.118 logit=48.621
+#73 black to move: 52 (5,7) p=1.000 logit=61.714, 44 (4,8) p=0.000 logit=49.743, 51 (5,6) p=0.000 logit=46.804
+#74 black to move: 56 (6,2) p=0.180 logit=48.883, 16 (1,7) p=0.112 logit=48.412, 66 (7,3) p=0.112 logit=48.411
+#75 white to move: 7 (0,7) p=0.909 logit=50.229, 44 (4,8) p=0.045 logit=47.225, 27 (3,0) p=0.031 logit=46.844
+#76 black to move: 22 (2,4) p=0.113 logit=48.925, 24 (2,6) p=0.103 logit=48.837, 42 (4,6) p=0.094 logit=48.748
+#77 white to move: 44 (4,8) p=0.639 logit=49.858, 12 (1,3) p=0.120 logit=48.183, 13 (1,4) p=0.120 logit=48.182
+#78 white to move: 55 (6,1) p=0.608 logit=52.979, 65 (7,2) p=0.162 logit=51.658, 34 (3,7) p=0.158 logit=51.630
+#79 white to move: 62 (6,8) p=0.495 logit=49.860, 44 (4,8) p=0.438 logit=49.739, 17 (1,8) p=0.033 logit=47.144
+#80 black to move: 56 (6,2) p=0.115 logit=48.652, 20 (2,2) p=0.115 logit=48.651, 24 (2,6) p=0.115 logit=48.651
+#81 white to move: 80 (8,8) p=1.000 logit=56.076, 78 (8,6) p=0.000 logit=46.594, pass p=0.000 logit=41.819
+#82 black to move: 30 (3,3) p=0.103 logit=48.957, 47 (5,2) p=0.085 logit=48.767, 39 (4,3) p=0.082 logit=48.733
+#83 black to move: 25 (2,7) p=1.000 logit=48.260, pass p=0.000 logit=36.529, 26 (2,8) p=0.000 logit=34.975
+#84 black to move: 12 (1,3) p=0.380 logit=51.553, 45 (5,0) p=0.153 logit=50.642, 73 (8,1) p=0.116 logit=50.367
+#85 black to move: 74 (8,2) p=0.994 logit=60.596, 72 (8,0) p=0.006 logit=55.501, 2 (0,2) p=0.000 logit=49.781
+#86 black to move: 51 (5,6) p=0.327 logit=50.184, 20 (2,2) p=0.084 logit=48.826, 22 (2,4) p=0.078 logit=48.746
+#87 white to move: 28 (3,1) p=0.806 logit=48.228, 36 (4,0) p=0.193 logit=46.798, pass p=0.001 logit=41.819
+#88 black to move: 47 (5,2) p=0.098 logit=48.748, 21 (2,3) p=0.090 logit=48.661, 29 (3,2) p=0.090 logit=48.661
+#89 black to move: 36 (4,0) p=0.951 logit=55.673, 64 (7,1) p=0.035 logit=52.365, 56 (6,2) p=0.014 logit=51.431
+#90 white to move: 37 (4,1) p=0.969 logit=54.999, 60 (6,6) p=0.007 logit=50.124, 56 (6,2) p=0.004 logit=49.477
+#91 white to move: 61 (6,7) p=1.000 logit=57.050, 64 (7,1) p=0.000 logit=48.156, 75 (8,3) p=0.000 logit=47.117
+#92 black to move: 47 (5,2) p=0.140 logit=48.750, 42 (4,6) p=0.135 logit=48.713, 51 (5,6) p=0.135 logit=48.713
+#93 white to move: pass p=0.981 logit=41.819, 38 (4,2) p=0.005 logit=36.486, 41 (4,5) p=0.003 logit=36.032
+#94 white to move: 58 (6,4) p=0.137 logit=48.747, 49 (5,4) p=0.125 logit=48.656, 50 (5,5) p=0.124 logit=48.649
+#95 black to move: 66 (7,3) p=1.000 logit=57.274, 25 (2,7) p=0.000 logit=48.311, 43 (4,7) p=0.000 logit=48.311
+#96 black to move: 28 (3,1) p=0.293 logit=49.301, 20 (2,2) p=0.121 logit=48.420, 51 (5,6) p=0.105 logit=48.275
+#97 black to move: 28 (3,1) p=0.565 logit=37.022, 36 (4,0) p=0.068 logit=34.905, 0 (0,0) p=0.066 logit=34.869
+#98 white to move: 56 (6,2) p=0.151 logit=48.644, 32 (3,5) p=0.147 logit=48.617, 42 (4,6) p=0.133 logit=48.518
+#99 black to move: 24 (2,6) p=0.953 logit=58.720, 5 (0,5) p=0.047 logit=55.707, 25 (2,7) p=0.000 logit=46.493
+```
+Passes left: 4.

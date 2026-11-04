@@ -1,0 +1,37 @@
+OUTPUT of Python run 67 of at most 120:
+```
+109 big-loss events in 64 games
+(0, 65, 5, 37, [[28, 0.1404], [20, 0.1404], [22, 0.0517]])
+(0, 87, 7, 7, [[7, 0.3333], [8, 0.3333], [81, 0.3333]])
+(1, 67, 4, 9, [[42, 0.0934], [0, 0.0567], [3, 0.0567]])
+(2, 65, 4, 31, [[31, 0.9962], [5, 0.0006], [14, 0.0006]])
+(4, 87, 41, 48, [[0, 0.2], [48, 0.2], [79, 0.2]])
+(4, 135, 22, 81, [[81, 1.0]])
+(5, 65, 4, 47, [[41, 0.1287], [47, 0.1287], [55, 0.078]])
+(5, 89, 6, 66, [[79, 0.243], [76, 0.243], [66, 0.243]])
+(5, 95, 20, 76, [[30, 0.1601], [32, 0.1601], [10, 0.0971]])
+(5, 125, 28, 0, [[0, 0.3333], [10, 0.3333], [81, 0.3333]])
+(7, 61, 6, 42, [[23, 0.2166], [13, 0.1314], [64, 0.1314]])
+(7, 77, 5, 38, [[23, 0.3667], [4, 0.2224], [38, 0.0496]])
+before      after ours   after capture
+XX.OOO.XX   XX.OOO.XX   XX.OOO.XX
+X.X..OoO.   X.X..OOO.   X.X..OOO.
+.X.X.O.O.   .X.X.O.O.   .X.X.OoO.
+X.XO.OXOO   X.XO.OXOO   X.XO.O.OO
+X.OOOOXO.   XxOOOOXO.   XXOOOO.O.
+XXXOXXXO.   XXXOXXXO.   XXXO...O.
+X.X.OOO.X   X.X.OOO.X   X.X.OOO.X
+XXXOOOOX.   XXXOOOOX.   XXXOOOOX.
+X.X..XXXX   X.X..XXXX   X.X..XXXX
+before      after ours   after capture
+..X...OOX   ..X...OOX   ..X...OO.
+..XXo..XX   ..XXO..XX   ..XXO.o..
+..X.XOOOX   ..X.XOOOX   ..X.XOOO.
+.X.X.XOOO   .X.XxXOOO   .X.XXXOOO
+XXX.XOOOX   XXX.XOOOX   XXX.XOOOX
+XXOXXOOO.   XXOXXOOO.   XXOXXOOO.
+OOOOXX.O.   OOOOXX.O.   OOOOXX.O.
+..OOXOOOX   ..OOXOOOX   ..OOXOOOX
+.O.XXXXX.   .O.XXXXX.   .O.XXXXX.
+
+```
