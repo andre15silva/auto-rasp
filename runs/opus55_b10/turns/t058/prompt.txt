@@ -1,0 +1,49 @@
+OUTPUT of Python run 55 of at most 120:
+```
+47 [(11, 35, 52), (11, 4, 67), (9, 42, 54), (9, 21, 83), (8, 49, 58), (8, 43, 60), (8, 41, 78), (8, 0, 53), (7, 1, 55), (6, 40, 60), (6, 5, 77), (5, 48, 66)]
+game 35 net white ply 52 lost 11
+   .X.XX.... .X.XX.... .X.XX.... .X.XX....
+   XXXXXXO.. XXXXXXO.. XXXXXXO.. XXXXXXO..
+   OXOOXO... .XOOXO... .XOOXO.O. .X..XO.O.
+   .OOOXOO.. XOOOXOO.. XOOOXOO.. X...XOO..
+   OO.OXO... OO.OXO... OO.OXO... ..X.XO...
+   OOOXXOO.. OOOXXOO.. OOOXXOO.. ...XXOO..
+   XXXXXOO.. XXXXXOO.. XXXXXOO.. XXXXXOO..
+   .XOOXO... .XOOXO... .XOOXO... .XOOXO...
+   ...X..... ...X..... ...X..... ...X.....
+  moves [('o', 27, None), ('n', 25, [[73, 0.1397], [24, 0.1044], [42, 0.1044], [16, 0.0982], [69, 0.0852]]), ('o', 38, None)]
+game 4 net black ply 67 lost 11
+   ....OOOO. ....OOOO. ....OOOO. ....OOOO.
+   XX.XXXOOO XX.XXXOOO XX.XXXOOO XX.XXXOOO
+   X.XOOOXXX X.XOOOXXX X.XOOOXXX X.XOOO...
+   .XXXOOOXX .XXXOOOXX .XXXOOOXX .XXXOOO..
+   .X.XOOOX. .X.XOOOX. .X.XOOOX. .X.XOOO.O
+   X.XX.XXXX X.XXOXXXX X.XXOXXXX X.XXO....
+   .X.OOOOOX .X.OOOOOX .XXOOOOOX .XXOOOOO.
+   .X.OOXOOO .X.OOXOOO .X.OOXOOO .X.OOXOOO
+   ...OXX... ...OXX... ...OXX... ...OXX...
+  moves [('o', 49, None), ('n', 56, [[56, 0.3595], [65, 0.2923], [74, 0.0876], [79, 0.0876], [2, 0.0733]]), ('o', 44, None)]
+game 42 net white ply 54 lost 9
+   ..O.XOO.. ..O.XOO.. ..O.XOO.. ..O.XOO..
+   .XXXXXO.. .XXXXXO.. .XXXXXO.. .XXXXXO..
+   .XOXXOO.. XXOXXOO.. XXOXXOO.. XX.XXOO..
+   XXOOXO... XXOOXO... XXOOXO... XX..XO...
+   .OOOXOO.. .OOOXOO.. .OOOXOO.. X...XOO..
+   OXOXXOO.. OXOXXOO.. OXOXXOO.. OX.XXOO..
+   .XOOXXOO. .XOOXXOO. .XOOXXOO. .X..XXOO.
+   XXXXXO.O. XXXXXO.O. XXXXXOOO. XXXXXOOO.
+   .X.X..... .X.X..... .X.X..... .X.X.....
+  moves [('o', 18, None), ('n', 69, [[33, 0.1688], [0, 0.1662], [16, 0.1566], [69, 0.1245], [77, 0.0676]]), ('o', 36, None)]
+game 21 net black ply 83 lost 9
+   .XXX.X.X. .XXX.X.X. XXXX.X.X. XXXX.X.X.
+   OX.XX.X.X OX.XX.X.X OX.XX.X.X OX.XX.X.X
+   OOXXOXXX. OOXXOXXX. OOXXOXXX. OOXXOXXX.
+   XOOOOOX.X XOOOOOX.X XOOOOOX.X .OOOOOX.X
+   XXOOOXXXX XXOOOXXXX XXOOOXXXX ..OOOXXXX
+   XXOOXXOOO XXOOXXOOO XXOOXXOOO ..OOXXOOO
+   .XOOOOOOO .XOOOOOOO .XOOOOOOO O.OOOOOOO
+   XXOOO.XO. XXOOO.XO. XXOOO.XO. ..OOO.XO.
+   X.XO.OOOO XO.O.OOOO XO.O.OOOO .O.O.OOOO
+  moves [('o', 73, None), ('n', 0, [[0, 0.953], [81, 0.047], [14, 0.0], [11, 0.0], [34, 0.0]]), ('o', 54, None)]
+
+```

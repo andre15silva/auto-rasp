@@ -1,0 +1,10 @@
+OUTPUT of Python run 54 of at most 120:
+```
+strong 1 39 captured 88.0 lost 7.4 margin 67.9
+strong -1 25 captured 7.7 lost 22.4 margin -7.7
+weak 1 28 captured 68.4 lost 5.1 margin 58.4
+weak -1 4 captured 8.8 lost 28.8 margin -10.5
+early (ply<30) net moves by line: {0: 312, 1: 625, 2: 648, 3: 300, 4: 34}
+prob of chosen move (ply<30): quantiles [0.     0.     0.     0.2709] frac chosen not in top5 0.5080771235018239
+
+```

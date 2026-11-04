@@ -106,3 +106,5 @@
 [2026-11-04T20:50:31+0000] turn 52: resume (662 chars)
 [2026-11-04T20:50:50+0000] turn 52: python; runs 51, passes 2/50, tool-free True
 [2026-11-04T20:50:50+0000] turn 53: resume (427 chars)
+[2026-11-04T21:36:28+0000] turn 53: error; runs 51, passes 2/50, tool-free True
+[2026-11-04T21:36:28+0000] turn 54: resume (184 chars)

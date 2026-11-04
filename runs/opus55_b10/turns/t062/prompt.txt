@@ -1,0 +1,46 @@
+OUTPUT of Python run 59 of at most 120:
+```
+'se:\n        if ex2 and eo2: s = 1.2\n        elif ex2: s = -0.8\n        elif eo2: s = 0.2\n        else: s = LINE_VAL[line] + 1.0\n    s += {0: -1.0, 1: -0.3, 2: 0.0, 3: 0.0, 4: 0.0}[line]\n    return s\n\n'
+179 R_ROUNDS = 6
+192 EPS_DEC = 8e-5      # decode threshold i
+244 NEAR_N = 30        # keys averaged for t
+325 UNIT = 1.0 / 16
+342 def nbrs(i):
+565 NB = [set(nbrs(i)) for i in range(82)]
+604 def man(a, b): return abs(a//9 - b//9) +
+660 def r_left(k, i):
+748 def r_right(k, i):
+842 def r_up(k, i):
+929 def r_down(k, i):
+1018 def r_nb(k, i):            # on-board ne
+1145 def r_nb81(k, i):          # neighbours 
+1287 def r_cmle(k, i):
+1419 def r_r2(k, i):
+1535 RELS = {'A': (r_left, r_up, r_nb, r_cmle
+2454 def cmap(f, x): return rasp.Map(f, x, si
+2508 def nmap(f, x): return rasp.numerical(ra
+2578 def smap(f, a, b): return rasp.SequenceM
+2630 def add(a, b, fa=1.0, fb=1.0): return ra
+2721 def sum_tree(xs):
+2906 def decode_bits(state, nvals):
+3157 def decode_distinct(state, nvals):
+3462 COLCODE = {'.': 0, 'x': 16, 'o': 32, 'B'
+3517 def clean_bool(x):
+3678 def line_of(i):
+3753 def msum(a, b): return tuple(sorted(a + 
+3797 CATS = ['E', 'X1', 'X2', 'X3', 'O1', 'O2
+3851 def clean_cat(c):
+3988 T_OFF = 20.0
+4001 def split_num(catsop):
+4239 PASS_LOGIT = -2.0
+4257 P_OFF = 8.0
+4269 def build_triple_classes():
+4695 LINE_VAL = {0: -1.5, 1: -0.5, 2: 0.8, 3:
+4750 def tactic_score(ms):
+5716 LINE_OPEN = {0: -1.5, 1: 0.0, 2: 2.5, 3:
+5770 def pos_score(nx2, no2, ax, ao, line):
+6773 TRIPLE_CLASS, TRIPLE_REP = build_triple_
+6824 def program():
+-5.0 3.5 -1.5 52
+
+```

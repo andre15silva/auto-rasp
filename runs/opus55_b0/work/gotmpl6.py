@@ -42,9 +42,9 @@ def P_eqm(k, q):
 GROUPS = {
   "A": {"o1s": "o1s", "o1b": "o1b", "x1s": "x1s"},
   "B": {"e": "e", "x1b": "x1b", "x2": "x2", "x3": "x3"},
-  "C": {"e": "e", "o1s": "o", "o1b": "o", "o3": "o", "x1s": "x", "x1b": "x", "x2": "x", "x3": "x", "edge": "edge"},
+  "C": {"e": "e", "o1s": "o", "o1b": "o", "o3": "o", "x1s": "xa", "x1b": "xa", "x2": "xn", "x3": "xn", "edge": "edge"},
 }
-GNAMES = {"A": ["o1s", "o1b", "x1s", "r"], "B": ["e", "x1b", "x2", "x3", "r"], "C": ["e", "o", "x", "edge"]}
+GNAMES = {"A": ["o1s", "o1b", "x1s", "r"], "B": ["e", "x1b", "x2", "x3", "r"], "C": ["e", "o", "xa", "xn", "edge"]}
 
 def gof(h, s):
     return GROUPS[h].get(s, "r")
@@ -79,10 +79,10 @@ def scoreB(c):
     return -6.0 if x2 >= 2 else -12.0
 
 def scoreC(c):
-    e, o, x, ed = c["e"], c["o"], c["x"], c["edge"]
+    e, o, xa, xn, ed = c["e"], c["o"], c["xa"], c["xn"], c["edge"]
     if ed == 4: return 7.0   # pass: total = A0 + B(-12) + 7 = -5
-    if o == 0 and e == 0: return -40.0
-    if o == 0 and e == 1: return -7.0
+    if o == 0 and e == 0 and xa == 0: return -40.0
+    if o == 0 and e == 1 and xa == 0: return -7.0
     return 1.0 if (o >= 1 and e >= 2) else 0.0
 
 SCOREF = {"A": scoreA, "B": scoreB, "C": scoreC}

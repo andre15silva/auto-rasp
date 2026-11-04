@@ -1,0 +1,48 @@
+OUTPUT of Python run 52 of at most 120:
+```
+game 0 black margin -7.5 end two_passes plies 89
+ .OOOO.OO.
+ OOOO.OO.O
+ OX.O.OOOO
+ OOOOOOOXX
+ OOOXOOX.X
+ OOXXXXXX.
+ OX.X.X.XX
+ XXX.X.XX.
+ X..XXX.XX
+[('o', 56, [None, None]), ('n', 65, [65, 0.9999]), ('o', 15, [None, None]), ('n', 72, [72, 0.5205]), ('o', 18, [None, None]), ('n', 80, [80, 0.3956]), ('o', 4, [None, None]), ('n', 79, [81, 0.4784]), ('o', 66, [None, None]), ('n', 75, [75, 1.0]), ('o', 81, [None, None]), ('n', 81, [81, 0.7674])]
+game 13 black margin -17.5 end two_passes plies 89
+ X.X.XXX.X
+ .XXXX.XX.
+ XXOXXX.XX
+ XXOOOXXXX
+ OXXOOOOOO
+ OOO.OOOOO
+ .OOOOOO.O
+ O.O.OOOOO
+ OOO.O.XO.
+[('o', 44, [None, None]), ('n', 35, [35, 0.7859]), ('o', 53, [None, None]), ('n', 26, [26, 0.7183]), ('o', 69, [None, None]), ('n', 81, [81, 0.6853]), ('o', 62, [None, None]), ('n', 81, [81, 0.6854]), ('o', 73, [None, None]), ('n', 5, [81, 0.6855]), ('o', 81, [None, None]), ('n', 81, [81, 0.9999])]
+game 21 black margin -19.5 end two_passes plies 96
+ XXXX.X.X.
+ OX.XX.X.X
+ OOXXOXXX.
+ .OOOOOX.X
+ XXOOOXXXX
+ OOOOXXOOO
+ O.OOOOOOO
+ OOOOOO.O.
+ .O.O.OOOO
+[('n', 37, [46, 0.2042]), ('o', 63, [None, None]), ('n', 55, [46, 0.4934]), ('o', 46, [None, None]), ('n', 36, [36, 0.9998]), ('o', 68, [None, None]), ('n', 81, [81, 0.9998]), ('o', 45, [None, None]), ('n', 81, [81, 1.0]), ('o', 64, [None, None]), ('n', 81, [81, 1.0]), ('o', 81, [None, None])]
+game 44 white margin 16.5 end repetition plies 90
+ OOOXXX.OX
+ O.OXXXXX.
+ .OOXXXXXX
+ OOOXXOOXO
+ XXXXO.OOO
+ XX.XOOOO.
+ .XXXOO.O.
+ OXXXOOO.O
+ .OXXOO...
+[('o', 72, [None, None]), ('n', 76, [76, 0.5769]), ('o', 13, [None, None]), ('n', 73, [73, 0.9999]), ('o', 45, [None, None]), ('n', 7, [7, 0.4924]), ('o', 8, [None, None]), ('n', 17, [17, 1.0]), ('o', 72, [None, None]), ('n', 81, [79, 0.4624]), ('o', 8, [None, None]), ('n', 73, [73, 1.0])]
+
+```

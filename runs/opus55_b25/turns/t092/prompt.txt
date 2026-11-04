@@ -1,0 +1,44 @@
+OUTPUT of Python run 77 of at most 120:
+```
+game 9 black -1.5 len 83 last moves [(78, 'n', 78), (79, 'o', 81), (80, 'n', 29), (81, 'o', 38), (82, 'n', 81), (83, 'o', 81)]
+. O . . O O X O .   . O . O O O X . X   . O O O O O X . X
+O O X X X O X X O   O O X X X O X X .   O O . . . O X X .
+O . O O O O O X X   O O O O O O O X X   O O O O O O O X X
+O . . O O O X . X   O . . O O O X . X   O . X O O O X . X
+O O . . O X X X .   O O . O O X X X .   O O O O O X X X .
+. O O O O X X . .   . O O O O X X . X   . O O O O X X . X
+O X O X X . X . .   O X O X X . X . X   O X O X X . X X X
+O X O X . X . . .   O X O X . X . X .   O X O X . X . X .
+X X X X X . . . .   X X X X X . . . X   X X X X X . X X X
+game 15 black -2.5 len 84 last moves [(79, 'o', 81), (80, 'n', 18), (81, 'o', 81), (82, 'n', 0), (83, 'o', 81), (84, 'n', 81)]
+. . . . . . . . .   . X . . . X . X X   X X X . X X . X X
+. X X X X . X X .   . X X X X X X X .   . X X X X X X X .
+. X X X X X . X X   . X X X X X . X X   X X X X X X . X X
+X X X . X X X O X   X X X . X X X O X   X X X . X X X O X
+O X O X . X O O O   O X O X . X O O O   O X O X . X O O O
+O O O O X X O O .   O O O O X X O O O   O O O O X X O O O
+O O O O X O . . O   O O O O X O O . O   O O O O X O O . O
+. O O O X O O O .   . O O O X O O O .   . O O O X O O O .
+. . . . O O O . .   . . O O O O O . .   . . O O O O O O .
+game 17 black -2.5 len 91 last moves [(86, 'n', 81), (87, 'o', 36), (88, 'n', 81), (89, 'o', 16), (90, 'n', 81), (91, 'o', 81)]
+O X . X . X X . X   O . O X . X X O .   O O O X . X X O .
+. O X . X X . X .   . O X . X X O . O   . O X . X X O O O
+O O X X X X X O X   O O X X X X X O .   O O X X X X X O .
+O O O O O O X O .   O O O O O O X O O   O O O O O O X O O
+X O X X O O O O .   X O X X O O O O .   O O X X O O O O .
+. X X . X O X O .   . X X . X O X O .   O X X . X O X O X
+X . X X X X X O .   X . X X X X X O .   X . X X X X X O .
+. X X . . X O O O   . X X X X X O O O   . X X X X X O O O
+. . . . . X X O .   X . X . X X X O .   X . X . X X X O .
+game 24 black -2.5 len 79 last moves [(74, 'n', 1), (75, 'o', 53), (76, 'n', 80), (77, 'o', 68), (78, 'n', 81), (79, 'o', 81)]
+. . . X . . . . .   . . . X . X . X .   X X . X . X . X .
+. . X . X . . X .   . . X . X . X X X   . X X . X . X X X
+X X . X X . X X X   X X . X X X X X X   X X . X X X X X X
+. X X O X X X O O   . X X O X X X O O   . X X O X X X O O
+X X X O X X O O O   X X X O X X O O O   X X X O X X O O O
+O O O O X X X O .   O O O O X X X O .   O O O O X X X O O
+O O . O O O O O O   O O O O O O O O O   O O O O O O O O O
+. O O X X X O O .   . O O . O . O O .   . O O . O O O O .
+. X X X O O O . .   O . . . O O O . .   O . . . O O O . X
+
+```

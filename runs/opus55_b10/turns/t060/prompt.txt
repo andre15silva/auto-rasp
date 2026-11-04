@@ -1,0 +1,17 @@
+OUTPUT of Python run 57 of at most 120:
+```
+def pos_score(ex2, eo2, hasx, haso, line):
+    if hasx and haso: s = 1.5
+    elif haso: s = 1.0 if ex2 else 0.3
+    elif hasx: s = 0.3 if eo2 else -3.0
+    else:
+        if ex2 and eo2: s = 1.2
+        elif ex2: s = -0.8
+        elif eo2: s = 0.2
+        else: s = LINE_VAL[line] + 1.0
+    s += {0: -1.0, 1: -0.3, 2: 0.0, 3: 0.0, 4: 0.0}[line]
+    return s
+
+-3.0 2.0 -1.5
+
+```

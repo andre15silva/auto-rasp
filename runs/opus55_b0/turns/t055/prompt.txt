@@ -1,0 +1,6 @@
+OUTPUT of Python run 55 of at most 120:
+```
+{'A': 35, 'B': 35, 'C': 70}
+-12.0 0.0 7.0
+
+```

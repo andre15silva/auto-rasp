@@ -1,0 +1,8 @@
+OUTPUT of Python run 75 of at most 120:
+```
+Counter({('two_passes', 1, 'white'): 55, ('two_passes', 1, 'black'): 50, ('two_passes', -1, 'black'): 14, ('two_passes', -1, 'white'): 8, ('repetition', -1, 'white'): 1})
+loss margins [-16.5, -16.5, -16.5, -13.5, -10.5, -9.5, -9.5, -8.5, -8.5, -7.5, -4.5, -3.5, -3.5, -3.5, -2.5, -2.5, -2.5, -1.5, -1.5, -1.5, -0.5, -0.5, 29.5]
+blow 78 nb wins 27 / 50
+losses lost/capt 20.5 8.3 len 92.3
+
+```

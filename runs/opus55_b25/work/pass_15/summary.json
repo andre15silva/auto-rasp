@@ -1,0 +1,37 @@
+{
+ "ok": true,
+ "pass": 15,
+ "kind": "games",
+ "per_opponent": {
+  "strong": {
+   "games": 128,
+   "score": 0.8203125,
+   "wins": 105,
+   "losses": 23,
+   "score_as_black": 0.78125,
+   "score_as_white": 0.859375,
+   "mean_margin": 51.7734375,
+   "mean_length": 108.5078125,
+   "stones_captured_per_game": 57.4453125,
+   "stones_lost_per_game": 6.6640625,
+   "passes_per_game": 2.03125,
+   "games_with_a_pass_before_move_60": 0,
+   "end_two_passes": 127,
+   "end_repetition": 1,
+   "end_move_limit": 0
+  }
+ },
+ "network": {
+  "layers": 28,
+  "heads": 4,
+  "key_size": 84,
+  "mlp_hidden_size": 471,
+  "residual_dims": 829,
+  "dense_params": 53225078,
+  "nonzero_params": 174536
+ },
+ "seconds_per_1000_positions": 17.16,
+ "seconds": 202.1,
+ "files": "/work/pass_15/",
+ "readme": "games.json: one entry per game (opponent, net_color, result +1/-1, margin = net's area score minus the opponent's incl. komi, end, stones captured / lost, moves: ply, by, move (row*9+col, 81 = pass), and for the network's moves its top-5 [move, probability]). boards.npy: (games, 162, 81) int8, the board AFTER each ply (1 Black, -1 White, 0 empty; index row*9+col); valid.npy: (games, 162) which plies were played."
+}

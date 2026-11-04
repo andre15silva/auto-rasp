@@ -166,6 +166,7 @@ def LV(i):
 TAC_CAP1, TAC_CAP2, TAC_EYE, TAC_SA, TAC_ESC, TAC_ATK, TAC_DEF = 20, 26, -25, -20, 14, 2, 3
 BIG_CAP, BIG_ESC, BIG_DEF, BIG_ATK = 6, 8, 4, 3
 TAC_ESC_LADDER = 3
+TAC_KO = -15
 PASSV = 0.0
 GAINW = 8.0
 DANGW = 20.0
@@ -284,7 +285,7 @@ def program():
 
     def ftab1(lab, ru):
         capc, xn, eye, nEc, on = lab
-        if capc >= 1: return ('cap', capc)
+        if capc >= 1: return ('cap', capc, int(nEc == 0 and not xn))
         if eye: return ('eye',)
         if xn: la = {'lo': 1, 'mid': 2, 'hi': 3}[ru]
         else: la = max(1, min(nEc, 3))
@@ -302,7 +303,9 @@ def program():
     bigbits = cat(rasp.SequenceMap(lambda a, b: (a[1], a[2], b[0], b[1]), labAb, labBb)).named('bigbits')
     def ftab2(s, eo):
         esc, o2, x2, x3 = eo
-        if s[0] == 'cap': return TAC_CAP2 if s[1] >= 2 else TAC_CAP1
+        if s[0] == 'cap':
+            if s[1] == 1 and s[2]: return TAC_KO
+            return TAC_CAP2 if s[1] >= 2 else TAC_CAP1
         if s[0] == 'eye': return TAC_EYE
         la, ne2, xn = s
         if xn and x3: la = max(la, 2)
@@ -312,7 +315,9 @@ def program():
     tab2 = cat(rasp.SequenceMap(ftab2, tab1, EO)).named('tab2')
     def fbig(s, bb):
         escB, capB, defB, atkB = bb
-        if s[0] == 'cap': return BIG_CAP * capB
+        if s[0] == 'cap':
+            if s[1] == 1 and s[2]: return (TAC_CAP1 - TAC_KO + BIG_CAP) if capB else 0
+            return BIG_CAP * capB
         if s[0] == 'eye': return 0
         la, ne2, xn = s
         if la <= 1: return 0

@@ -1,0 +1,32 @@
+OUTPUT of Python run 51 of at most 120:
+```
+128 dict_keys(['opponent', 'net_color', 'result', 'margin', 'end', 'captured', 'lost', 'moves'])
+0 black margin -7.5 end two_passes cap None lost None len 89 netpasses 1
+1 black margin -12.5 end two_passes cap None lost None len 89 netpasses 2
+3 black margin -9.5 end two_passes cap None lost None len 90 netpasses 1
+4 black margin -12.5 end two_passes cap None lost None len 97 netpasses 2
+5 black margin -7.5 end two_passes cap None lost None len 90 netpasses 5
+8 black margin -12.5 end two_passes cap None lost None len 90 netpasses 3
+10 black margin -14.5 end two_passes cap None lost None len 94 netpasses 6
+11 black margin -5.5 end two_passes cap None lost None len 91 netpasses 3
+13 black margin -17.5 end two_passes cap None lost None len 89 netpasses 3
+20 black margin -15.5 end two_passes cap None lost None len 100 netpasses 2
+21 black margin -19.5 end two_passes cap None lost None len 96 netpasses 4
+22 black margin -11.5 end two_passes cap None lost None len 94 netpasses 3
+26 black margin -5.5 end two_passes cap None lost None len 90 netpasses 5
+31 black margin -3.5 end two_passes cap None lost None len 92 netpasses 2
+35 white margin -3.5 end two_passes cap None lost None len 107 netpasses 5
+38 white margin -1.5 end two_passes cap None lost None len 88 netpasses 5
+40 white margin -3.5 end two_passes cap None lost None len 94 netpasses 2
+41 white margin -4.5 end two_passes cap None lost None len 103 netpasses 7
+42 white margin -4.5 end two_passes cap None lost None len 92 netpasses 4
+43 white margin -4.5 end two_passes cap None lost None len 105 netpasses 5
+44 white margin 16.5 end repetition cap None lost None len 90 netpasses 1
+47 white margin -11.5 end two_passes cap None lost None len 117 netpasses 7
+48 white margin -12.5 end two_passes cap None lost None len 105 netpasses 6
+49 white margin -5.5 end two_passes cap None lost None len 101 netpasses 4
+52 white margin -1.5 end two_passes cap None lost None len 99 netpasses 8
+repetition games: [(44, 'strong', -1, 'white'), (67, 'weak', 1, 'black')]
+[{'ply': 0, 'by': 'net', 'move': 47, 'top5': [[40, 0.041], [20, 0.0336], [21, 0.0336], [24, 0.0336], [22, 0.0336]]}, {'ply': 1, 'by': 'opponent', 'move': 48}, {'ply': 2, 'by': 'net', 'move': 57, 'top5': [[24, 0.0466], [20, 0.0466], [22, 0.0466], [21, 0.0466], [23, 0.0466]]}, {'ply': 3, 'by': 'opponent', 'move': 40}, {'ply': 4, 'by': 'net', 'move': 39, 'top5': [[39, 0.4017], [49, 0.4017], [20, 0.0133], [24, 0.0133], [21, 0.0133]]}, {'ply': 5, 'by': 'opponent', 'move': 30}]
+
+```
