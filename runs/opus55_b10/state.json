@@ -3,13 +3,13 @@
  "model": "claude-opus-5-5",
  "effort": "xhigh",
  "session_id": "8b6ea6d0-13cb-4aef-801d-eb0b3903f233",
- "turn": 95,
- "runs": 88,
+ "turn": 100,
+ "runs": 93,
  "passes": 7,
  "requests": 7,
  "done": false,
- "next": "OUTPUT of Python run 88 of at most 120:\n```\n(668117154, 232)\n\n[stderr]\nTraceback (most recent call last):\n  File \"<string>\", line 72, in <module>\n  File \"<string>\", line 46, in compile_program\n  File \"/harness/tracr_policy.py\", line 35, in compile_sop\n    return compiling.compile_rasp_to_model(sop, vocab=set(VOCAB), max_seq_len=MAX_SEQ_LEN, compiler_bos=BOS,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 25, in _compile_no_forward\n  File \"/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/compiling.py\", line 107, in compile_rasp_to_model\n    expr_to_craft_graph.add_craft_components_to_rasp_graph(\n  File \"/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/expr_to_craft_graph.py\", line 125, in add_craft_components_to_rasp_graph\n    block = numerical_mlp.map_numerical_mlp(\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/chamber/numerical_mlp.py\", line 185, in map_numerical_mlp\n    discretising_layer = _get_discretising_layer(\n                         ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/chamber/numerical_mlp.py\", line 87, in _get_discretising_layer\n    value_thresholds = [\n                       ^\n  File \"/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/chamber/numerical_mlp.py\", line 88, in <listcomp>\n    (sorted_values[i] + sorted_values[i + 1]) / 2 for i in range(num_vals - 1)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~\nTypeError: unsupported operand type(s) for /: 'str' and 'int'\n\n```",
+ "next": "OUTPUT of Python run 93 of at most 120:\n```\ncompiled: {'layers': 28, 'heads': 4, 'key_size': 85, 'mlp_hidden_size': 456, 'residual_dims': 1573, 'dense_params': 100338954, 'nonzero_params': 29065, 'mlp_exactness': 1000000, 'compile_seconds': 321.2, 'seconds_per_1000_positions': 23.11, 'output_label': 'logit_1'}\n{'layers': 28, 'heads': 4, 'key_size': 85, 'mlp_hidden_size': 456, 'residual_dims': 1573, 'dense_params': 100338954, 'nonzero_params': 29065, 'mlp_exactness': 1000000, 'compile_seconds': 321.2, 'seconds_per_1000_positions': 23.11, 'output_label': 'logit_1'}\n\n```",
  "started": "2026-11-04T18:11:10+0000",
  "session_started": true,
- "acted": 94
+ "acted": 99
 }

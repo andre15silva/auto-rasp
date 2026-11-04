@@ -55,7 +55,7 @@ def thr(xh, name):
 SIZES = ('t', 's', 'm', 'l')
 def szcls(v):
     n = int(round(v * 100))
-    return 't' if n == 0 else 's' if n <= 4 else 'm' if n <= 7 else 'l'
+    return 't' if n <= 1 else 's' if n <= 3 else 'm' if n <= 6 else 'l'
 
 def build(stop=None):
     tok, idx = rasp.tokens, rasp.indices
@@ -69,8 +69,8 @@ def build(stop=None):
     def bvf(t, i):
         if i == 81: return 'S' if t in ('B', 'W') else 'D'
         if t == '.': return bucket(i)
-        if t == 'x': return ('X', i // 9, i % 9)
-        if t == 'o': return ('O', i // 9, i % 9)
+        if t == 'x': return ('X', bucket(i))
+        if t == 'o': return ('O', bucket(i))
         return 'D'
     bv = cat(SM(bvf, tok, idx), 'bv')
     def pinit(k, q):
@@ -107,31 +107,19 @@ def build(stop=None):
         bund = cat(rasp.Aggregate(selH if s_ % 2 == 1 else selV, bund), f'bund{s_}')
 
     # ---- extraction
-    def rmapf(v):
-        if v == 'D' or isinstance(v, int): return v
-        if isinstance(v, tuple): return (v[0], 'r', v[1])
-        return 'other'
-    def cmapf(v):
-        if v == 'D': return 'D'
-        if isinstance(v, tuple): return (v[0], 'c', v[2])
-        return 'other'
-    rmap = cat(M(rmapf, bund), 'rmap')
-    cmap = cat(M(cmapf, bund), 'cmap')
-    def extract(src, pred, name):
+    def extract(src_, pred, name):
         def fx(v, pred=pred):
             if v == 'D': return TINY
             return 1 if pred(v) else 0
-        return thr(num(M(fx, src), 'x' + name), 'f' + name)
-    fb = [extract(rmap, (lambda v, h=h: v == h), f'b{h}') for h in range(NBUCK)]
-    fXr = [extract(rmap, (lambda v, r=r: v == ('X', 'r', r)), f'Xr{r}') for r in range(9)]
-    fOr = [extract(rmap, (lambda v, r=r: v == ('O', 'r', r)), f'Or{r}') for r in range(9)]
-    fXc = [extract(cmap, (lambda v, c=c: v == ('X', 'c', c)), f'Xc{c}') for c in range(9)]
-    fOc = [extract(cmap, (lambda v, c=c: v == ('O', 'c', c)), f'Oc{c}') for c in range(9)]
-    fanyX = extract(rmap, (lambda v: isinstance(v, tuple) and v[0] == 'X'), 'anyX')
-    fanyO = extract(rmap, (lambda v: isinstance(v, tuple) and v[0] == 'O'), 'anyO')
+        return thr(num(M(fx, src_), 'x' + name), 'f' + name)
+    fb = [extract(bund, (lambda v, h=h: v == h), f'b{h}') for h in range(NBUCK)]
+    fXm = [extract(bund, (lambda v, h=h: v == ('X', h)), f'Xm{h}') for h in range(NBUCK)]
+    fOm = [extract(bund, (lambda v, h=h: v == ('O', h)), f'Om{h}') for h in range(NBUCK)]
+    fanyX = extract(bund, (lambda v: isinstance(v, tuple) and v[0] == 'X'), 'anyX')
+    fanyO = extract(bund, (lambda v: isinstance(v, tuple) and v[0] == 'O'), 'anyO')
     libn = tree(fb, 'sl', 0.01)
-    SX = tree(fXr + fXc, 'sX', 0.01)
-    SO = tree(fOr + fOc, 'sO', 0.01)
+    SX = tree(fXm, 'sX', 0.01)
+    SO = tree(fOm, 'sO', 0.01)
     cnt3 = cat(M(lambda v: min(int(round(v * 100)), 3), libn), 'cnt3')
     szX = cat(M(szcls, SX), 'szX')
     szO = cat(M(szcls, SO), 'szO')
@@ -172,15 +160,20 @@ def build(stop=None):
 
     # libs after the move (approx): empties + other liberties of joined own groups + captures
     la1 = cat(SM(lambda e, x3: (e, x3), nE, x3a), 'la1')
-    la2 = cat(SM(lambda x2, cp: (x2, cp), x2m, capm), 'la2')
+    la2 = cat(SM(lambda x2, cp: (x2 > 0, cp > 0), x2m, capm), 'la2')
     def laf(a, b):
         e, x3 = a; x2, cp = b
-        la = e + (1 if x2 else 0) + (2 if x3 else 0) + (2 if cp else 0)
-        return (min(la, 4), x2, cp, e)
+        l = e + (1 if x2 else 0) + (2 if x3 else 0) + (2 if cp else 0)
+        return (min(l, 3), e == 0)
     la = cat(SM(laf, la1, la2), 'la')
+    A = cat(SM(lambda l, cp: (l, cp), la, capm), 'tA')
+    escg = cat(SM(lambda e, c: e if c == 'E' else -1, escm, color), 'escg')
+    Bp = cat(SM(lambda e, x2: (e, x2), escg, x2m), 'tB')
     T = TACT
-    def tact(l, esc):
-        la_, x2, cp, e = l
+    def tact(a, b):
+        (la_, e0), cp = a
+        esc, x2 = b
+        if esc == -1: return 0.0
         v = 0.0
         if cp:
             v += T['cap'][cp] + (T['capsave'] if esc else 0.0)
@@ -192,11 +185,10 @@ def build(stop=None):
             if la_ == 0: v += T['sui']
             elif la_ == 1: v += T['sa'][max(x2, 1)]
             elif la_ == 2 and x2: v += T['fill2']
-        if e == 0 and not cp and not esc: v += T['noE']
+        if e0 and not cp and not esc: v += T['noE']
         if la_ >= 3 and x2: v += T['def2'][x2]
         return round(v, 2)
-    escg = cat(SM(lambda e, c: e if c == 'E' else -1, escm, color), 'escg')
-    t1c = cat(SM(lambda l, e: 0.0 if e == -1 else tact(l, e), la, escg), 't1c')
+    t1c = cat(SM(tact, A, Bp), 't1c')
     t1 = num(M(lambda v: v, t1c), 't1')
     def atk(o2, l):
         la_ = l[0]

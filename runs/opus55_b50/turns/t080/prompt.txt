@@ -1,0 +1,6 @@
+OUTPUT of Python run 74 of at most 120:
+```
+nbinfo compile 16 D 775 layers 18
+feat compile 97 D 886 layers 21
+
+```

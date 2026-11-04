@@ -1,0 +1,17 @@
+OUTPUT of Python run 90 of at most 120:
+```
+41 [('map_12', 1), ('cst_23', 64)]
+42 [('cE_14', 'A'), ('cW_21', 'A'), ('cN_32', 'A'), ('cS_33', 'A')]
+43 [('linear_sequence_map_7', 4), ('map_91', 8)]
+45 [('pos_3', 4), ('sequence_map_20', 64), ('map_69', 1)]
+46 [('aggregate_51', 'A')]
+47 [('sequence_map_13', 288)]
+49 [('tcat_8', 440), ('map_39', 165)]
+51 [('tact_4', 1), ('sequence_map_25', 16)]
+52 [('aggregate_15', 'A')]
+53 [('map_9', 1)]
+55 [('savecap_5', 5)]
+57 [('linear_sequence_map_2', 4)]
+59 [('logit_1', 4)]
+
+```

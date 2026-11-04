@@ -107,7 +107,7 @@ def split_num(catsop):
     return add(p, n, 1.0, -1.0)
 
 PASS_LOGIT = -2.0
-SAVECAP_BONUS = 7.0
+SAVECAP_SCALE = 28.0
 P_OFF = 8.0
 def build_triple_classes():
     import itertools
@@ -281,13 +281,12 @@ def program():
     tcat = smap(lambda t, e: max(-20.0, tactic_score(msum(TRIPLE_REP[t], (e,)))), tW, cE).named('tcat')
     tact = nmap(lambda v: v + T_OFF, tcat).named('tact')
     # opponent stones in atari that touch one of our stones in atari -> capturing them saves us
-    isx1 = nmap(lambda c: 1.0 if c == 'X1' else 0.0, cmap(lambda v: v, cst))         # depth +2 (delay)
+    isx1 = nmap(lambda c: 1.0 if c == 'X1' else 0.0, cst)
     x1n = rasp.numerical(rasp.Aggregate(rasp.Select(idx, qA, GEQ), isx1, default=0))
     hx1 = cmap(lambda x: int(x > 0.05), x1n)
     flag = smap(lambda c, h: 'F' if (c == 'O1' and h) else ('Z' if (c == 'N' and h) else 'N'), cst, hx1)
     fsoft = rasp.Aggregate(rasp.Select(idx, qA, GEQ), flag)
-    fnum = nmap(lambda v: 1.0 if v == 'F' else (0.1 if v == 'Z' else 0.0), fsoft)
-    savecap = nmap(lambda x: SAVECAP_BONUS if x > 0.05 else 0.0, fnum).named('savecap')
+    savecap = nmap(lambda v: SAVECAP_SCALE if v == 'F' else 0.0, fsoft).named('savecap')
     # ---- positional (cheap, token based)
     # ---- positional (token based, scheduled into idle attention slots)
     rtok = rasp.Aggregate(rasp.Select(idx, qB, GT), tok)
@@ -343,4 +342,4 @@ def program():
     cutcat = smap(lambda c, r: c + r, cutcat, regcat)
     extra = add(nmap(lambda v: v + 6.0, adjcat), nmap(lambda v: v + 12.0, cutcat))
     pos = add(nmap(lambda v: v + P_OFF, pcat), extra).named('pos')
-    return add(add(tact, savecap), pos).named('logit')
+    return add(add(tact, pos), savecap).named('logit')
