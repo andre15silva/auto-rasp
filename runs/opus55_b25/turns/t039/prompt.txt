@@ -1,0 +1,54 @@
+OUTPUT of Python run 35 of at most 120:
+```
+game 31 net black len 70 same as [67] last moves [(67, 'o', 36), (68, 'n', 27), (69, 'o', 9), (70, 'n', 18)]
+X X . X X . X . .   X X . X X . X . .   X X . X X . X . .   X X . X X . X . .
+. X X X X X X O O   . X X X X X X O O   O X X X X X X O O   . X X X X X X O O
+X O O X X . X O .   X O O X X . X O .   . O O X X . X O .   X O O X X . X O .
+. O O X O X X O .   X O O X O X X O .   . O O X O X X O .   . O O X O X X O .
+O O O O O O O O .   O O O O O O O O .   O O O O O O O O .   O O O O O O O O .
+X X X O O O X O .   X X X O O O X O .   X X X O O O X O .   X X X O O O X O .
+. X X X X O X O .   . X X X X O X O .   . X X X X O X O .   . X X X X O X O .
+X . . . X X X O .   X . . . X X X O .   X . . . X X X O .   X . . . X X X O .
+. . X X . X . . .   . . X X . X . . .   . . X X . X . . .   . . X X . X . . .
+game 36 net black len 54 same as [51] last moves [(51, 'o', 9), (52, 'n', 76), (53, 'o', 74), (54, 'n', 75)]
+. . . . . . . . .   . . . . . . . . .   . . . . . . . . .   . . . . . . . . .
+O X O O O O X X .   O X O O O O X X .   O X O O O O X X .   O X O O O O X X .
+O O O O O X X . .   O O O O O X X . .   O O O O O X X . .   O O O O O X X . .
+. . O O X X . . .   . . O O X X . . .   . . O O X X . . .   . . O O X X . . .
+X O O O X X . . .   X O O O X X . . .   X O O O X X . . .   X O O O X X . . .
+. X X O X X X . .   . X X O X X X . .   . X X O X X X . .   . X X O X X X . .
+X X O O O X X . .   X X O O O X X . .   X X O O O X X . .   X X O O O X X . .
+X . X O O O X X .   X . X O O O X X .   X . X O O O X X .   X . X O O O X X .
+. X . X . O X . .   . X . X X O X . .   . X O . . O X . .   . X . X . O X . .
+game 40 net black len 74 same as [68] last moves [(68, 'n', 72), (69, 'o', 46), (70, 'n', 74), (71, 'o', 78), (72, 'n', 37), (73, 'o', 73), (74, 'n', 77)]
+. . . . . . . . .   . . . . . . . . .   . . . . . . . . .   . . . . . . . . .   . . . . . . . . .   . . . . . . . . .   . . . . . . . . .
+. O . O X X X . .   . O . O X X X . .   . O . O X X X . .   . O . O X X X . .   . O . O X X X . .   . O . O X X X . .   . O . O X X X . .
+O O O O X . X . .   O O O O X . X . .   O O O O X . X . .   O O O O X . X . .   O O O O X . X . .   O O O O X . X . .   O O O O X . X . .
+. O O O O X X . .   . O O O O X X . .   . O O O O X X . .   . O O O O X X . .   . O O O O X X . .   . O O O O X X . .   . O O O O X X . .
+O X O O X X . . .   O . O O X X . . .   O . O O X X . . .   O . O O X X . . .   O X O O X X . . .   O X O O X X . . .   O X O O X X . . .
+X . X O X . X . .   X O X O X . X . .   X O X O X . X . .   X O X O X . X . .   X . X O X . X . .   X . X O X . X . .   X . X O X . X . .
+X X X O O X X . X   X X X O O X X . X   X X X O O X X . X   X X X O O X X . X   X X X O O X X . X   X X X O O X X . X   X X X O O X X . X
+. X O O O O X X .   . X O O O O X X .   . X O O O O X X .   . X O O O O X X .   . X O O O O X X .   . X O O O O X X .   . X O O O O X X .
+X O . O O X . X X   X O . O O X . X X   X . X O O X . X X   X . X O O . O X X   X . X O O . O X X   X O . O O . O X X   X O . O O X . X X
+game 41 net black len 74 same as [71] last moves [(71, 'o', 5), (72, 'n', 45), (73, 'o', 63), (74, 'n', 54)]
+. X . . . O O . O   . X . . . O O . O   . X . . . O O . O   . X . . . O O . O
+X . X X X O O . .   X . X X X O O . .   X . X X X O O . .   X . X X X O O . .
+O X . X X O . . O   O X . X X O . . O   O X . X X O . . O   O X . X X O . . O
+O X X X X O O O O   O X X X X O O O O   O X X X X O O O O   O X X X X O O O O
+O O O O O O X X X   O O O O O O X X X   O O O O O O X X X   O O O O O O X X X
+. O O O O X . X .   X O O O O X . X .   . O O O O X . X .   . O O O O X . X .
+X O O O X X X X .   X O O O X X X X .   . O O O X X X X .   X O O O X X X X .
+. X X O O X . X .   . X X O O X . X .   O X X O O X . X .   . X X O O X . X .
+X X . O . . X . .   X X . O . . X . .   X X . O . . X . .   X X . O . . X . .
+game 52 net white len 97 same as [92] last moves [(92, 'o', 54), (93, 'n', 39), (94, 'o', 71), (95, 'n', 81), (96, 'o', 40), (97, 'n', 80)]
+O . X X X O O O .   O . X X X O O O .   O . X X X O O O .   O . X X X O O O .   O . X X X O O O .   O . X X X O O O .
+X X X X O O O O O   X X X X O O O O O   X X X X O O O O O   X X X X O O O O O   X X X X O O O O O   X X X X O O O O O
+. X X X O O O O .   . X X X O O O O .   . X X X O O O O .   . X X X O O O O .   . X X X O O O O .   . X X X O O O O .
+X X X X O . O O O   X X X X O . O O O   X X X X O . O O O   X X X X O . O O O   X X X X O . O O O   X X X X O . O O O
+. X X . X O O O .   . X X O . O O O .   . X X O . O O O .   . X X O . O O O .   . X X . X O O O .   . X X . X O O O .
+X X X X O O . O O   X X X X O O . O O   X X X X O O . O O   X X X X O O . O O   X X X X O O . O O   X X X X O O . O O
+X X . X X X O O O   X X . X X X O O O   X X . X X X O O O   X X . X X X O O O   X X . X X X O O O   X X . X X X O O O
+. X X X X X X O .   . X X X X X X O .   . X X X X X X O X   . X X X X X X O X   . X X X X X X O X   . X X X X X X O .
+. X . X X X X X O   . X . X X X X X O   . X . X X X X X .   . X . X X X X X .   . X . X X X X X .   . X . X X X X X O
+
+```

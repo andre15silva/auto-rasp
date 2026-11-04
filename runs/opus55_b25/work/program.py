@@ -5,6 +5,8 @@ import math, itertools
 MLP_EXACTNESS = 100
 NCLS = 13
 T_HOPS = 6
+F_HOPS = 4
+FGAIN = 2000.0
 BIG = 1e6
 
 def rc(i): return divmod(i, 9)
@@ -100,18 +102,18 @@ def pred_yes(target):
         return None
     return p
 
-PROTOS_B = [t for t in itertools.product(range(5), repeat=3) if sum(t) == 4]
-def catB(v): return 'O2' if v == 'O2' else ('X2' if v == 'X2' else 'R')
-CATSB = ['O2', 'X2', 'R']
+PROTOS_B = [t for t in itertools.product(range(5), repeat=4) if sum(t) == 4]
+def catB(v): return v if v in ('O2', 'X2', 'X3') else 'R'
+CATSB = ['O2', 'X2', 'X3', 'R']
 def pred_protoB(k, q):
     if k > len(PROTOS_B): return None
-    t = PROTOS_B[k] if k < len(PROTOS_B) else (0, 0, 4)
+    t = PROTOS_B[k] if k < len(PROTOS_B) else (0, 0, 0, 4)
     m = [x / 4 for x in t]
     sq = sum(x * x for x in m)
     return C1 * (2 * m[CATSB.index(catB(q))] - sq) + 0.5
 def labelB(k):
-    t = PROTOS_B[k] if k < len(PROTOS_B) else (0, 0, 4)
-    return (int(t[0] >= 1), int(t[1] >= 1))
+    t = PROTOS_B[k] if k < len(PROTOS_B) else (0, 0, 0, 4)
+    return (int(t[0] >= 1), int(t[1] >= 1), int(t[2] >= 1))
 
 ZTH, ZC = 0.12, 10.0
 def pred_zone(k, q):
@@ -148,7 +150,7 @@ def program():
     rv2 = cat(rasp.Map(lambda k: 'c2' if k < NPAIR else 'c0', idx)).named('rv2')
     rvu = cat(rasp.Map(lambda k: 'lo' if k < NPAIR else 'hi', idx)).named('rvu')
     labmap = cat(rasp.Map(lambda k: labelA(PROTOS[k]) if k < len(PROTOS) else (0, 0, 0, 2), idx)).named('labmap')
-    labBmap = cat(rasp.Map(lambda k: labelB(k) if k <= len(PROTOS_B) else (0, 0), idx)).named('labBmap')
+    labBmap = cat(rasp.Map(lambda k: labelB(k) if k <= len(PROTOS_B) else (0, 0, 0), idx)).named('labBmap')
     ynmap = cat(rasp.Map(lambda k: 'yes' if k == 0 else 'no', idx)).named('ynmap')
     zmap = cat(rasp.Map(lambda k: ['own', 'opp', 'neu'][k] if k < 3 else 'neu', idx)).named('zmap')
     linev = num(rasp.Map(LV, idx)).named('linev')
@@ -178,16 +180,37 @@ def program():
     U = cat(rasp.Aggregate(sel_open(), W)).named('U')
     RU = cat(rasp.Aggregate(mksel(idx, U, pred_upair), rvu)).named('RU')
 
+    # ---- far-liberty flags: a stone seeing >=2 (>=3) classes flags its chain ----
+    def fflag(kd, r):
+        if kd in ('X', 'O') and r == 'c0': return (kd, 'F')
+        return 'n'
+    G2 = cat(rasp.SequenceMap(fflag, kind, RS1)).named('G2_0')
+    G3 = cat(rasp.SequenceMap(fflag, kind, RS2)).named('G3_0')
+    def fgm(kd, v):
+        if v != 'n' and v[0] == kd: return v
+        return 'n'
+    for t in range(1, F_HOPS + 1):
+        A2 = cat(rasp.Aggregate(sel_closed(), G2)).named(f'FA2_{t}')
+        A3 = cat(rasp.Aggregate(sel_closed(), G3)).named(f'FA3_{t}')
+        G2 = cat(rasp.SequenceMap(fgm, kind, A2)).named(f'G2_{t}')
+        G3 = cat(rasp.SequenceMap(fgm, kind, A3)).named(f'G3_{t}')
+    def pred_flag(k, q):
+        if k == 0: return (-0.4 + FGAIN) if q != 'n' else -0.4
+        if k == 1: return 0.6
+        return None
+    FR2 = cat(rasp.Aggregate(mksel(idx, G2, pred_flag), ynmap)).named('FR2')
+    FR3 = cat(rasp.Aggregate(mksel(idx, G3, pred_flag), ynmap)).named('FR3')
+
     def fstA(kd, r):
-        if kd == 'X': return 'X1' if r == 'c1' else 'Xm'
-        if kd == 'O': return 'O1' if r == 'c1' else 'Om'
+        if kd == 'X': return 'Xm' if r == 'yes' else 'X1'
+        if kd == 'O': return 'Om' if r == 'yes' else 'O1'
         return kd
     def fstB(kd, r):
-        if kd == 'X': return 'X2' if r == 'c2' else 'X3'
-        if kd == 'O': return 'O2' if r == 'c2' else 'O3'
+        if kd == 'X': return 'X3' if r == 'yes' else 'X2'
+        if kd == 'O': return 'O3' if r == 'yes' else 'O2'
         return kd
-    stA = cat(rasp.SequenceMap(fstA, kind, RS1)).named('stA')
-    stB = cat(rasp.SequenceMap(fstB, kind, RS2)).named('stB')
+    stA = cat(rasp.SequenceMap(fstA, kind, FR2)).named('stA')
+    stB = cat(rasp.SequenceMap(fstB, kind, FR3)).named('stB')
     HA = cat(rasp.Aggregate(sel_hist(), stA)).named('HA')
     HB = cat(rasp.Aggregate(sel_hist(), stB)).named('HB')
     labA = cat(rasp.Aggregate(mksel(idx, HA, pred_proto), labmap)).named('labA')
@@ -196,17 +219,19 @@ def program():
 
     def ftab1(lab, ru):
         capc, xn, eye, nEc = lab
-        if capc >= 1: la = 3
-        elif xn: la = 1 if ru == 'lo' else 2
+        if capc >= 1: return ('cap', capc)
+        if eye: return ('eye',)
+        if xn: la = 1 if ru == 'lo' else 2
         else: la = max(1, min(nEc, 2))
-        return (capc, eye, la, int(nEc >= 2))
+        return (la, int(nEc >= 2), xn)
     tab1 = cat(rasp.SequenceMap(ftab1, labA, RU)).named('tab1')
-    EO = cat(rasp.SequenceMap(lambda a, b: (int(a == 'yes'), b[0], b[1]), escO, ox2)).named('EO')
+    EO = cat(rasp.SequenceMap(lambda a, b: (int(a == 'yes'),) + tuple(b), escO, ox2)).named('EO')
     def ftab2(s, eo):
-        capc, eye, la, ne2 = s
-        esc, o2, x2 = eo
-        if capc >= 1: return TAC_CAP2 if capc >= 2 else TAC_CAP1
-        if eye: return TAC_EYE
+        esc, o2, x2, x3 = eo
+        if s[0] == 'cap': return TAC_CAP2 if s[1] >= 2 else TAC_CAP1
+        if s[0] == 'eye': return TAC_EYE
+        la, ne2, xn = s
+        if xn and x3: la = max(la, 2)
         if la <= 1: return TAC_SA
         return TAC_ESC * esc + TAC_ATK * o2 + TAC_DEF * int(x2 and ne2 and not esc)
     tab2 = cat(rasp.SequenceMap(ftab2, tab1, EO)).named('tab2')

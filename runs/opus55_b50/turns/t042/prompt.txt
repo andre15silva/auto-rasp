@@ -1,0 +1,8 @@
+OUTPUT of Python run 41 of at most 120:
+```
+{'TRIVIAL_FLAGS': True} compiled: {'layers': 12, 'heads': 2, 'key_size': 84, 'mlp_hidden_size': 328, 'residual_dims': 453, 'dense_params': 7280634, 'nonzero_params': 4605, 'mlp_exactness': 1000, 'compile_seconds': 5.7, 'seconds_per_1000_positions': 8.48, 'output_label': 'R0_8_1'}
+{} compiled: {'layers': 14, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 344, 'residual_dims': 567, 'dense_params': 16215850, 'nonzero_params': 6784, 'mlp_exactness': 1000, 'compile_seconds': 5.2, 'seconds_per_1000_positions': 7.52, 'output_label': 'R0_8_33'}
+{'TRIVIAL_FLAGS': True} compiled: {'layers': 12, 'heads': 2, 'key_size': 84, 'mlp_hidden_size': 328, 'residual_dims': 453, 'dense_params': 7280634, 'nonzero_params': 4605, 'mlp_exactness': 1000, 'compile_seconds': 1.2, 'seconds_per_1000_positions': 5.21, 'output_label': 'R0_8_74'}
+{} compiled: {'layers': 14, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 344, 'residual_dims': 567, 'dense_params': 16215850, 'nonzero_params': 6784, 'mlp_exactness': 1000, 'compile_seconds': 1.4, 'seconds_per_1000_positions': 4.33, 'output_label': 'R0_8_106'}
+
+```
