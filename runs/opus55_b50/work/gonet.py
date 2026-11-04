@@ -3,7 +3,9 @@ from tracr.rasp import rasp
 
 SEL = 10.6                 # logit ~115.7 (gap to BOS ~110 -> exact zeros in float32)
 UNSEL = 0.0
-UNSEL_B = -10.0            # for selectors that may select nothing (BOS must win cleanly)
+UNSEL_B = -10.0
+FIXSEL = False
+NOGRADE = False            # for selectors that may select nothing (BOS must win cleanly)
 G_LO, G_HI = 10.6, 10.6 + 10.2 * 8
 N_PROP = 6
 NBUCK = 8
@@ -130,6 +132,8 @@ def build(stop=None):
         if q == 81 or k == 81: return G_HI if (q == 81 and k == 81) else UNSEL
         if k % 9 == q % 9 and k <= q: return G_HI - gstep * ((q - k) // 9)
         return UNSEL
+    if NOGRADE:
+        ph = pv = (lambda k, q: SEL if k == q else UNSEL_B)
     hrun = rasp.categorical(rasp.Aggregate(rasp.Select(hkey, idx, ph), idx)).named('hrun')
     vrun = rasp.categorical(rasp.Aggregate(rasp.Select(vkey, idx, pv), idx)).named('vrun')
     ncS = shift(color4, ORTH['S'], 'ncS')
@@ -138,6 +142,11 @@ def build(stop=None):
     eq = lambda k, q: SEL if k == q else UNSEL
     selH = rasp.Select(hrun, hrun, eq)
     selV = rasp.Select(vrun, vrun, eq)
+    if FIXSEL:
+        def fx(k, q):
+            if k >= 81 or q >= 81: return SEL if k == q else UNSEL
+            return SEL if abs(k//9 - q//9) + abs(k%9 - q%9) <= 1 else UNSEL
+        selH = selV = rasp.Select(idx, idx, fx)
 
     low = 1.0
     for s in range(1, N_PROP + 1):

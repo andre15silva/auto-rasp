@@ -1,0 +1,6 @@
+OUTPUT of Python run 59 of at most 120:
+```
+6 min over positions: 2.712673611111111e-05 percentiles 1/5/50: [0.     0.0001 0.0018]
+8 min over positions: 1.0333994708994707e-05 percentiles 1/5/50: [0.     0.0001 0.0035]
+
+```

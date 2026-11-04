@@ -1,0 +1,10 @@
+OUTPUT of Python run 91 of at most 120:
+```
+-20.0 * FSC True
+BIG = 1e8 True
+FGAIN = 1e6 True
+ZC = 0.12, 2.3 True
+SCALE = 3.0 True
+compiled: {'layers': 27, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 471, 'residual_dims': 829, 'dense_params': 51326847, 'nonzero_params': 174536, 'mlp_exactness': 100, 'compile_seconds': 17.1, 'seconds_per_1000_positions': 22.45, 'output_label': 'logit_1'}
+
+```

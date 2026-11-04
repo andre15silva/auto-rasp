@@ -1,0 +1,21 @@
+OUTPUT of Python run 56 of at most 120:
+```
+{'N_PROP': 0} 
+[stderr]
+Traceback (most recent call last):
+  File "<string>", line 92, in <module>
+  File "<string>", line 46, in compile_program
+  File "/harness/tracr_policy.py", line 35, in compile_sop
+    return compiling.compile_rasp_to_model(sop, vocab=set(VOCAB), max_seq_len=MAX_SEQ_LEN, compiler_bos=BOS,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 25, in _compile_no_forward
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/compiling.py", line 100, in compile_rasp_to_model
+    basis_inference.infer_bases(
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/basis_inference.py", line 98, in infer_bases
+    value_set = compute_value_set(expr)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/basis_inference.py", line 69, in compute_value_set
+    out.add(res)
+MemoryError
+
+```
