@@ -190,6 +190,7 @@ def build(stop=None):
         return round(v, 2)
     t1c = cat(SM(tact, A, Bp), 't1c')
     t1 = num(M(lambda v: v, t1c), 't1')
+    if stop == 't1': return t1
     def atk(o2, l):
         la_ = l[0]
         return T['atari'][o2] if (o2 and la_ >= 2) else 0.0
@@ -257,6 +258,7 @@ def build(stop=None):
     t4 = num(M(lambda v: v, t4c), 't4')
     t5c = cat(SM(lambda inf, c: (INFL.get(inf, 0.0) if c == 'E' else 0.0), infl, color), 't5c')
     t5 = num(M(lambda v: v, t5c), 't5')
+    if stop == 't5': return lsm(t4, t5, 'dbg5')
 
     # ---- pass: Tromp-Taylor estimate
     def ttf(c, r):
@@ -295,6 +297,7 @@ def build(stop=None):
         return PASSTAB(tc, nc, sd)
     t6c = cat(SM(passf, pstate, side), 't6c')
     t6 = num(M(lambda v: v, t6c), 't6')
+    if stop == 't6': return t6
 
     s12 = lsm(t1, t2, 's12')
     s34 = lsm(t3, t4, 's34')
