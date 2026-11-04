@@ -1,0 +1,8 @@
+OUTPUT of Python run 78 of at most 120:
+```
+infer 0.7
+[(83, 'vkey_137'), (83, 'hkey_141'), (82, 'vrun_131'), (82, 'indices'), (82, 'hrun_135'), (51, 't1c_2'), (51, 't1_1'), (35, 'tA_3'), (30, 'tB_4'), (26, 'bv_149'), (26, 'bund6_128'), (26, 'bund5_130')]
+craft 0.3
+
+[timed out after 900 s]
+```
