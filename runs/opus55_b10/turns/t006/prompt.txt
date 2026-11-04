@@ -1,0 +1,82 @@
+OUTPUT of Python run 6 of at most 120:
+```
+         2699326 function calls (2673531 primitive calls) in 7.762 seconds
+
+   Ordered by: cumulative time
+   List reduced from 2925 to 40 due to restriction <40>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    8.127    8.127 <string>:24(_compile_no_forward)
+        1    0.000    0.000    8.126    8.126 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/compiling.py:34(compile_rasp_to_model)
+        1    0.000    0.000    6.694    6.694 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/craft_model_to_transformer.py:26(craft_model_to_transformer)
+        1    0.130    0.130    6.693    6.693 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/assemble.py:210(assemble_craft_model)
+  400/195    0.001    0.000    5.494    0.028 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/traceback_util.py:191(reraise_with_filtered_traceback)
+   264/77    0.003    0.000    5.465    0.071 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/pjit.py:250(cache_miss)
+        1    0.000    0.000    5.345    5.345 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/transform.py:163(init_fn)
+        1    0.000    0.000    5.345    5.345 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/transform.py:413(init_fn)
+        1    0.000    0.000    5.342    5.342 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/assemble.py:261(forward)
+    121/6    0.004    0.000    5.265    0.877 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/module.py:435(wrapped)
+    121/6    0.001    0.000    5.264    0.877 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/module.py:295(run_interceptors)
+  264/125    0.003    0.000    5.255    0.042 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/pjit.py:130(_run_python_pjit)
+       77    0.002    0.000    5.238    0.068 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/pjit.py:1137(_pjit_call_impl_python)
+     71/1    0.004    0.000    5.224    5.224 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/source_info_util.py:288(wrapper)
+        1    0.000    0.000    5.224    5.224 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/transformer/model.py:176(__call__)
+  403/308    0.005    0.000    5.075    0.016 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/profiler.py:417(wrapper)
+        1    0.001    0.001    4.400    4.400 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/transformer/model.py:73(__call__)
+       77    0.001    0.000    4.144    0.054 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/interpreters/pxla.py:1209(compile)
+       77    0.007    0.000    4.142    0.054 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/interpreters/pxla.py:1686(from_hlo)
+       77    0.003    0.000    4.102    0.053 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/interpreters/pxla.py:1499(_cached_compilation)
+       77    0.003    0.000    4.061    0.053 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/compiler.py:387(compile_or_get_cached)
+       77    0.001    0.000    4.005    0.052 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/compiler.py:727(_compile_and_write_cache)
+       77    3.999    0.052    3.999    0.052 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/compiler.py:292(backend_compile_and_load)
+       36    0.002    0.000    3.510    0.097 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/basic.py:159(__call__)
+       74    0.003    0.000    3.000    0.041 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/base.py:606(get_parameter)
+       36    0.002    0.000    2.805    0.078 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/initializers.py:212(__call__)
+       36    0.002    0.000    2.802    0.078 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/initializers.py:120(__call__)
+        6    0.002    0.000    2.620    0.437 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/transformer/attention.py:97(__call__)
+ 1030/913    0.013    0.000    2.059    0.002 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/core.py:660(bind)
+       36    0.005    0.000    2.020    0.056 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/random/core.py:1073(truncated_normal)
+      492    0.002    0.000    1.878    0.004 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/core.py:1285(process_primitive)
+      340    0.056    0.000    1.650    0.005 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/dispatch.py:81(apply_primitive)
+        6    0.000    0.000    1.642    0.274 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/basic.py:119(__call__)
+       99    0.119    0.001    1.576    0.016 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/vectorspace_fns.py:70(from_action)
+  866/763    0.003    0.000    1.533    0.002 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/core.py:709(bind_with_trace)
+       18    0.000    0.000    1.225    0.068 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/transformer/attention.py:151(_linear_projection)
+       77    0.002    0.000    1.047    0.014 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/pjit.py:1082(_resolve_and_lower)
+       77    0.000    0.000    1.041    0.014 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/pjit.py:1247(_pjit_lower)
+       77    0.010    0.000    1.040    0.014 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/interpreters/pxla.py:954(lower_sharding_computation)
+        1    0.001    0.001    0.992    0.992 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/craft_graph_to_model.py:200(craft_graph_to_model)
+
+
+
+         2699326 function calls (2673531 primitive calls) in 7.762 seconds
+
+   Ordered by: internal time
+   List reduced from 2925 to 20 due to restriction <20>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       77    3.999    0.052    3.999    0.052 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/compiler.py:292(backend_compile_and_load)
+     1776    0.338    0.000    0.760    0.000 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/bases.py:190(add_directions)
+       77    0.337    0.004    0.521    0.007 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/interpreters/mlir.py:623(make_ir_context)
+      953    0.156    0.000    0.341    0.000 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/bases.py:97(<dictcomp>)
+    37702    0.148    0.000    0.148    0.000 {built-in method numpy.zeros}
+        1    0.130    0.130    6.693    6.693 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/assemble.py:210(assemble_craft_model)
+       99    0.119    0.001    1.576    0.016 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/vectorspace_fns.py:70(from_action)
+842190/841869    0.104    0.000    0.105    0.000 {built-in method builtins.hash}
+        8    0.091    0.011    0.091    0.011 {built-in method builtins.compile}
+    49800    0.090    0.000    0.325    0.000 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/chamber/categorical_attn.py:96(qk_fun)
+    38966    0.087    0.000    0.178    0.000 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/bases.py:231(make_vector)
+    79005    0.081    0.000    0.160    0.000 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/bases.py:249(__contains__)
+   200820    0.074    0.000    0.074    0.000 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/bases.py:49(__lt__)
+        1    0.065    0.065    0.065    0.065 /opt/venvs/sandbox/lib/python3.11/site-packages/jaxlib/mlir/dialects/_mhlo_ops_gen.py:8421(RoundOp)
+      340    0.056    0.000    1.650    0.005 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/dispatch.py:81(apply_primitive)
+170890/169379    0.054    0.000    0.062    0.000 {built-in method builtins.isinstance}
+       72    0.047    0.001    0.047    0.001 /opt/venvs/sandbox/lib/python3.11/site-packages/numpy/_core/numeric.py:97(zeros_like)
+     1211    0.046    0.000    0.123    0.000 {built-in method builtins.sorted}
+     5123    0.045    0.000    0.159    0.000 /opt/venvs/sandbox/lib/python3.11/site-packages/numpy/lib/_twodim_base_impl.py:176(eye)
+    32367    0.045    0.000    0.251    0.000 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/bases.py:269(null_vector)
+
+
+
+
+```

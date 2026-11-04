@@ -21,14 +21,14 @@
  ],
  "model": "claude-opus-5-5",
  "effort": "xhigh",
- "wall_s": 11.4,
+ "wall_s": 54.5,
  "usage": {
-  "input_tokens": 4,
-  "cache_creation_input_tokens": 1961,
-  "cache_read_input_tokens": 66049,
-  "output_tokens": 936,
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 1263,
+  "cache_read_input_tokens": 68010,
+  "output_tokens": 4535,
   "output_tokens_details": {
-   "thinking_tokens": 377
+   "thinking_tokens": 4261
   },
   "server_tool_use": {
    "web_search_requests": 0,
@@ -36,19 +36,19 @@
   },
   "service_tier": "standard",
   "cache_creation": {
-   "ephemeral_1h_input_tokens": 1961,
+   "ephemeral_1h_input_tokens": 1263,
    "ephemeral_5m_input_tokens": 0
   },
   "inference_geo": "global",
   "iterations": [
    {
-    "input_tokens": 4,
-    "output_tokens": 936,
-    "cache_read_input_tokens": 66049,
-    "cache_creation_input_tokens": 1961,
+    "input_tokens": 2,
+    "output_tokens": 4535,
+    "cache_read_input_tokens": 68010,
+    "cache_creation_input_tokens": 1263,
     "cache_creation": {
      "ephemeral_5m_input_tokens": 0,
-     "ephemeral_1h_input_tokens": 1961
+     "ephemeral_1h_input_tokens": 1263
     },
     "type": "message"
    }
@@ -71,15 +71,15 @@
    "maxOutputTokens": 128000
   },
   "claude-opus-5-5": {
-   "inputTokens": 34,
-   "outputTokens": 41966,
-   "thinkingTokens": 39503,
-   "cacheReadInputTokens": 368545,
-   "cacheCreationInputTokens": 68010,
+   "inputTokens": 36,
+   "outputTokens": 46501,
+   "thinkingTokens": 43764,
+   "cacheReadInputTokens": 436555,
+   "cacheCreationInputTokens": 69273,
    "cacheCreationEphemeral5mInputTokens": 0,
-   "cacheCreationEphemeral1hInputTokens": 68010,
+   "cacheCreationEphemeral1hInputTokens": 69273,
    "webSearchRequests": 0,
-   "costUSD": 1.4572450000000001,
+   "costUSD": 1.5716590000000001,
    "contextWindow": 1000000,
    "maxOutputTokens": 128000,
    "canonicalModel": "claude-opus-5-5",
@@ -87,7 +87,7 @@
    "costBasis": "list"
   }
  },
- "cost_usd": 1.4576870000000002,
+ "cost_usd": 1.5721010000000002,
  "num_turns": 1,
  "stop_reason": "end_turn",
  "audit": {

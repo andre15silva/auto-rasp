@@ -1,0 +1,6 @@
+OUTPUT of Python run 5 of at most 120:
+```
+compiled: {'layers': 14, 'heads': 4, 'key_size': 83, 'mlp_hidden_size': 1752, 'residual_dims': 2053, 'dense_params': 139162070, 'nonzero_params': 9626, 'mlp_exactness': 100, 'compile_seconds': 630.2, 'seconds_per_1000_positions': 24.89, 'output_label': 'map_1'}
+{'layers': 14, 'heads': 4, 'key_size': 83, 'mlp_hidden_size': 1752, 'residual_dims': 2053, 'dense_params': 139162070, 'nonzero_params': 9626, 'mlp_exactness': 100, 'compile_seconds': 630.2, 'seconds_per_1000_positions': 24.89, 'output_label': 'map_1'}
+
+```

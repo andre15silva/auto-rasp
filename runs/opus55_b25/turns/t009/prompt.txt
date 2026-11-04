@@ -1,7 +1,5 @@
-OUTPUT of Python run 8 of at most 120:
+OUTPUT of Python run 9 of at most 120:
 ```
-compiled: {'layers': 3, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 8, 'residual_dims': 117, 'dense_params': 491640, 'nonzero_params': 792, 'mlp_exactness': 100, 'compile_seconds': 6.4, 'seconds_per_1000_positions': 0.15, 'output_label': 'linear_sequence_map_1'}
-<class 'dict'>
-{'layers': 3, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 8, 'residual_dims': 117, 'dense_params': 491640, 'nonzero_params': 792, 'mlp_exactness': 100, 'compile_seconds': 6.4, 'seconds_per_1000_positions': 0.15, 'output_label': 'linear_sequence_map_1', 'residual_labels': "['aggregate_10:.', 'aggregate_10:B', 'aggregate_10:W', 'aggregate_10:o', 'aggregate_10:x', 'aggregate_11:.', 'aggregate_11:B', 'aggregate_11:W', 'aggregate_11:o', 'aggregate_11:x', 'aggregate_8:.', 'aggregate_8:B', 'aggregate_8:W', 'aggregate_8:o', 'aggregate_8:x', 'aggregate_9:.', 'aggregate_9:B', 'aggregate_9:W', 'aggregate_9:o', 'aggregate_9:x']..."}
 
+[timed out after 900 s]
 ```

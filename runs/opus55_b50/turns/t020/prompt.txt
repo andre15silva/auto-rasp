@@ -1,0 +1,19 @@
+OUTPUT of Python run 19 of at most 120:
+```
+<class 'list'> 128
+dict_keys(['opponent', 'net_color', 'result', 'margin', 'end', 'captured', 'lost', 'moves'])
+0 strong black -1 -25.5 two_passes 107
+  passes: [(56, 'net'), (72, 'net'), (89, 'opponent'), (93, 'opponent'), (102, 'net'), (105, 'opponent'), (106, 'net')]
+1 strong black -1 -30.5 two_passes 99
+  passes: [(52, 'net'), (58, 'net'), (91, 'opponent'), (97, 'opponent'), (98, 'net')]
+2 strong black -1 -49.5 two_passes 123
+  passes: [(66, 'net'), (94, 'net'), (110, 'net'), (119, 'opponent'), (121, 'opponent'), (122, 'net')]
+3 strong black -1 -70.5 two_passes 140
+  passes: [(56, 'net'), (100, 'net'), (112, 'net'), (122, 'net'), (128, 'net'), (134, 'net'), (136, 'net'), (138, 'net'), (139, 'opponent')]
+4 strong black -1 -11.5 two_passes 91
+  passes: [(65, 'opponent'), (71, 'opponent'), (77, 'opponent'), (83, 'opponent'), (85, 'opponent'), (87, 'opponent'), (89, 'opponent'), (90, 'net')]
+5 strong black -1 -0.5 two_passes 89
+  passes: [(87, 'opponent'), (88, 'net')]
+[{"ply": 0, "by": "net", "move": 61, "top5": [[30, 0.0234], [31, 0.0234], [50, 0.0234], [49, 0.0234], [48, 0.0234]]}, {"ply": 1, "by": "opponent", "move": 65}, {"ply": 2, "by": "net", "move": 36, "top5": [[56, 0.0284], [30, 0.0232], [50, 0.0232], [31, 0.0232], [39, 0.0232]]}, {"ply": 3, "by": "opponent", "move": 48}, {"ply": 4, "by": "net", "move": 63, "top5": [[49, 0.0343], [39, 0.0343], [47, 0.0281], [56, 0.0281], [57, 0.0281]]}, {"ply": 5, "by": "opponent", "move": 12}]
+
+```
