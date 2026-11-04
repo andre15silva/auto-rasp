@@ -115,14 +115,14 @@ def labelB(k):
     t = PROTOS_B[k] if k < len(PROTOS_B) else (0, 0, 0, 4)
     return (int(t[0] >= 1), int(t[1] >= 1), int(t[2] >= 1))
 
-ZTH, ZC = 0.12, 10.0
+ZCENT = [-0.3, -0.13, 0.0, 0.13, 0.3]
+ZNAMES = ['pS', 'pW', 'neu', 'oW', 'oS']
+ZZ = 50.0
 def pred_zone(k, q):
-    fx = {'X': 1.0, 'O': -2.0}.get(q, 0.0)
-    fo = {'O': 1.0, 'X': -2.0}.get(q, 0.0)
-    if k == 0: return 0.6 + ZC * (fx - ZTH)
-    if k == 1: return 0.6 + ZC * (fo - ZTH)
-    if k == 2: return 0.6
-    return None
+    if k >= len(ZCENT): return None
+    f = {'X': 1.0, 'O': -1.0}.get(q, 0.0)
+    c = ZCENT[k]
+    return 0.6 + ZZ * (2 * c * f - c * c)
 
 def LV(i):
     if i >= 81: return 0.0
@@ -135,6 +135,8 @@ PASSV = 0.0
 GAINW = 8.0
 DANGW = 20.0
 SCALE = 3.0
+SA_OPP_BONUS = 16.0
+GAINF = {'neu': 1.0, 'pW': 0.7, 'pS': 0.25, 'oW': 0.6, 'oS': 0.1}
 
 def program():
     tok, idx = rasp.tokens, rasp.indices
@@ -152,7 +154,7 @@ def program():
     labmap = cat(rasp.Map(lambda k: labelA(PROTOS[k]) if k < len(PROTOS) else (0, 0, 0, 2), idx)).named('labmap')
     labBmap = cat(rasp.Map(lambda k: labelB(k) if k <= len(PROTOS_B) else (0, 0, 0), idx)).named('labBmap')
     ynmap = cat(rasp.Map(lambda k: 'yes' if k == 0 else 'no', idx)).named('ynmap')
-    zmap = cat(rasp.Map(lambda k: ['own', 'opp', 'neu'][k] if k < 3 else 'neu', idx)).named('zmap')
+    zmap = cat(rasp.Map(lambda k: ZNAMES[k] if k < len(ZNAMES) else 'neu', idx)).named('zmap')
     linev = num(rasp.Map(LV, idx)).named('linev')
 
     # ---------- liberty-class propagation ----------
@@ -247,15 +249,18 @@ def program():
         return 'S' + kd
     zoneP = cat(rasp.SequenceMap(fz, kind, zone)).named('zoneP')
     GainM = cat(rasp.Aggregate(sel_kernel(1.5, pad=True), zoneP)).named('GainM')
-    gainR = num(rasp.Map(lambda z: {'neu': 1.0, 'opp': 0.5, 'own': 0.35}.get(z, 0.0), GainM)).named('gainR')
-    zpen = num(rasp.Map(lambda z: {'own': 2.0}.get(z, 0.0), zoneP)).named('zpen')
+    gainR = num(rasp.Map(lambda z: GAINF.get(z, 0.0), GainM)).named('gainR')
+    zpen = num(rasp.Map(lambda z: {'oS': 2.0, 'oW': 0.5}.get(z, 0.0), zoneP)).named('zpen')
     DTH = 0.05
     dang = num(rasp.Map(lambda v: {'O': 1.0 - DTH, 'X': -1.0 - DTH}.get(v, -DTH), InfM)).named('dang')
     passv = num(rasp.Map(lambda kd: PASSV if kd == 'P' else 0.0, kind)).named('passv')
 
+    zsa = cat(rasp.SequenceMap(lambda s, z: 'thr' if (s == TAC_SA and z in ('pS', 'pW')) else 'no', tab2, zoneP)).named('zsa')
+    zsaR = num(rasp.Map(lambda v: SA_OPP_BONUS if v == 'thr' else 0.0, zsa)).named('zsaR')
     a1 = num(rasp.LinearSequenceMap(tacP, tacN, 1.0, -1.0)).named('a1')
     a2 = num(rasp.LinearSequenceMap(gainR, zpen, GAINW, -1.0)).named('a2')
     a3 = num(rasp.LinearSequenceMap(linev, dang, 1.0, -DANGW)).named('a3')
-    b1 = num(rasp.LinearSequenceMap(a1, a2, 1.0, 1.0)).named('b1')
+    b0 = num(rasp.LinearSequenceMap(a1, zsaR, 1.0, 1.0)).named('b0')
+    b1 = num(rasp.LinearSequenceMap(b0, a2, 1.0, 1.0)).named('b1')
     out = num(rasp.LinearSequenceMap(b1, a3, SCALE, SCALE)).named('logit')
     return out

@@ -5,4 +5,4 @@ import importlib, gonet
 importlib.reload(gonet)
 MLP_EXACTNESS = 1000
 def program():
-    return gonet.build(stop='prop')
+    return gonet.build(stop='nbinfo')

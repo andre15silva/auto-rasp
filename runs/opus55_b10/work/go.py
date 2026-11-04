@@ -2,8 +2,9 @@
 from tracr.rasp import rasp
 GT, LT, GEQ, LEQ, EQ = (rasp.Comparison.GT, rasp.Comparison.LT, rasp.Comparison.GEQ,
                         rasp.Comparison.LEQ, rasp.Comparison.EQ)
-R_ROUNDS = 6
-EPS_DEC = 6e-4      # decode threshold is EPS_DEC/2
+R_ROUNDS = 8
+EPS_DEC = 8e-5      # decode threshold is EPS_DEC/2
+NEAR_N = 30        # keys averaged for the near-one constant (theta = BOS share)
 UNIT = 1.0 / 16
 
 def nbrs(i):
@@ -93,7 +94,7 @@ CATS = ['E', 'X1', 'X2', 'X3', 'O1', 'O2', 'O3', 'N']
 def clean_cat(c):
     x = nmap(lambda v: 0.1 * CATS.index(v), c)
     return cmap(lambda y: CATS[min(7, max(0, int(round(y / 0.1))))], x)
-T_OFF = 20.0
+T_OFF = 30.0
 P_OFF = 6.0
 def split_num(catsop):
     """categorical SOp with numeric values -> numeric SOp (via positive & negative parts)"""
@@ -172,13 +173,19 @@ def program():
     rowE = smap(rowEf, idx, tok)
     colE = smap(colEf, idx, tok)
     seedsel = rasp.Select(idx, qB, LEQ)          # neighbours + index 81
+    # near-one constant: one-hot 'c' with magnitude 1 - theta (theta = BOS attention share)
+    constc = cmap(lambda i: 'c', idx)
+    nq = cmap(lambda i: NEAR_N, idx)
+    nearone = rasp.Aggregate(rasp.Select(idx, nq, LT), constc).named('nearone')
+    cleanf = lambda v, c: v
+    def clean(x): return smap(cleanf, x, nearone)
     stonly = lambda v, t: v if t in ('x', 'o') else 'D'
-    sr = smap(stonly, rasp.Aggregate(seedsel, rowE), tok).named('seed_r')
-    sc = smap(stonly, rasp.Aggregate(seedsel, colE), tok).named('seed_c')
+    sr = clean(smap(stonly, rasp.Aggregate(seedsel, rowE), tok)).named('seed_r')
+    sc = clean(smap(stonly, rasp.Aggregate(seedsel, colE), tok)).named('seed_c')
     for k in range(R_ROUNDS):
         sel = selr if k % 2 == 0 else selc
-        sr = rasp.Aggregate(sel, sr).named('sr%d' % k)
-        sc = rasp.Aggregate(sel, sc).named('sc%d' % k)
+        sr = clean(rasp.Aggregate(sel, sr)).named('sr%d' % k)
+        sc = clean(rasp.Aggregate(sel, sc)).named('sc%d' % k)
     nr = decode_distinct(sr, 9).named('nr')
     nc = decode_distinct(sc, 9).named('nc')
     def lclass(a, b):

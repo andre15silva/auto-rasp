@@ -1,0 +1,13 @@
+OUTPUT of Python run 45 of at most 120:
+```
+
+[stderr]
+Traceback (most recent call last):
+  File "<string>", line 76, in <module>
+  File "<string>", line 45, in compile_program
+  File "/work/program.py", line 239, in program
+    zsa = cat(rasp.SequenceMap(lambda s, z: 'thr' if (s == TAC_SA and z == 'opp') else 'no', tab2, zoneP)).named('zsa')
+                                                                                             ^^^^
+UnboundLocalError: cannot access local variable 'zoneP' where it is not associated with a value
+
+```

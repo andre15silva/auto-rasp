@@ -1,0 +1,8 @@
+OUTPUT of Python run 38 of at most 120:
+```
+logit mismatch 11 8 5.3 -1.6999999999999993
+logit mismatch 19 75 5.3 -1.6999999999999993
+logit mismatch 24 15 6.0 -1.0
+total 8200 tcat mismatches 0 pcat mismatches 0 logit mismatches 12
+
+```
