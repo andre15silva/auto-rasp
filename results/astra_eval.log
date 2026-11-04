@@ -1,1 +1,28 @@
 astra_b0 vs ppo_s0: 0.4065 (B 0.265 W 0.548) [43.4s]
+astra_b0 vs ppo_s2: 0.3745 (B 0.260 W 0.489) [36.1s]
+astra_b0 vs random: 0.9980 (B 0.997 W 0.999) [29.8s]
+astra_b0 vs astra_b10: 0.4560 (B 0.308 W 0.604) [32.6s]
+astra_b0 vs astra_b25: 0.5175 (B 0.358 W 0.677) [43.5s]
+astra_b0 vs astra_b50: 0.1465 (B 0.100 W 0.193) [39.0s]
+astra_b0: main 0.39049999999999996
+astra_b10 vs ppo_s0: 0.4575 (B 0.333 W 0.582) [72.4s]
+astra_b10 vs ppo_s2: 0.5665 (B 0.513 W 0.620) [77.4s]
+astra_b10 vs random: 0.9940 (B 0.991 W 0.997) [59.7s]
+astra_b10 vs astra_b0: 0.5375 (B 0.394 W 0.681) [64.8s]
+astra_b10 vs astra_b25: 0.4140 (B 0.407 W 0.421) [73.0s]
+astra_b10 vs astra_b50: 0.2245 (B 0.171 W 0.278) [63.8s]
+astra_b10: main 0.512
+astra_b25 vs ppo_s0: 0.4510 (B 0.330 W 0.572) [77.6s]
+astra_b25 vs ppo_s2: 0.5205 (B 0.443 W 0.598) [75.5s]
+astra_b25 vs random: 0.9905 (B 0.990 W 0.991) [51.1s]
+astra_b25 vs astra_b0: 0.4920 (B 0.321 W 0.663) [62.4s]
+astra_b25 vs astra_b10: 0.5785 (B 0.575 W 0.582) [65.7s]
+astra_b25 vs astra_b50: 0.3770 (B 0.279 W 0.475) [66.4s]
+astra_b25: main 0.48575
+astra_b50 vs ppo_s0: 0.7540 (B 0.710 W 0.798) [76.4s]
+astra_b50 vs ppo_s2: 0.8160 (B 0.837 W 0.795) [60.4s]
+astra_b50 vs random: 1.0000 (B 1.000 W 1.000) [37.3s]
+astra_b50 vs astra_b0: 0.8520 (B 0.790 W 0.914) [41.8s]
+astra_b50 vs astra_b10: 0.7845 (B 0.729 W 0.840) [49.0s]
+astra_b50 vs astra_b25: 0.6095 (B 0.512 W 0.707) [54.3s]
+astra_b50: main 0.7849999999999999

@@ -182,6 +182,22 @@ class Run:
             msg += "Top 3 moves per position:\n```\n" + "\n".join(top3) + "\n```\n"
         return kind, msg + f"Passes left: {budget - st['passes']}."
 
+    def _pending_answer(self):
+        """After a restart: (the current turn's answer if the model answered but the harness had not acted,
+        whether the model must be asked again within the same turn)."""
+        st = self.state
+        if st["turn"] < 1 or st.get("acted") == st["turn"]:
+            return None, False
+        tdir = os.path.join(self.dir, "turns", f"t{st['turn']:03d}")
+        answered = os.path.exists(os.path.join(tdir, "run.json")) and os.path.exists(os.path.join(tdir, "answer.md"))
+        same_prompt = (os.path.exists(os.path.join(tdir, "prompt.txt"))
+                       and open(os.path.join(tdir, "prompt.txt")).read() == st["next"])
+        if "acted" not in st and not same_prompt:
+            return None, False  # (state from before 'acted' existed) the turn was completed
+        if answered:  # act on it; the next model call is a new turn
+            return open(os.path.join(tdir, "answer.md")).read(), False
+        return None, True  # interrupted during the model call: ask again in the same turn
+
     def loop(self):
         st = self.state
         if st["done"]:
@@ -192,13 +208,26 @@ class Run:
             open(os.path.join(self.dir, "message.txt"), "w").write(msg)
             json.dump({"budget": self.budget, "model": st["model"], "effort": st["effort"]},
                       open(os.path.join(self.dir, "config.json"), "w"))
-        while st["turn"] < self.args.max_turns:
-            st["turn"] += 1
-            st["next"] = msg
-            self.save()
-            self.log(f"turn {st['turn']}: {'new session' if st['turn'] == 1 else 'resume'} ({len(msg):,} chars)")
-            answer, audit = self.call_model(msg)
+        pending, same_turn = self._pending_answer()
+        while True:
+            if pending is not None:
+                answer = pending
+                audit = json.load(open(os.path.join(self.dir, "turns", f"t{st['turn']:03d}", "run.json")))["audit"]
+                self.log(f"turn {st['turn']}: resumed after a restart; acting on the saved answer")
+                pending = None
+            else:
+                if not same_turn:
+                    if st["turn"] >= self.args.max_turns:
+                        self.log(f"stopped at the turn limit ({self.args.max_turns})")
+                        break
+                    st["turn"] += 1
+                same_turn = False
+                st["next"] = msg
+                self.save()
+                self.log(f"turn {st['turn']}: {'new session' if st['turn'] == 1 else 'resume'} ({len(msg):,} chars)")
+                answer, audit = self.call_model(msg)
             kind, msg = self.act(answer)
+            st["acted"] = st["turn"]
             self.log(f"turn {st['turn']}: {kind}; runs {st['runs']}, passes {st['passes']}/{self.budget}, "
                      f"tool-free {audit['tool_free']}")
             if kind == "final":
@@ -208,8 +237,6 @@ class Run:
                 break
             st["next"] = msg
             self.save()
-        else:
-            self.log(f"stopped at the turn limit ({self.args.max_turns})")
         self.finalize()
 
     def finalize(self):

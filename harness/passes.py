@@ -103,6 +103,7 @@ def games_pass(req, run_dir, k, seed):
     pdir = os.path.join(run_dir, "work", f"pass_{k}")
     os.makedirs(pdir, exist_ok=True)
     net = TracrPolicy(model_path)
+    net.model.max_rows = 8192
     per, games, boards, valid = {}, [], [], []
     t0 = time.time()
     with sandbox.heavy_lock():
@@ -184,7 +185,7 @@ def positions_pass(req, run_dir, k):
     pdir = os.path.join(run_dir, "work", f"pass_{k}")
     os.makedirs(pdir, exist_ok=True)
     with sandbox.heavy_lock():
-        tm = TracrModel(model_path)
+        tm = TracrModel(model_path, max_rows=8192)
         resid = tm.residual(tm.encode(toks))
     logits = resid[:, 1:, tm.out_index]
     probs = masked_probs(logits, legal)

@@ -3,8 +3,12 @@
 /work (read-write, kept between runs) is the only writable folder; the rest of the file system is the read-only
 /usr and the sandbox venv (tracr, jax, haiku, numpy, scipy, scikit-learn, PyTorch CPU, pandas, sympy, networkx;
 no Go library). No network, a clean environment, TIMEOUT seconds and MEM bytes of address space per run, output
-cut at MAX_OUT characters. All sandbox jobs (writer runs, pass compiles) of all concurrent experiment runs share
-one global lock so that together they never exceed the machine's memory.
+cut at MAX_OUT characters.
+
+Concurrency: all memory-heavy jobs of all concurrent experiment runs on this machine (sandbox runs, pass compiles,
+games/positions passes) share SLOTS slots, and every sandbox job runs inside one shared memory cgroup (CGROUP_MEM
+bytes in total), so that together they cannot exhaust the machine; if they ever do, the kernel kills a sandbox job,
+which is reported as such, never a harness or model process.
 """
 import contextlib
 import fcntl
@@ -17,19 +21,42 @@ SANDBOX_VENV = os.environ.get("AUTORASP_SANDBOX_VENV", "/opt/venvs/sandbox")
 TIMEOUT, MAX_OUT, MEM = 900, 20_000, 10 << 30
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
-LOCK = os.environ.get("AUTORASP_LOCK", "/tmp/autorasp-heavy.lock")
+SLOTS = int(os.environ.get("AUTORASP_SLOTS", "3"))
+SLOT_LOCK = "/tmp/autorasp-slot-{}.lock"
+CGROUP = "/sys/fs/cgroup/memory/autorasp"
+CGROUP_MEM = int(os.environ.get("AUTORASP_CGROUP_MEM", str(int(10.5 * (1 << 30)))))
 THREADS = "4"
 
 
 @contextlib.contextmanager
 def heavy_lock():
-    """Serializes memory-heavy work (sandbox runs, compiles, passes) across all experiment runs on this machine."""
-    with open(LOCK, "a") as f:
-        fcntl.flock(f, fcntl.LOCK_EX)
-        try:
-            yield
-        finally:
-            fcntl.flock(f, fcntl.LOCK_UN)
+    """Takes one of SLOTS machine-wide slots for memory-heavy work (sandbox runs, compiles, passes)."""
+    while True:
+        for i in range(SLOTS):
+            f = open(SLOT_LOCK.format(i), "a")
+            try:
+                fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                f.close()
+                continue
+            try:
+                yield
+            finally:
+                fcntl.flock(f, fcntl.LOCK_UN)
+                f.close()
+            return
+        time.sleep(1.0)
+
+
+def _cgroup():
+    """The shared memory cgroup for sandbox jobs (cgroup v1), or None if unavailable."""
+    try:
+        os.makedirs(CGROUP, exist_ok=True)
+        with open(os.path.join(CGROUP, "memory.limit_in_bytes"), "w") as f:
+            f.write(str(CGROUP_MEM))
+        return CGROUP
+    except OSError:
+        return None
 
 
 def bwrap_cmd(binds, code, chdir="/work"):
@@ -49,10 +76,17 @@ def bwrap_cmd(binds, code, chdir="/work"):
 
 def run(cmd, timeout=TIMEOUT):
     t0 = time.time()
+    cg = _cgroup()
+    full = ["prlimit", f"--as={MEM}", "--"] + cmd
+    if cg:  # enter the shared cgroup, then exec the job
+        full = ["sh", "-c", f'echo $$ > {cg}/cgroup.procs && exec "$@"', "sh"] + full
     try:
-        p = subprocess.run(["prlimit", f"--as={MEM}", "--"] + cmd, capture_output=True, text=True, timeout=timeout)
+        p = subprocess.run(full, capture_output=True, text=True, timeout=timeout)
         out = p.stdout + (("\n[stderr]\n" + p.stderr[-6000:]) if p.stderr.strip() else "")
         rc = p.returncode
+        if rc in (-9, 137) and "MemoryError" not in out:
+            out += ("\n[killed: the machine ran out of memory while this run and other jobs were running; this run "
+                    "was within its own limits if it used less than 10 GB]")
     except subprocess.TimeoutExpired as e:
         out = (e.stdout.decode() if isinstance(e.stdout, bytes) else (e.stdout or "")) + f"\n[timed out after {timeout} s]"
         rc = -9
