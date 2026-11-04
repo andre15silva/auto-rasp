@@ -1,0 +1,7 @@
+OUTPUT of Python run 20 of at most 120:
+```
+compiled: {'layers': 22, 'heads': 10, 'key_size': 85, 'mlp_hidden_size': 960, 'residual_dims': 1214, 'dense_params': 142326456, 'nonzero_params': 25860, 'mlp_exactness': 10000000, 'compile_seconds': 71.1, 'seconds_per_1000_positions': 31.78, 'output_label': 'linear_sequence_map_1'}
+{'layers': 22, 'heads': 10, 'key_size': 85, 'mlp_hidden_size': 960, 'residual_dims': 1214, 'dense_params': 142326456, 'nonzero_params': 25860, 'mlp_exactness': 10000000, 'compile_seconds': 71.1, 'seconds_per_1000_positions': 31.78, 'output_label': 'linear_sequence_map_1'}
+97 [('sequence_map_6', 120), ('selector_width_75', 83), ('selector_width_88', 83), ('sequence_map_109', 83), ('sequence_map_91', 83), ('sequence_map_96', 83), ('indices', 82), ('map_21', 82), ('map_29', 82), ('sequence_map_10', 36), ('sequence_map_4', 31), ('sequence_map_5', 22), ('sequence_map_9', 21), ('aggregate_101', 10), ('aggregate_102', 10), ('aggregate_52', 10), ('aggregate_55', 10), ('aggregate_61', 10), ('aggregate_66', 10), ('aggregate_77', 10), ('aggregate_86', 10), ('aggregate_89', 10), ('aggregate_90', 10), ('aggregate_93', 10), ('aggregate_94', 10), ('aggregate_97', 10), ('aggregate_98', 10), ('map_106', 10), ('map_107', 10), ('aggregate_11', 8)]
+
+```

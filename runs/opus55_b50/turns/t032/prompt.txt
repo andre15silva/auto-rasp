@@ -1,0 +1,12 @@
+OUTPUT of Python run 31 of at most 120:
+```
+{'FIXSEL': True, 'N_PROP': 2} prop+h
+compiled: {'layers': 9, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 328, 'residual_dims': 390, 'dense_params': 7074144, 'nonzero_params': 50621, 'mlp_exactness': 1000, 'compile_seconds': 4.9, 'seconds_per_1000_positions': 3.1, 'output_label': 'dbg_1'}
+{'FIXSEL': True, 'N_PROP': 2} prop
+compiled: {'layers': 8, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 328, 'residual_dims': 221, 'dense_params': 3570114, 'nonzero_params': 42836, 'mlp_exactness': 1000, 'compile_seconds': 2.8, 'seconds_per_1000_positions': 1.38, 'output_label': 'R0_2_27'}
+{'N_PROP': 2} prop
+compiled: {'layers': 8, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 344, 'residual_dims': 555, 'dense_params': 9091726, 'nonzero_params': 58386, 'mlp_exactness': 1000, 'compile_seconds': 3.1, 'seconds_per_1000_positions': 3.73, 'output_label': 'R0_2_47'}
+{'N_PROP': 0} prop+h
+compiled: {'layers': 7, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 328, 'residual_dims': 386, 'dense_params': 5453496, 'nonzero_params': 36987, 'mlp_exactness': 1000, 'compile_seconds': 3.1, 'seconds_per_1000_positions': 1.43, 'output_label': 'dbg_76'}
+
+```

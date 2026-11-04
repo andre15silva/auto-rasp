@@ -1,0 +1,16 @@
+OUTPUT of Python run 28 of at most 120:
+```
+/opt:
+total 0
+drwx------ 3 0 0  60 Nov  4 19:52 .
+drwxr-xr-x 9 0 0 240 Nov  4 19:52 ..
+drwx------ 3 0 0  60 Nov  4 19:52 venvs
+
+/opt/venvs:
+total 4
+drwx------ 3 0 0   60 Nov  4 19:52 .
+drwx------ 3 0 0   60 Nov  4 19:52 ..
+drwxr-xr-x 5 0 0 4096 Nov  4 17:58 sandbox
+ 
+
+```

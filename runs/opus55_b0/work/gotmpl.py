@@ -40,11 +40,11 @@ def P_eqm(k, q):
 
 # ---------- templates ----------
 GROUPS = {
-  "A": {"o1": "o1", "o2": "o2", "o3": "o3"},
-  "B": {"e": "e", "x1": "x1", "x2": "x2", "x3": "x3"},
-  "C": {"e": "e", "o1": "o", "o2": "o", "o3": "o", "x1": "x", "x2": "x", "x3": "x", "edge": "edge"},
+  "A": {"o1s": "o1s", "o1b": "o1b", "o2": "o2", "x1b": "x1b"},
+  "B": {"e": "e", "x1s": "x1", "x1b": "x1", "x2": "x2", "x3": "x3"},
+  "C": {"e": "e", "o1s": "o", "o1b": "o", "o2": "o", "o3": "o", "x1s": "x", "x1b": "x", "x2": "x", "x3": "x", "edge": "edge"},
 }
-GNAMES = {"A": ["o1", "o2", "o3", "r"], "B": ["e", "x1", "x2", "x3", "r"], "C": ["e", "o", "x", "edge"]}
+GNAMES = {"A": ["o1s", "o1b", "o2", "x1b", "r"], "B": ["e", "x1", "x2", "x3", "r"], "C": ["e", "o", "x", "edge"]}
 
 def gof(h, s):
     return GROUPS[h].get(s, "r")
@@ -59,9 +59,12 @@ def cfgs(h):
 CFG = {h: cfgs(h) for h in "ABC"}
 
 def scoreA(c):
-    if c["o1"] >= 1: return 25.0 + 4.0 * (c["o1"] - 1)
-    if c["o2"] >= 1: return 3.0 + 1.0 * (c["o2"] - 1)
-    return 0.0
+    s = 0.0
+    if c["o1b"] >= 1: s += 40.0 + 4.0 * (c["o1b"] + c["o1s"] - 1)
+    elif c["o1s"] >= 1: s += 25.0 + 4.0 * (c["o1s"] - 1)
+    elif c["o2"] >= 1: s += 3.0 + 1.0 * (c["o2"] - 1)
+    if c["x1b"] >= 1: s += 20.0
+    return s
 
 def scoreB(c):
     e, x1, x2, x3 = c["e"], c["x1"], c["x2"], c["x3"]

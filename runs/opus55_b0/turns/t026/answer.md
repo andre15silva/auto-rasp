@@ -1,0 +1,15 @@
+```python
+s = open('/work/prog_v4.py').read()
+s = s.replace('''    SZx = rasp.Aggregate(rasp.Select(Kx, Lx, P_sz), szvx)
+    SZo = rasp.Aggregate(rasp.Select(Ko, Lo, P_sz), szvo)''', '''    AtX0 = rasp.Aggregate(rasp.Select(idx, GLx, P_atari), atval)
+    AtO0 = rasp.Aggregate(rasp.Select(idx, GLo, P_atari), atval)
+    szvx2 = rasp.SequenceMap(lambda a, b: a, szvx, AtX0)
+    szvo2 = rasp.SequenceMap(lambda a, b: a, szvo, AtO0)
+    SZx = rasp.Aggregate(rasp.Select(Kx, Lx, P_sz), szvx2)
+    SZo = rasp.Aggregate(rasp.Select(Ko, Lo, P_sz), szvo2)''')
+s = s.replace('''    AtX = rasp.Aggregate(rasp.Select(idx, GLx, P_atari), atval)
+    AtO = rasp.Aggregate(rasp.Select(idx, GLo, P_atari), atval)''', '''    AtX, AtO = AtX0, AtO0''')
+open('/work/prog_v4.py','w').write(s)
+res = compile_program('/work/prog_v4.py')
+print({k: v for k, v in res.items() if k != 'residual_labels'})
+```

@@ -52,8 +52,10 @@ def program():
     M1x = rasp.Aggregate(rasp.Select(idx, GLx, P_minlib), idx)
     M1o = rasp.Aggregate(rasp.Select(idx, GLo, P_minlib), idx)
 
-    I1x = rasp.Aggregate(rasp.Select(M1x, idx, P_eqm), vYx)
-    I1o = rasp.Aggregate(rasp.Select(M1o, idx, P_eqm), vYo)
+    M1xc = rasp.SequenceMap(lambda m, b: m, M1x, ise)
+    M1oc = rasp.SequenceMap(lambda m, b: m, M1o, ise)
+    I1x = rasp.Aggregate(rasp.Select(M1xc, idx, P_eqm), vYx)
+    I1o = rasp.Aggregate(rasp.Select(M1oc, idx, P_eqm), vYo)
     fe2 = lambda p, y: 81 if y == "y" else p
     Ie2x = rasp.SequenceMap(fe2, Ie, I1x)
     Ie2o = rasp.SequenceMap(fe2, Ie, I1o)

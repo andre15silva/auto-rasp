@@ -1,0 +1,6 @@
+OUTPUT of Python run 21 of at most 120:
+```
+off counts [0, 1, 2, 4, 5, 7] {0: 25, 1: 20, 2: 4, 4: 20, 5: 8, 7: 4}
+121
+
+```

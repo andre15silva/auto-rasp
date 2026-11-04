@@ -1,0 +1,7 @@
+OUTPUT of Python run 33 of at most 120:
+```
+compiled: {'layers': 14, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 344, 'residual_dims': 567, 'dense_params': 16215850, 'nonzero_params': 6784, 'mlp_exactness': 1000, 'compile_seconds': 6.6, 'seconds_per_1000_positions': 10.42, 'output_label': 'R0_8_1'}
+compiled: {'layers': 14, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 344, 'residual_dims': 567, 'dense_params': 16215850, 'nonzero_params': 6784, 'mlp_exactness': 1000, 'compile_seconds': 1.5, 'seconds_per_1000_positions': 11.48, 'output_label': 'R0_8_42'}
+compiled: {'layers': 14, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 344, 'residual_dims': 567, 'dense_params': 16215850, 'nonzero_params': 6784, 'mlp_exactness': 1000, 'compile_seconds': 1.7, 'seconds_per_1000_positions': 8.36, 'output_label': 'R0_8_83'}
+
+```

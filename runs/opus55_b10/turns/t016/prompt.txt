@@ -1,0 +1,10 @@
+OUTPUT of Python run 16 of at most 120:
+```
+extract visits 150524 leaf visits {'indices': 41496, 'tokens': 21152}
+indices paths from leaf to all nodes 335363
+tokens paths from leaf to all nodes 170942
+estimated dfs calls if sources duplicated: 17531988232
+estimated dfs calls if deduped: 506305
+extract time 0.6136596202850342 sources 62648
+
+```

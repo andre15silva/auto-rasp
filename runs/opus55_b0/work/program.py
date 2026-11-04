@@ -1,113 +1,96 @@
 
-import math, itertools
+import math
 from tracr.rasp import rasp
 from gocore import *
+from gotmpl import *
+from gowin import *
 
 MLP_EXACTNESS = 100
-STATES = ["e", "xs", "xa", "os", "oa", "edge"]
-TS = 40.0
-SCALE = 2.5
-PASS_SCORE = -5.0
-OFF = 40.0
-
-def score(c):
-    e, xs, xa, os_, oa, ed = [c.get(s, 0) for s in STATES]
-    if ed == 4: return PASS_SCORE
-    no = os_ + oa
-    cap = oa >= 1
-    libs = e + 1.5 * xs
-    if no == 0 and e == 0 and not cap: return -30.0
-    s = 0.0
-    if cap: s += 12 + 2 * (oa - 1)
-    save = xa >= 1 and (libs >= 2 or cap)
-    if save: s += 8 + 2 * (xa - 1)
-    if not cap:
-        if libs <= 1: s -= 10
-        elif libs < 2: s -= 3
-    if no == 0 and e == 1 and not cap and not save: s -= 6
-    if no >= 1 and libs >= 2: s += 1
-    return s
-
-def configs(n_edge):
-    out = []
-    for combo in itertools.combinations_with_replacement(STATES[:5], 4 - n_edge):
-        c = {s: 0 for s in STATES}
-        for s in combo: c[s] += 1
-        c["edge"] = n_edge
-        out.append(c)
-    return out
-
-CFG_I = configs(0)
-CFG_E = configs(1) + configs(2) + [dict({s: 0 for s in STATES}, edge=4)]
-FB_I = len(CFG_I); FB_E = len(CFG_E)
-
-def tmpl_score(c, v):
-    ch = {s: c[s] / 4.0 for s in STATES}
-    nn = sum(x * x for x in ch.values())
-    return TS * (2 * ch[v] - nn)
-
-def P_tI(k, q):
-    if k < FB_I: return tmpl_score(CFG_I[k], q)
-    if k == FB_I: return TS * 8 if q == "edge" else 0.0
-    return -TS * 10
-
-def P_tE(k, q):
-    if k < FB_E: return tmpl_score(CFG_E[k], q)
-    if k == FB_E: return -TS * 10 if q == "edge" else TS * 1.5
-    return -TS * 10
-
-def lvl(cfgs, fb, t):
-    if t < fb: return round(score(cfgs[t]) * 2) / 2
-    return 0.0
-
-def prior(i):
-    if i >= 81: return 0.0
-    r, c = divmod(i, 9)
-    d = min(r, c, 8 - r, 8 - c)
-    return [-1.5, 0.0, 1.0, 1.0, 0.8][d]
-
-K_ITERS = 3
 
 def program():
     tok, idx = rasp.tokens, rasp.indices
     isx = rasp.Map(lambda t: 1 if t == "x" else 0, tok)
     iso = rasp.Map(lambda t: 1 if t == "o" else 0, tok)
     ise = rasp.Map(lambda t: 1 if t == "." else 0, tok)
+    clsx = rasp.Map(lambda t: "s" if t == "x" else ("P" if t in ("B", "W") else "n"), tok)
+    clso = rasp.Map(lambda t: "s" if t == "o" else ("P" if t in ("B", "W") else "n"), tok)
+    atval = rasp.Map(lambda t: "A" if t == "." else "S", tok)
+    tvx = rasp.Map(lambda t: "x2" if t == "." else "n", tok)
+    tvo = rasp.Map(lambda t: "o2" if t == "." else "n", tok)
+    vYx = rasp.Map(lambda t: "y" if t == "x" else "n", tok)
+    vYo = rasp.Map(lambda t: "y" if t == "o" else "n", tok)
+    Lft = rasp.Aggregate(rasp.Select(idx, idx, P_left), tok)
+
     f0 = lambda b, i: i if (b == 1 and i < 81) else 81
-    Lx = rasp.SequenceMap(f0, isx, idx)
-    Lo = rasp.SequenceMap(f0, iso, idx)
+    Lx0 = rasp.SequenceMap(f0, isx, idx)
+    Lo0 = rasp.SequenceMap(f0, iso, idx)
     Ie = rasp.SequenceMap(f0, ise, idx)
+    rsx = rasp.SequenceMap(lambda t, l: 1 if (t == "x" and l != "x") else 0, tok, Lft)
+    rso = rasp.SequenceMap(lambda t, l: 1 if (t == "o" and l != "o") else 0, tok, Lft)
+    RSx = rasp.SequenceMap(f0, rsx, idx)
+    RSo = rasp.SequenceMap(f0, rso, idx)
+
     sel_self = rasp.Select(idx, idx, P_selfw)
     sel_open = rasp.Select(idx, idx, P_open_proxy)
     E = rasp.Aggregate(sel_open, Ie)
-    for k in range(K_ITERS):
+
+    Lx = rasp.Aggregate(rasp.Select(RSx, Lx0, P_run), RSx)
+    Lo = rasp.Aggregate(rasp.Select(RSo, Lo0, P_run), RSo)
+    for k in range(3):
         Hx = rasp.Aggregate(sel_self, Lx)
         Ho = rasp.Aggregate(sel_self, Lo)
         Lx = rasp.Aggregate(rasp.Select(idx, Hx, P_argmin), Lx)
         Lo = rasp.Aggregate(rasp.Select(idx, Ho, P_argmin), Lo)
-    GLx = rasp.Aggregate(rasp.Select(Lx, Lx, P_group), E)
-    GLo = rasp.Aggregate(rasp.Select(Lo, Lo, P_group), E)
-    atval = rasp.Map(lambda t: "A" if t == "." else "S", tok)
+
+    fk = lambda l, c: (l if (c == "s" and l != 81) else ("P" if c == "P" else "n"))
+    Kx = rasp.SequenceMap(fk, Lx, clsx)
+    Ko = rasp.SequenceMap(fk, Lo, clso)
+    GLx = rasp.Aggregate(rasp.Select(Kx, Lx, P_group2), E)
+    GLo = rasp.Aggregate(rasp.Select(Ko, Lo, P_group2), E)
+
     AtX = rasp.Aggregate(rasp.Select(idx, GLx, P_atari), atval)
     AtO = rasp.Aggregate(rasp.Select(idx, GLo, P_atari), atval)
-    def fA(t, a):
-        if t == "x": return "xa" if a == "A" else "xs"
+    M1x = rasp.Aggregate(rasp.Select(idx, GLx, P_minlib), idx)
+    M1o = rasp.Aggregate(rasp.Select(idx, GLo, P_minlib), idx)
+
+    M1xc = rasp.SequenceMap(lambda m, b: m, M1x, ise)
+    M1oc = rasp.SequenceMap(lambda m, b: m, M1o, ise)
+    I1x = rasp.Aggregate(rasp.Select(M1xc, idx, P_eqm), vYx)
+    I1o = rasp.Aggregate(rasp.Select(M1oc, idx, P_eqm), vYo)
+    fe2 = lambda p, y: 81 if y == "y" else p
+    Ie2x = rasp.SequenceMap(fe2, Ie, I1x)
+    Ie2o = rasp.SequenceMap(fe2, Ie, I1o)
+    E2x = rasp.Aggregate(sel_open, Ie2x)
+    E2o = rasp.Aggregate(sel_open, Ie2o)
+    GL2x = rasp.Aggregate(rasp.Select(Kx, Lx, P_group2), E2x)
+    GL2o = rasp.Aggregate(rasp.Select(Ko, Lo, P_group2), E2o)
+    T2x = rasp.Aggregate(rasp.Select(idx, GL2x, P_atari), tvx)
+    T2o = rasp.Aggregate(rasp.Select(idx, GL2o, P_atari), tvo)
+
+    def f1(t, a):
+        if t == "x": return "x1" if a == "A" else "xS"
         if t == "o": return "o"
         if t == ".": return "e"
         return "edge"
-    stA = rasp.SequenceMap(fA, tok, AtX)
-    def fB(s, a):
-        if s == "o": return "oa" if a == "A" else "os"
+    st1 = rasp.SequenceMap(f1, tok, AtX)
+    st2 = rasp.SequenceMap(lambda s, a: ("o1" if a == "A" else "oS") if s == "o" else s, st1, AtO)
+    T2xo = rasp.SequenceMap(lambda a, b: "x2" if a == "x2" else ("o2" if b == "o2" else "n"), T2x, T2o)
+    def f3(s, t):
+        if s == "xS": return "x2" if t == "x2" else "x3"
+        if s == "oS": return "o2" if t == "o2" else "o3"
         return s
-    st = rasp.SequenceMap(fB, stA, AtO)
+    st = rasp.SequenceMap(f3, st2, T2xo)
     hist = rasp.Aggregate(sel_open, st)
-    tcI = rasp.Map(lambda t: lvl(CFG_I, FB_I, t), idx)
-    tcE = rasp.Map(lambda t: lvl(CFG_E, FB_E, t), idx)
-    TI = rasp.Aggregate(rasp.Select(idx, hist, P_tI), tcI)
-    TE = rasp.Aggregate(rasp.Select(idx, hist, P_tE), tcE)
-    vI = rasp.numerical(rasp.Map(lambda c: (c + OFF) * SCALE, TI))
-    vE = rasp.numerical(rasp.Map(lambda c: (c + OFF) * SCALE, TE))
-    Pn = rasp.numerical(rasp.Map(lambda i: (prior(i) + 2.0) * SCALE, idx))
-    S1 = rasp.numerical(rasp.LinearSequenceMap(vI, vE, 1.0, 1.0))
-    out = rasp.numerical(rasp.LinearSequenceMap(S1, Pn, 1.0, 1.0))
-    return out
+
+    vals = []
+    for h in "ABC":
+        tc = rasp.Map(make_tlevel(h), idx)
+        T = rasp.Aggregate(rasp.Select(idx, hist, make_tpred(h)), tc)
+        vals.append(rasp.numerical(rasp.Map(lambda c: (c + OFF) * SCALE, T)))
+    histw = rasp.Aggregate(rasp.Select(idx, idx, P_win), tok)
+    tcW = rasp.Map(tlevelW, idx)
+    TW = rasp.Aggregate(rasp.Select(idx, histw, P_tW), tcW)
+    Pn = rasp.numerical(rasp.Map(lambda c: (c + OFF) * SCALE, TW))
+    S1 = rasp.numerical(rasp.LinearSequenceMap(vals[0], vals[1], 1.0, 1.0))
+    S2 = rasp.numerical(rasp.LinearSequenceMap(vals[2], Pn, 1.0, 1.0))
+    return rasp.numerical(rasp.LinearSequenceMap(S1, S2, 1.0, 1.0))

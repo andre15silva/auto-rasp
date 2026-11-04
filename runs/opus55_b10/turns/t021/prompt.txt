@@ -1,0 +1,7 @@
+OUTPUT of Python run 21 of at most 120:
+```
+(132764179, 101)
+compiled: {'layers': 22, 'heads': 4, 'key_size': 85, 'mlp_hidden_size': 990, 'residual_dims': 1195, 'dense_params': 88012950, 'nonzero_params': 26218, 'mlp_exactness': 10000000, 'compile_seconds': 71.2, 'seconds_per_1000_positions': 13.08, 'output_label': 'linear_sequence_map_1'}
+{'layers': 22, 'heads': 4, 'key_size': 85, 'mlp_hidden_size': 990, 'residual_dims': 1195, 'dense_params': 88012950, 'nonzero_params': 26218, 'mlp_exactness': 10000000, 'compile_seconds': 71.2, 'seconds_per_1000_positions': 13.08, 'output_label': 'linear_sequence_map_1'}
+
+```

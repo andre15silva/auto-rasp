@@ -3,7 +3,9 @@ from tracr.rasp import rasp
 
 K_SIZE = 84                      # expected attention key size (all selectors use <=82-valued SOps)
 UNIT = 1.0                       # predicate units; logit = 100*pred/sqrt(K)
-SEL, UNSEL = 5.0, -5.0
+SEL, UNSEL = 10.6, -10.0
+FIXSEL = False
+GTOP, GSTEP = 10.6 + 10.2 * 8, 10.2
 N_PROP = 8                       # propagation steps (H,V,H,V,...)
 
 def rc(i): return divmod(i, 9)
@@ -90,13 +92,13 @@ def build(stop=None):
     vkey = rasp.categorical(rasp.SequenceMap(lambda b, i: i if b else 'no', vsb, idx)).named('vkey')
     def ph(k, q):
         if k == 'no': return UNSEL
-        if q == 81 or k == 81: return 6.9 if (q == 81 and k == 81) else UNSEL
-        if k // 9 == q // 9 and k <= q: return 6.9 - 0.7 * (q - k)
+        if q == 81 or k == 81: return GTOP if (q == 81 and k == 81) else UNSEL
+        if k // 9 == q // 9 and k <= q: return GTOP - GSTEP * (q - k)
         return UNSEL
     def pv(k, q):
         if k == 'no': return UNSEL
-        if q == 81 or k == 81: return 6.9 if (q == 81 and k == 81) else UNSEL
-        if k % 9 == q % 9 and k <= q: return 6.9 - 0.7 * ((q - k) // 9)
+        if q == 81 or k == 81: return GTOP if (q == 81 and k == 81) else UNSEL
+        if k % 9 == q % 9 and k <= q: return GTOP - GSTEP * ((q - k) // 9)
         return UNSEL
     color4 = rasp.categorical(rasp.SequenceMap(lambda b, c: c, hsb, color)).named('color4')
     dc = {d: shift(color4, v, 'dc' + d) for d, v in DIAG.items()}
@@ -105,9 +107,15 @@ def build(stop=None):
     eq = lambda k, q: SEL if k == q else UNSEL
     selH = rasp.Select(hrun, hrun, eq)
     selV = rasp.Select(vrun, vrun, eq)
+    if FIXSEL:
+        def fx(k, q):
+            if k >= 81 or q >= 81: return SEL if k == q else UNSEL
+            return SEL if abs(k//9 - q//9) + abs(k%9 - q%9) <= 1 else UNSEL
+        selH = selV = rasp.Select(idx, idx, fx)
 
     if stop == 'runs':
         return rasp.numerical(rasp.Map(lambda v: 0.0 if v == 'no' else 1.0, rasp.categorical(rasp.SequenceMap(lambda a, b: a, hkey, hrun))))
+    def lsm(a, b, name): return rasp.numerical(rasp.LinearSequenceMap(a, b, 1, 1)).named(name)
     # ---- propagation
     names = [f'R{r}' for r in range(9)] + [f'C{c}' for c in range(9)] + ['TX', 'TO']
     for s in range(1, N_PROP + 1):
@@ -119,6 +127,9 @@ def build(stop=None):
         flags = new
     R, C, TXc, TOc = flags[:9], flags[9:18], flags[18], flags[19]
     if stop == 'prop': return flags[0]
+    if stop == 'prop+h':
+        hx = rasp.numerical(rasp.Map(lambda v: 1 if v == 3 else 0, hrun))
+        return lsm(flags[0], hx, 'dbg')
 
     def lsm(a, b, name): return rasp.numerical(rasp.LinearSequenceMap(a, b, 1, 1)).named(name)
     def tree(leaves, name):

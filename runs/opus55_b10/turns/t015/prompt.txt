@@ -1,0 +1,41 @@
+OUTPUT of Python run 15 of at most 120:
+```
+nodes 392
+paths to sink 62648 total dfs calls approx 506305
+[(62648, 'linear_sequence_map_1'), (50161, 'sequence_map_3'), (50161, 'map_2'), (25200, 'sequence_map_203'), (24961, 'sequence_map_4'), (18960, 'sequence_map_204'), (12720, 'sequence_map_205'), (12487, 'sequence_map_375'), (12487, 'map_374'), (12481, 'sequence_map_5')]
+def extract_rasp_graph(tip: rasp.SOp) -> ExtractRaspGraphOutput:
+  """Converts a RASP program into a graph representation."""
+  expr_queue = queue.Queue()
+  graph = nx.DiGraph()
+  sources: List[NodeID] = []
+
+  def ensure_node(expr: rasp.RASPExpr) -> NodeID:
+    """Finds or creates a graph node corresponding to expr; returns its ID."""
+    node_id = expr.label
+    if node_id not in graph:
+      graph.add_node(node_id, **{nodes.ID: node_id, nodes.EXPR: expr})
+
+    return node_id
+
+  # Breadth-first search over the RASP expression graph.
+
+  def visit_raspexpr(expr: rasp.RASPExpr):
+    parent_id = ensure_node(expr)
+
+    for child_expr in expr.children:
+      expr_queue.put(child_expr)
+      child_id = ensure_node(child_expr)
+      graph.add_edge(child_id, parent_id)
+
+    if not expr.children:
+      sources.append(graph.nodes[parent_id])
+
+  expr_queue.put(tip)
+  sink = graph.nodes[ensure_node(tip)]
+  while not expr_queue.empty():
+    visit_raspexpr(expr_queue.get())
+
+  return ExtractRaspGraphOutput(graph=graph, sink=sink, sources=sources)
+
+
+```

@@ -1,0 +1,6 @@
+OUTPUT of Python run 22 of at most 120:
+```
+logit_1
+['OOO..OOX.', '.OOX.OX.X', 'OOX.XOOX.', 'OOXOO.OOX', 'OOXO.OXOX', 'XXOOO.XX.', 'XO.OX..XX', '.XX.XXXX.', '..XX.O.X.'] 1 60
+
+```

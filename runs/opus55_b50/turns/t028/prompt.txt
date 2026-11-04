@@ -1,0 +1,12 @@
+OUTPUT of Python run 27 of at most 120:
+```
+{'SEL': 5.0, 'UNSEL': -5.0, 'GTOP': 6.9, 'GSTEP': 0.7}
+compiled: {'layers': 14, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 344, 'residual_dims': 567, 'dense_params': 16215850, 'nonzero_params': 99288, 'mlp_exactness': 1000, 'compile_seconds': 5.6, 'seconds_per_1000_positions': 17.81, 'output_label': 'R0_8_1'}
+{'SEL': 5.0, 'UNSEL': 0.0, 'GTOP': 6.9, 'GSTEP': 0.7}
+compiled: {'layers': 14, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 344, 'residual_dims': 567, 'dense_params': 16215850, 'nonzero_params': 6784, 'mlp_exactness': 1000, 'compile_seconds': 1.4, 'seconds_per_1000_positions': 8.27, 'output_label': 'R0_8_42'}
+{'SEL': 3.0, 'UNSEL': -3.0, 'GTOP': 6.9, 'GSTEP': 0.7}
+compiled: {'layers': 14, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 344, 'residual_dims': 567, 'dense_params': 16215850, 'nonzero_params': 99288, 'mlp_exactness': 1000, 'compile_seconds': 1.5, 'seconds_per_1000_positions': 17.56, 'output_label': 'R0_8_83'}
+{'SEL': 5.0, 'UNSEL': -5.0, 'GTOP': 4.0, 'GSTEP': 0.3}
+compiled: {'layers': 14, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 344, 'residual_dims': 567, 'dense_params': 16215850, 'nonzero_params': 99288, 'mlp_exactness': 1000, 'compile_seconds': 1.5, 'seconds_per_1000_positions': 22.09, 'output_label': 'R0_8_124'}
+
+```
