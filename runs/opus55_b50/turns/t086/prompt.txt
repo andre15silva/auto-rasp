@@ -1,0 +1,7 @@
+OUTPUT of Python run 80 of at most 120:
+```
+depth 94.1
+alloc 93.83
+craft model 97.48
+
+```

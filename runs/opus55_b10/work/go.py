@@ -299,6 +299,29 @@ def program():
         return lambda v: 1.0 if v == col else (0.05 if v == 'W' else 0.0)
     thr = lambda x: int(x > 0.025)
     adj = smap(lambda a, b: (a, b), cmap(thr, nmap(pres('x'), tadj)), cmap(thr, nmap(pres('o'), tadj)))
+    # cutting points: orthogonal + diagonal tokens (heads placed in idle slots, patterns evaluated late)
+    dtok = rasp.Aggregate(rasp.Select(idx, qB, LT), tok)                # depth 2 (with ltok, utok)
+    rtok = rasp.Aggregate(rasp.Select(idx, qB, GT), tok_d3)             # depth 4
+    utok_d5 = cmap(lambda t: t, cmap(lambda t: t, cmap(lambda t: t, utok)))   # depth 5
+    dtok_d5 = cmap(lambda t: t, cmap(lambda t: t, cmap(lambda t: t, dtok)))
+    nw = rasp.Aggregate(rasp.Select(idx, qA, GT), utok_d5)              # depth 6: token at (r-1, c-1)
+    ne = rasp.Aggregate(rasp.Select(idx, qB, GT), utok_d5)              # (r-1, c+1)
+    se = rasp.Aggregate(rasp.Select(idx, qB, GT), dtok_d5)              # (r+1, c+1)
+    dtok_d6 = cmap(lambda t: t, dtok_d5)
+    sw = rasp.Aggregate(rasp.Select(idx, qA, GT), dtok_d6)              # depth 7: (r+1, c-1)
+    def pair(a, b):
+        return 'XX' if (a == 'x' and b == 'x') else ('OO' if (a == 'o' and b == 'o') else '-')
+    def late(x): return smap(lambda v, z: v, x, dly)
+    def quad(p, dg):
+        if p == 'XX' and dg == 'o': return 'our'
+        if p == 'OO' and dg == 'x': return 'their'
+        return '-'
+    qne = smap(quad, late(smap(pair, utok, rtok)), ne); qnw = smap(quad, late(smap(pair, utok, ltok)), nw)
+    qse = smap(quad, late(smap(pair, dtok, rtok)), se); qsw = smap(quad, late(smap(pair, dtok, ltok)), sw)
+    def cmb(a, b):
+        sa = set(a) if isinstance(a, tuple) else {a}; sb = set(b) if isinstance(b, tuple) else {b}
+        return tuple(sorted((sa | sb) - {'-'}))
+    cuts = smap(cmb, smap(cmb, qne, qnw), smap(cmb, qse, qsw)).named('cuts')
     def dens(col):
         return lambda v: 1.0 if v == col else ({'B': 0.1, 'W': 0.4}.get(v, 0.0))
     def lev(x):
@@ -323,7 +346,7 @@ def program():
         return cmap(lambda x: int(x > EPS_G / 2), m)
     region = smap(lambda a, b: (a, b), gbit('X'), gbit('O')).named('region')
     regcat = smap(lambda r, p: TERR_VAL(r, p), region, phase)
-    cutcat = regcat
+    cutcat = smap(lambda c, r: c + r, smap(lambda c, cont: CUT_VAL(c, cont), cuts, contested), regcat)
     extra = add(nmap(lambda v: v + 6.0, adjcat), nmap(lambda v: v + 12.0, cutcat))
     pos = add(nmap(lambda v: v + P_OFF, pcat), extra).named('pos')
     return add(add(tact, pos), savecap).named('logit')

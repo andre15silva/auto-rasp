@@ -69,8 +69,8 @@ def build(stop=None):
     def bvf(t, i):
         if i == 81: return 'S' if t in ('B', 'W') else 'D'
         if t == '.': return bucket(i)
-        if t == 'x': return ('X', bucket(i))
-        if t == 'o': return ('O', bucket(i))
+        if t == 'x': return 'X'
+        if t == 'o': return 'O'
         return 'D'
     bv = cat(SM(bvf, tok, idx), 'bv')
     def pinit(k, q):
@@ -113,96 +113,38 @@ def build(stop=None):
             return 1 if pred(v) else 0
         return thr(num(M(fx, src_), 'x' + name), 'f' + name)
     fb = [extract(bund, (lambda v, h=h: v == h), f'b{h}') for h in range(NBUCK)]
-    fXm = [extract(bund, (lambda v, h=h: v == ('X', h)), f'Xm{h}') for h in range(NBUCK)]
-    fOm = [extract(bund, (lambda v, h=h: v == ('O', h)), f'Om{h}') for h in range(NBUCK)]
-    fanyX = extract(bund, (lambda v: isinstance(v, tuple) and v[0] == 'X'), 'anyX')
-    fanyO = extract(bund, (lambda v: isinstance(v, tuple) and v[0] == 'O'), 'anyO')
+    fanyX = extract(bund, (lambda v: v == 'X'), 'anyX')
+    fanyO = extract(bund, (lambda v: v == 'O'), 'anyO')
     libn = tree(fb, 'sl', 0.01)
-    SX = tree(fXm, 'sX', 0.01)
-    SO = tree(fOm, 'sO', 0.01)
     cnt3 = cat(M(lambda v: min(int(round(v * 100)), 3), libn), 'cnt3')
-    szX = cat(M(szcls, SX), 'szX')
-    szO = cat(M(szcls, SO), 'szO')
+    # local size proxy: stone has a same-coloured orthogonal neighbour <=> group size >= 2
+    sNS = cat(SM(lambda a, b: (a, b), ncN, ncS), 'sNS')
+    sWE = cat(SM(lambda a, b: (a, b), ncW, ncE), 'sWE')
+    s4c = cat(SM(lambda p, q: tuple(sorted(set(p + q))), sNS, sWE), 's4c')
+    mult = cat(SM(lambda cs, c: (c in cs) if c in ('X', 'O') else False, s4c, color), 'mult')
     cc = cat(SM(lambda n, c: c if c in ('E', 'S') else (c, n), cnt3, color), 'cc')
-    szp = cat(SM(lambda a, b: (a, b), szX, szO), 'szp')
-    def nbf(c, sp):
+    def nbf(c, ml):
         if c == 'E': return 'E'
         if c == 'S': return 'B'
         col, n = c
-        sz = sp[0] if col == 'X' else sp[1]
         if n == 0: n = 3
-        if col == 'O' and n >= 3: return 'O3'
-        return (col, min(n, 3), sz)
-    nbinfo = cat(SM(nbf, cc, szp), 'nbinfo')
+        if col == 'X':
+            if n == 1: return 'X1m' if ml else 'X1s'
+            return 'X2' if n == 2 else 'X3'
+        if n == 1: return 'O1m' if ml else 'O1s'
+        return 'O2' if n == 2 else 'B'
+    nbinfo = cat(SM(nbf, cc, mult), 'nbinfo')
     if stop == 'nbinfo': return num(M(lambda v: 1 if v == 'E' else 0, nbinfo), 'dbg')
 
-    # ---- tactical features at empty points
+    # ---- tactical evaluation at empty points (pair-of-pairs lookup)
     nbs = {d: shift(nbinfo, v, 'nb' + d) for d, v in ORTH.items()}
-    SZI = {'t': 1, 's': 2, 'm': 3, 'l': 4}
-    def feat(fn, name):
-        return [cat(M(fn, nbs[d]), f'{name}{d}') for d in 'NSWE']
-    def comb(parts, op, name, cap=None):
-        a = cat(SM(lambda x, y: op(x, y) if cap is None else min(op(x, y), cap), parts[0], parts[1]), name + 'NS')
-        b = cat(SM(lambda x, y: op(x, y) if cap is None else min(op(x, y), cap), parts[2], parts[3]), name + 'WE')
-        return cat(SM(lambda x, y: op(x, y) if cap is None else min(op(x, y), cap), a, b), name)
-    add = lambda x, y: x + y
-    mx = lambda x, y: max(x, y)
-    isst = lambda v, col, n: isinstance(v, tuple) and v[0] == col and v[1] == n
-    nE = comb(feat(lambda v: 1 if v == 'E' else 0, 'fe'), add, 'nE')
-    capm = comb(feat(lambda v: SZI[v[2]] if isst(v, 'O', 1) else 0, 'fcap'), mx, 'capm')
-    escm = comb(feat(lambda v: SZI[v[2]] if isst(v, 'X', 1) else 0, 'fesc'), mx, 'escm')
-    x2m = comb(feat(lambda v: SZI[v[2]] if isst(v, 'X', 2) else 0, 'fx2'), mx, 'x2m')
-    x3a = comb(feat(lambda v: 1 if isst(v, 'X', 3) else 0, 'fx3'), mx, 'x3a')
-    o2m = comb(feat(lambda v: SZI[v[2]] if isst(v, 'O', 2) else 0, 'fo2'), mx, 'o2m')
-    nX = comb(feat(lambda v: 1 if (isinstance(v, tuple) and v[0] == 'X') else 0, 'fnx'), add, 'nX')
-    nO = comb(feat(lambda v: 1 if (v == 'O3' or (isinstance(v, tuple) and v[0] == 'O')) else 0, 'fno'), add, 'nO')
-    if stop == 'feat': return num(M(lambda v: v, nE), 'dbg')
-
-    # libs after the move (approx): empties + other liberties of joined own groups + captures
-    la1 = cat(SM(lambda e, x3: (e, x3), nE, x3a), 'la1')
-    la2 = cat(SM(lambda x2, cp: (x2 > 0, cp > 0), x2m, capm), 'la2')
-    def laf(a, b):
-        e, x3 = a; x2, cp = b
-        l = e + (1 if x2 else 0) + (2 if x3 else 0) + (2 if cp else 0)
-        return (min(l, 3), e == 0)
-    la = cat(SM(laf, la1, la2), 'la')
-    A = cat(SM(lambda l, cp: (l, cp), la, capm), 'tA')
-    escg = cat(SM(lambda e, c: e if c == 'E' else -1, escm, color), 'escg')
-    Bp = cat(SM(lambda e, x2: (e, x2), escg, x2m), 'tB')
-    T = TACT
-    def tact(a, b):
-        (la_, e0), cp = a
-        esc, x2 = b
-        if esc == -1: return 0.0
-        v = 0.0
-        if cp:
-            v += T['cap'][cp] + (T['capsave'] if esc else 0.0)
-        elif esc:
-            if la_ >= 3: v += T['esc3'][esc]
-            elif la_ == 2: v += T['esc2'][esc]
-            else: v += T['escf']
-        else:
-            if la_ == 0: v += T['sui']
-            elif la_ == 1: v += T['sa'][max(x2, 1)]
-            elif la_ == 2 and x2: v += T['fill2']
-        if e0 and not cp and not esc: v += T['noE']
-        if la_ >= 3 and x2: v += T['def2'][x2]
-        return round(v, 2)
-    t1c = cat(SM(tact, A, Bp), 't1c')
+    srt = lambda a, b: tuple(sorted((a, b)))
+    pNS = cat(SM(srt, nbs['N'], nbs['S']), 'pNS')
+    pWE = cat(SM(srt, nbs['W'], nbs['E']), 'pWE')
+    t1c = cat(SM(lambda a, b: tactical(list(a) + list(b)), pNS, pWE), 't1c')
     t1 = num(M(lambda v: v, t1c), 't1')
     if stop == 't1': return t1
-    def atk(o2, l):
-        la_ = l[0]
-        return T['atari'][o2] if (o2 and la_ >= 2) else 0.0
-    t2c = cat(SM(atk, o2m, la), 't2c')
-    t2 = num(M(lambda v: v, t2c), 't2')
-    def shapef(nx, no):
-        return SHAPE.get((min(nx, 3), min(no, 3)), 0.0)
-    t3c = cat(SM(shapef, nX, nO), 't3c')
-    t3 = num(M(lambda v: v, t3c), 't3')
-
     # ---- eyes
-    srt = lambda a, b: tuple(sorted((a, b)))
     oNS = cat(SM(srt, ncN, ncS), 'oNS')
     oWE = cat(SM(srt, ncW, ncE), 'oWE')
     def orthcls(p1, p2):
@@ -299,21 +241,45 @@ def build(stop=None):
     t6 = num(M(lambda v: v, t6c), 't6')
     if stop == 't6': return t6
 
-    s12 = lsm(t1, t2, 's12')
-    s34 = lsm(t3, t4, 's34')
+    s14 = lsm(t1, t4, 's14')
     s56 = lsm(t5, t6, 's56')
-    s1234 = lsm(s12, s34, 's1234')
-    return lsm(s1234, s56, 'logits')
+    return lsm(s14, s56, 'logits')
 
+
+
+NBC = ('E', 'B', 'X1s', 'X1m', 'X2', 'X3', 'O1s', 'O1m', 'O2')
+def tactical(l):
+    n = {k: l.count(k) for k in NBC}
+    if n['B'] == 4: return 0.0
+    T = TACT
+    capv = T['cap_m'] if n['O1m'] else (T['cap_s'] if n['O1s'] else 0.0)
+    nO1 = n['O1m'] + n['O1s']
+    escv = 'm' if n['X1m'] else ('s' if n['X1s'] else None)
+    la = n['E'] + (1 if n['X2'] else 0) + (2 if n['X3'] else 0) + (2 if nO1 else 0)
+    v = 0.0
+    if nO1:
+        v += capv + T['cap_extra'] * (nO1 - 1) + (T['capsave'] if escv else 0.0)
+    elif escv:
+        if la >= 3: v += T['esc3'][escv]
+        elif la == 2: v += T['esc2'][escv]
+        else: v += T['escf']
+    else:
+        if la == 0: v += T['sui']
+        elif la == 1: v += T['sa_m'] if n['X2'] else T['sa_s']
+        elif la == 2 and n['X2']: v += T['fill2']
+    if n['E'] == 0 and not nO1 and not escv: v += T['noE']
+    if la >= 2 and n['O2']: v += T['atari']
+    if la >= 3 and n['X2']: v += T['def2']
+    nX = n['X1s'] + n['X1m'] + n['X2'] + n['X3']
+    nO = nO1 + n['O2'] + 0
+    v += SHAPE.get((min(nX, 3), min(nO, 3)), 0.0)
+    return round(v, 2)
 
 # ---------------- tables
-TACT = {
-    'cap': {1: 8.0, 2: 9.5, 3: 11.0, 4: 12.5}, 'capsave': 2.0,
-    'esc3': {1: 7.0, 2: 8.5, 3: 10.0, 4: 11.5}, 'esc2': {1: 2.0, 2: 3.0, 3: 4.0, 4: 5.0}, 'escf': -5.0,
-    'sui': -10.0, 'sa': {1: -6.0, 2: -8.0, 3: -10.0, 4: -12.0}, 'fill2': -1.0, 'noE': -2.0,
-    'def2': {1: 0.8, 2: 1.5, 3: 2.5, 4: 3.5},
-    'atari': {1: 1.5, 2: 2.0, 3: 2.5, 4: 3.0},
-}
+TACT = {'cap_s': 8.0, 'cap_m': 11.0, 'cap_extra': 1.5, 'capsave': 2.0,
+        'esc3': {'s': 6.5, 'm': 9.0}, 'esc2': {'s': 1.5, 'm': 3.5}, 'escf': -5.0,
+        'sui': -10.0, 'sa_s': -6.0, 'sa_m': -9.0, 'fill2': -1.0, 'noE': -2.0,
+        'atari': 2.0, 'def2': 1.5}
 SHAPE = {(1, 0): -0.2, (2, 0): -0.8, (3, 0): -1.5, (0, 1): 0.2, (0, 2): 0.3, (1, 1): 0.5, (2, 1): 0.3, (1, 2): 0.6}
 REG = {'own': -1.5, 'opp': -1.0, 'both': 0.0, 'none': 0.0}
 PRIOR = [-2.0, -0.6, 0.6, 0.7, 0.8]

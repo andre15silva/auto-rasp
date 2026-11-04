@@ -1,0 +1,8 @@
+OUTPUT of Python run 83 of at most 120:
+```
+v3 source entries {'indices': 2179, 'tokens': 874} pout {'indices': 6310, 'tokens': 3272} cost 1.66e+07
+v4 nbinfo source entries {'tokens': 601, 'indices': 1512} pout {'tokens': 2885, 'indices': 5749} cost 1.04e+07
+v4 feat source entries {'indices': 6056, 'tokens': 2404} pout {'indices': 17629, 'tokens': 8832} cost 1.28e+08
+v4 t1 source entries {'tokens': 16829, 'indices': 42392} pout {'tokens': 60168, 'indices': 120129} cost 6.11e+09
+
+```
