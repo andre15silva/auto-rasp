@@ -1,0 +1,100 @@
+OUTPUT of Python run 7 of at most 120:
+```
+  min_depth, max_depth = min(nodes_by_depth.keys()), max(nodes_by_depth.keys())
+  depth = min_depth
+  while depth < max_depth:
+    if _all_attn_nodes(nodes_by_depth[depth]) and _all_mlp_nodes(
+        nodes_by_depth[depth + 1]
+    ):
+      # Condense by decrementing the depth of all nodes starting from depth+1
+      for update_depth in range(depth + 1, max_depth + 1):
+        for node in nodes_by_depth[update_depth]:
+          node_id = node[nodes.ID]
+          depth_by_node_id[node_id] = update_depth - 1
+        nodes_by_depth[update_depth - 1].extend(nodes_by_depth[update_depth])
+        nodes_by_depth[update_depth] = []
+      max_depth -= 1
+    depth += 1
+
+  # Allocate nodes to layers by depth, ensuring attn -> mlp -> attn -> mlp ...
+  current_layer = 0
+  current_depth = 1
+  for node_id, depth in sorted(depth_by_node_id.items(), key=lambda x: x[1]):
+    while depth > current_depth:
+      current_depth += 1
+      current_layer += 2
+    if depth == current_depth:
+      if _node_is_residual_block(graph.nodes[node_id]):
+        layer_allocation[node_id] = current_layer
+      else:
+        is_mlp = _node_is_mlp(graph.nodes[node_id])
+        layer_allocation[node_id] = current_layer + int(is_mlp)
+
+  return layer_allocation
+
+
+def craft_graph_to_model(
+    graph: nx.DiGraph, sources: Sequence[Node]
+) -> transformers.SeriesWithResiduals:
+  """Translates a RASP graph with craft blocks into a full craft model.
+
+  1. Allocate modules to layers, assuming layers in the order
+  2. Creates subspaces for all inputs and outputs, and builds residual stream.
+  3. Assembles everything into a craft model and returns it.
+
+  Args:
+    graph: RASP graph with craft blocks.
+    sources: List of input nodes
+
+  Returns:
+    A craft model that can be compiled to model weights.
+
+  Raises:
+    ValueError: On invalid input (if the craft_graph does not have craft blocks
+      already specified)
+  """
+  layer_allocation = _allocate_modules_to_layers(graph, sources)
+  blocks_by_layer = collections.defaultdict(list)
+  model_blocks = []
+
+  residual_space = bases.VectorSpaceWithBasis([])
+
+  for node_id, layer_no in layer_allocation.items():
+    node = graph.nodes[node_id]
+    block = node[nodes.MODEL_BLOCK] if nodes.MODEL_BLOCK in node else None
+
+    if _node_is_residual_block(node):
+      assert isinstance(block, transformers.SeriesWithResiduals)
+      assert len(block.blocks) == 2
+      residual_space = bases.join_vector_spaces(
+          residual_space,
+          block.blocks[0].residual_space,
+          block.blocks[1].residual_space,
+      )
+      blocks_by_layer[layer_no].append(block.blocks[0])
+      blocks_by_layer[layer_no + 1].append(block.blocks[1])
+    elif block:
+      residual_space = bases.join_vector_spaces(
+          residual_space, node[nodes.MODEL_BLOCK].residual_space
+      )
+      blocks_by_layer[layer_no].append(block)
+
+  for layer_no, layer_blocks in sorted(
+      blocks_by_layer.items(), key=lambda x: x[0]
+  ):
+    for block in layer_blocks:
+      block.residual_space = residual_space
+
+    if layer_blocks:
+      if layer_no % 2 == 0:  # Attention Layer
+        multi_head_attn = transformers.MultiAttentionHead(layer_blocks)
+        model_blocks.append(multi_head_attn)
+      else:  # MLP Layer
+        parallel_mlp = transformers.MLP.combine_in_parallel(layer_blocks)
+        model_blocks.append(parallel_mlp)
+
+  return transformers.SeriesWithResiduals(model_blocks)
+
+
+
+```

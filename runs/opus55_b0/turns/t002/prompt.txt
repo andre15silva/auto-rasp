@@ -1,0 +1,43 @@
+OUTPUT of Python run 1 of at most 120:
+```
+/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/__init__.py
+/__init__.py 696
+/craft/__init__.py 696
+/craft/vectorspace_fns.py 5910
+/craft/bases.py 11648
+/craft/transformers.py 6938
+/craft/chamber/categorical_mlp.py 6594
+/craft/chamber/categorical_attn.py 7063
+/craft/chamber/__init__.py 696
+/craft/chamber/selector_width.py 6421
+/craft/chamber/numerical_mlp.py 13594
+/rasp/causal_eval.py 1335
+/rasp/__init__.py 696
+/rasp/rasp.py 28048
+/examples/__init__.py 696
+/transformer/model.py 6544
+/transformer/__init__.py 696
+/transformer/encoder.py 4489
+/transformer/attention.py 5968
+/transformer/compressed_model.py 6548
+/compiler/craft_model_to_transformer.py 2993
+/compiler/assemble.py 12994
+/compiler/basis_inference.py 3952
+/compiler/nodes.py 1227
+/compiler/__init__.py 855
+/compiler/compiling.py 4321
+/compiler/validating.py 7694
+/compiler/lib.py 12068
+/compiler/expr_to_craft_graph.py 12314
+/compiler/rasp_to_graph.py 2128
+/compiler/craft_graph_to_model.py 9255
+/utils/errors.py 1277
+/utils/__init__.py 696
+/utils/debugging.py 1168
+[]
+Compiles path (default /work/program.py) exactly as the passes and the evaluation do and returns its size
+    and speed; the compiled network is not run on any board (the speed is timed on dummy inputs, outputs
+    discarded).
+no source could not get source code
+
+```

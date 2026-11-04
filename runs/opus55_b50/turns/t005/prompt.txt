@@ -1,0 +1,534 @@
+OUTPUT of Python run 4 of at most 120:
+```
+===== craft/chamber/categorical_attn.py
+"""Attention head for categorical inputs."""
+
+from typing import Optional
+
+from tracr.craft import bases
+from tracr.craft import transformers
+from tracr.craft import vectorspace_fns
+from typing_extensions import Protocol
+
+
+class QueryKeyToAttnLogit(Protocol):
+
+  def __call__(self, query: bases.BasisDirection,
+               key: bases.BasisDirection) -> bool:
+    pass
+
+
+def categorical_attn(
+    query_space: bases.VectorSpaceWithBasis,
+    key_space: bases.VectorSpaceWithBasis,
+    value_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis,
+    bos_space: bases.VectorSpaceWithBasis,
+    one_space: bases.VectorSpaceWithBasis,
+    attn_fn: QueryKeyToAttnLogit,
+    default_output: Optional[bases.VectorInBasis] = None,
+    causal: bool = False,
+    always_attend_to_bos: bool = False,
+    use_bos_for_default_output: bool = True,
+    softmax_coldness: float = 100.,
+) -> transformers.AttentionHead:
+  """Returns an attention head for categorical inputs.
+
+  Assumes the existence of a beginning of sequence token and attends to it
+  always with strength 0.5*softmax_coldness. This allows to implement an
+  arbitrary default value for rows in the attention pattern that are all-zero.
+
+  Attends to the BOS token if all other key-query pairs have zero attention.
+  Hence, the first value in the value sequence will be the default output for
+  such cases.
+
+  Args:
+    query_space: Vector space containing (categorical) query input.
+    key_space: Vector space containing (categorical) key input.
+    value_space: Vector space containing (numerical) value input.
+    output_space: Vector space which will contain (numerical) output.
+    bos_space: 1-d space used to identify the beginning of sequence token.
+    one_space: 1-d space which contains 1 at every position.
+    attn_fn: A selector function f(query, key) operating on the query/key basis
+      directions that defines the attention pattern.
+    default_output: Output to return if attention pattern is all zero.
+    causal: If True, use masked attention.
+    always_attend_to_bos: If True, always attend to the BOS token. If False,
+      only attend to BOS when attending to nothing else.
+    use_bos_for_default_output: If True, assume BOS is not in the value space
+      and output a default value when attending to BOS. If False, assume BOS is
+      in the value space, and map it to the output space like any other token.
+    softmax_coldness: The inverse temperature of the softmax. Default value is
+      high which makes the attention close to a hard maximum.
+  """
+  bases.ensure_dims(bos_space, num_dims=1, name="bos_space")
+  bases.ensure_dims(one_space, num_dims=1, name="one_space")
+  bos_direction = bos_space.basis[0]
+  one_direction = one_space.basis[0]
+
+  # Add bos direction to query, key, and value spaces in case it is missing
+  query_space = bases.join_vector_spaces(query_space, bos_space, one_space)
+  key_space = bases.join_vector_spaces(key_space, bos_space)
+  value_space = bases.join_vector_spaces(value_space, bos_space)
+
+  if always_attend_to_bos:
+    value_basis = value_space.basis
+  else:
+    value_basis = [v for v in value_space.basis if v != bos_direction]
+  assert len(value_basis) == output_space.num_dims
+  value_to_output = dict(zip(value_basis, output_space.basis))
+
+  if default_output is None:
+    default_output = output_space.null_vector()
+  assert default_output in output_space
+
+  def qk_fun(query: bases.BasisDirection, key: bases.BasisDirection) -> float:
+
+    # We want to enforce the following property on our attention patterns:
+    # - if nothing else is attended to, attend to the BOS token.
+    # - otherwise, don't attend to the BOS token.
+    #
+    # We assume that the BOS position always only contains the vector bos + one,
+    # and that any other position has bos coefficient 0.
+    #
+    # We do this as follows:
+    # Let Q and K be subspaces of V containing the query and key vectors,
+    # both disjoint with the BOS space {bos} or the one space {one}.
+    # Suppose we have an attn_fn which defines a bilinear W_QK: V x V -> ℝ,
+    # s.t. W_QK(q, k) = 0 whenever either q or k are bos or one.
+    #
+    # Then define W_new: V x V -> ℝ st:
+    # W_new(one, bos) = 0.5, otherwise 0.
+    #
+    # Now set W_QK' = W_QK + W_new.
+    #
+    # To evaluate the attention to the BOS position:
+    # W_QK'(q, bos + one)
+    # = W_QK'(q, bos) + W_QK'(q, one)
+    # = W_QK(q, bos) + W_QK(q, one) + W_new(q, bos) + W_new(q, one)
+    # = 0            + 0            + W_new(q, bos) + W_new(q, one)
+    # = W_new(q, bos) + W_new(q, one)
+    # = W_new(q' + one, bos) + W_new(q' + one, one)  where q = one + q'
+    # = W_new(q', bos) + W_new(one, bos) + W_new(q', one) + W_new(one, one)
+    # = 0              + 0.5             + 0              + 0
+    # = 0.5
+    #
+    # To evaluate the attention to a non-BOS position:
+    # W_QK'(0 * bos + q, 0 * bos + k)  # s.t. q ∈ Q+{one}, k ∈ K+{one}
+    # = 0*W_QK'(bos, 0*bos + k) + W_QK'(q, 0*bos + k)
+    # = W_QK'(q, 0*bos + k)
+    # = 0*W_QK'(q, bos) + W_QK'(q, k)
+    # = W_QK'(q, k)
+    # = W_QK(q, k)    since W_QK' = W_QK on inputs not containing bos.
+    # = W_QK(q', k')  since W_QK(x, y) = 0 whenever x or y are one.
+    #
+    # Since W_QK(q, k) takes values in 0, 1, a sufficiently high softmax
+    # coldness will give us the desired property.                            QED
+    #
+    # The following implements this idea.
+    # By replacing 0.5 with 1, we can instead enforce a different property: that
+    # the BOS token is always attended to in addition to whatever else.
+
+    if key == bos_direction and query == one_direction:
+      c = 1. if always_attend_to_bos else 0.5
+      return c * softmax_coldness
+    elif {key, query}.intersection({one_direction, bos_direction}):
+      return 0
+
+    return softmax_coldness * attn_fn(query, key)
+
+  w_qk = vectorspace_fns.ScalarBilinear.from_action(
+      query_space,
+      key_space,
+      qk_fun,
+  )
+
+  def ov_fun(input_dir: bases.BasisDirection) -> bases.VectorInBasis:
+    if use_bos_for_default_output and input_dir == bos_direction:
+      return default_output
+    return output_space.vector_from_basis_direction(value_to_output[input_dir])
+
+  w_ov = vectorspace_fns.Linear.from_action(
+      value_space,
+      output_space,
+      ov_fun,
+  )
+
+  return transformers.AttentionHead(w_qk, w_ov, causal=causal)
+
+===== craft/chamber/categorical_mlp.py
+"""MLP to compute basic linear functions of one-hot encoded integers."""
+
+from typing import Callable
+
+import numpy as np
+
+from tracr.craft import bases
+from tracr.craft import transformers
+from tracr.craft import vectorspace_fns
+
+_ONE_SPACE = bases.VectorSpaceWithBasis.from_names(["one"])
+
+
+def map_categorical_mlp(
+    input_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis,
+    operation: Callable[[bases.BasisDirection], bases.BasisDirection],
+) -> transformers.MLP:
+  """Returns an MLP that encodes any categorical function of a single variable f(x).
+
+  The hidden layer is the identity and output combines this with a lookup table
+    output_k = sum(f(i)*input_i for all i in input space)
+
+  Args:
+    input_space: space containing the input x.
+    output_space: space containing possible outputs.
+    operation: A function operating on basis directions.
+  """
+
+  def operation_fn(direction):
+    if direction in input_space:
+      output_direction = operation(direction)
+      if output_direction in output_space:
+        return output_space.vector_from_basis_direction(output_direction)
+    return output_space.null_vector()
+
+  first_layer = vectorspace_fns.Linear.from_action(input_space, output_space,
+                                                   operation_fn)
+
+  second_layer = vectorspace_fns.project(output_space, output_space)
+
+  return transformers.MLP(first_layer, second_layer)
+
+
+def map_categorical_to_numerical_mlp(
+    input_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis,
+    operation: Callable[[bases.Value], float],
+) -> transformers.MLP:
+  """Returns an MLP to compute f(x) from a categorical to a numerical variable.
+
+  The hidden layer is the identity and output combines this with a lookup table
+    output = sum(f(i)*input_i for all i in input space)
+
+  Args:
+    input_space: Vector space containing the input x.
+    output_space: Vector space to write the numerical output to.
+    operation: A function operating on basis directions.
+  """
+  bases.ensure_dims(output_space, num_dims=1, name="output_space")
+  out_vec = output_space.vector_from_basis_direction(output_space.basis[0])
+
+  def operation_fn(direction):
+    if direction in input_space:
+      return operation(direction.value) * out_vec
+    return output_space.null_vector()
+
+  first_layer = vectorspace_fns.Linear.from_action(input_space, output_space,
+                                                   operation_fn)
+
+  second_layer = vectorspace_fns.project(output_space, output_space)
+
+  return transformers.MLP(first_layer, second_layer)
+
+
+def sequence_map_categorical_mlp(
+    input1_space: bases.VectorSpaceWithBasis,
+    input2_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis,
+    operation: Callable[[bases.BasisDirection, bases.BasisDirection],
+                        bases.BasisDirection],
+    one_space: bases.VectorSpaceWithBasis = _ONE_SPACE,
+    hidden_name: bases.Name = "__hidden__",
+) -> transformers.MLP:
+  """Returns an MLP that encodes a categorical function of two variables f(x, y).
+
+  The hidden layer of the MLP computes the logical and of all input directions
+    hidden_i_j = ReLU(x_i+x_j-1)
+
+  And the output combines this with a lookup table
+    output_k = sum(f(i, j)*hidden_i_j for all i,j in input space)
+
+  Args:
+    input1_space: Vector space containing the input x.
+    input2_space: Vector space containing the input y.
+    output_space: Vector space to write outputs to.
+    operation: A function operating on basis directions.
+    one_space: a reserved 1-d space that always contains a 1.
+    hidden_name: Name for hidden dimensions.
+  """
+  bases.ensure_dims(one_space, num_dims=1, name="one_space")
+
+  if not set(input1_space.basis).isdisjoint(input2_space.basis):
+    raise ValueError("Input spaces to a SequenceMap must be disjoint. "
+                     "If input spaces are the same, use Map instead!")
+
+  input_space = bases.direct_sum(input1_space, input2_space, one_space)
+
+  def to_hidden(x, y):
+    return bases.BasisDirection(hidden_name, (x.name, x.value, y.name, y.value))
+
+  def from_hidden(h):
+    x_name, x_value, y_name, y_value = h.value
+    x_dir = bases.BasisDirection(x_name, x_value)
+    y_dir = bases.BasisDirection(y_name, y_value)
+    return x_dir, y_dir
+
+  hidden_dir = []
+  for dir1 in input1_space.basis:
+    for dir2 in input2_space.basis:
+      hidden_dir.append(to_hidden(dir1, dir2))
+  hidden_space = bases.VectorSpaceWithBasis(hidden_dir)
+
+  def logical_and(direction):
+    if direction in one_space:
+      out = bases.VectorInBasis(hidden_space.basis,
+                                -np.ones(hidden_space.num_dims))
+    elif direction in input1_space:
+      dir1 = direction
+      out = hidden_space.null_vector()
+      for dir2 in input2_space.basis:
+        vector = bases.VectorInBasis(
+            [to_hidden(dir1, dir2)], np.array([1]), _basis_is_sorted=True
+        )
+        out = out.add_directions(vector)
+    else:
+      dir2 = direction
+      out = hidden_space.null_vector()
+      for dir1 in input1_space.basis:
+        vector = bases.VectorInBasis(
+            [to_hidden(dir1, dir2)], np.array([1]), _basis_is_sorted=True
+        )
+        out = out.add_directions(vector)
+    return out
+
+  first_layer = vectorspace_fns.Linear.from_action(input_space, hidden_space,
+                                                   logical_and)
+
+  def operation_fn(direction):
+    dir1, dir2 = from_hidden(direction)
+    output_direction = operation(dir1, dir2)
+    if output_direction in output_space:
+      return output_space.vector_from_basis_direction(output_direction)
+    else:
+      return output_space.null_vector()
+
+  second_layer = vectorspace_fns.Linear.from_action(hidden_space, output_space,
+                                                    operation_fn)
+
+  return transformers.MLP(first_layer, second_layer)
+
+===== craft/chamber/numerical_mlp.py
+"""MLPs to compute arbitrary numerical functions by discretising."""
+
+import dataclasses
+from typing import Callable, Iterable, List
+
+from tracr.craft import bases
+from tracr.craft import transformers
+from tracr.craft import vectorspace_fns
+from tracr.utils import errors
+
+
+@dataclasses.dataclass
+class DiscretisingLayerMaterials:
+  """Provides components for a hidden layer that discretises the input.
+
+  Attributes:
+    action: Function acting on basis directions that defines the computation.
+    hidden_space: Vector space of the hidden representation of the layer.
+    output_values: Set of output values that correspond to the discretisation.
+  """
+
+  action: Callable[[bases.BasisDirection], bases.VectorInBasis]
+  hidden_space: bases.VectorSpaceWithBasis
+  output_values: List[float]
+
+
+def _get_discretising_layer(
+    input_value_set: Iterable[float],
+    f: Callable[[float], float],
+    hidden_name: bases.Name,
+    one_direction: bases.BasisDirection,
+    large_number: float,
+) -> DiscretisingLayerMaterials:
+  """Creates a hidden layer that discretises the input of f(x) into a value set.
+
+  The input is split up into a distinct region around each value in
+  `input_value_set`:
+
+  elements of value set:  v0   |  v1  |  v2  |  v3  |  v4  | ...
+  thresholds:                  t0     t1     t2     t3     t4
+
+  The hidden layer has two activations per threshold:
+    hidden_k_1 = ReLU(L * (x - threshold[k]) + 1)
+    hidden_k_2 = ReLU(L * (x - threshold[k]))
+
+  Note that hidden_k_1 - hidden_k_2 is:
+    1                 if x >= threshold[k] + 1/L
+    0                 if x <= threshold[k]
+    between 0 and 1   if threshold[k] < x < threshold[k] + 1/L
+
+  So as long as we choose L a big enough number, we have
+    hidden_k_1 - hidden_k_2 = 1 if x >= threshold[k].
+  i.e. we know in which region the input value is.
+
+  Args:
+    input_value_set: Set of discrete input values.
+    f: Function to approximate.
+    hidden_name: Name for hidden dimensions.
+    one_direction: Auxiliary dimension that must contain 1 in the input.
+    large_number: Large number L that determines accuracy of the computation.
+
+  Returns:
+    DiscretisingLayerMaterials containing all components for the layer.
+  """
+  output_values, sorted_values = [], []
+  for x in sorted(input_value_set):
+    res = errors.ignoring_arithmetic_errors(f)(x)
+    if res is not None:
+      output_values.append(res)
+      sorted_values.append(x)
+
+  num_vals = len(sorted_values)
+  value_thresholds = [
+      (sorted_values[i] + sorted_values[i + 1]) / 2 for i in range(num_vals - 1)
+  ]
+
+  hidden_directions = [bases.BasisDirection(f"{hidden_name}start")]
+  for k in range(1, num_vals):
+    dir0 = bases.BasisDirection(hidden_name, (k, 0))
+    dir1 = bases.BasisDirection(hidden_name, (k, 1))
+    hidden_directions.extend([dir0, dir1])
+  hidden_space = bases.VectorSpaceWithBasis(hidden_directions)
+
+  def action(direction: bases.BasisDirection) -> bases.VectorInBasis:
+    # hidden_k_0 = ReLU(L * (x - threshold[k]) + 1)
+    # hidden_k_1 = ReLU(L * (x - threshold[k]))
+    if direction == one_direction:
+      hidden = hidden_space.vector_from_basis_direction(
+          bases.BasisDirection(f"{hidden_name}start")
+      )
+    else:
+      hidden = hidden_space.null_vector()
+    for k in range(1, num_vals):
+      vec0 = hidden_space.vector_from_basis_direction(
+          bases.BasisDirection(hidden_name, (k, 0))
+      )
+      vec1 = hidden_space.vector_from_basis_direction(
+          bases.BasisDirection(hidden_name, (k, 1))
+      )
+      if direction == one_direction:
+        hidden += (1 - large_number * value_thresholds[k - 1]) * vec0
+        hidden -= large_number * value_thresholds[k - 1] * vec1
+      else:
+        hidden += large_number * vec0 + large_number * vec1
+    return hidden
+
+  return DiscretisingLayerMaterials(
+      action=action, hidden_space=hidden_space, output_values=output_values
+  )
+
+
+def map_numerical_mlp(
+    f: Callable[[float], float],
+    input_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis,
+    input_value_set: Iterable[float],
+    one_space: bases.VectorSpaceWithBasis,
+    large_number: float = 100,
+    hidden_name: bases.Name = "__hidden__",
+) -> transformers.MLP:
+  """Returns an MLP that encodes any function of a single variable f(x).
+
+  This is implemented by discretising the input according to input_value_set
+  and defining thresholds that determine which part of the input range will
+  is allocated to which value in input_value_set.
+
+  elements of value set:  v0   |  v1  |  v2  |  v3  |  v4  | ...
+  thresholds:                  t0     t1     t2     t3     t4
+
+  The MLP computes two hidden activations per threshold:
+    hidden_k_0 = ReLU(L * (x - threshold[k]) + 1)
+    hidden_k_1 = ReLU(L * (x - threshold[k]))
+
+  Note that hidden_k_1 - hidden_k_2 is:
+    1                 if x >= threshold[k] + 1/L
+    0                 if x <= threshold[k]
+    between 0 and 1   if threshold[k] < x < threshold[k] + 1/L
+
+  So as long as we choose L a big enough number, we have
+    hidden_k_0 - hidden_k_1 = 1 if x >= threshold[k].
+
+  The MLP then computes the output as:
+    output = f(input[0]) +
+      sum((hidden_k_0 - hidden_k_1) * (f(input[k]) - f(input[k-1]))
+        for all k=0,1,...)
+
+  This sum will be (by a telescoping sums argument)
+    f(input[0])      if x <= threshold[0]
+    f(input[k])      if threshold[k-1] < x <= threshold[k] for some other k
+    f(input[-1])     if x > threshold[-1]
+  which approximates f() up to an accuracy given by input_value_set and L.
+
+  Args:
+    f: Function to approximate.
+    input_space: 1-d vector space that encodes the input x.
+    output_space: 1-d vector space to write the output to.
+    input_value_set: Set of values the input can take.
+    one_space: Auxiliary 1-d vector space that must contain 1 in the input.
+    large_number: Large number L that determines accuracy of the computation.
+      Note that too large values of L can lead to numerical issues, particularly
+      during inference on GPU/TPU.
+    hidden_name: Name for hidden dimensions.
+  """
+  bases.ensure_dims(input_space, num_dims=1, name="input_space")
+  bases.ensure_dims(output_space, num_dims=1, name="output_space")
+  bases.ensure_dims(one_space, num_dims=1, name="one_space")
+
+  input_space = bases.join_vector_spaces(input_space, one_space)
+  out_vec = output_space.vector_from_basis_direction(output_space.basis[0])
+
+  discretising_layer = _get_discretising_layer(
+      input_value_set=input_value_set,
+      f=f,
+      hidden_name=hidden_name,
+      one_direction=one_space.basis[0],
+      large_number=large_number,
+  )
+  first_layer = vectorspace_fns.Linear.from_action(
+      input_space, discretising_layer.hidden_space, discretising_layer.action
+  )
+
+  def second_layer_action(
+      direction: bases.BasisDirection,
+  ) -> bases.VectorInBasis:
+    # output = sum(
+    #     (hidden_k_0 - hidden_k_1) * (f(input[k]) - f(input[k-1]))
+    #   for all k)
+    if direction.name == f"{hidden_name}start":
+      return discretising_layer.output_values[0] * out_vec
+    k, i = direction.value
+    # add hidden_k_0 and subtract hidden_k_1
+    sign = {0: 1, 1: -1}[i]
+    return (
+        sign
+        * (
+            discretising_layer.output_values[k]
+            - discretising_layer.output_values[k - 1]
+        )
+        * out_vec
+    )
+
+  second_layer = vectorspace_fns.Linear.from_action(
+      discretising_layer.hidden_space, output_space, second_layer_action
+  )
+
+  return transformers.MLP(first_layer, second_layer)
+
+
+def map_numerical_to_categorical_mlp(
+    f: Callable[[float], float],
+    input_space: bases.VectorSpace
+[output cut at 20,000 characters]
+```

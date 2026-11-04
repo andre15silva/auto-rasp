@@ -1,0 +1,11 @@
+[2026-11-04T18:11:08+0000] turn 1: new session (7,005 chars)
+[2026-11-04T18:15:04+0000] turn 1: python; runs 1, passes 0/0, tool-free True
+[2026-11-04T18:15:04+0000] turn 2: resume (1,351 chars)
+[2026-11-04T18:15:14+0000] turn 2: python; runs 2, passes 0/0, tool-free True
+[2026-11-04T18:15:14+0000] turn 3: resume (171 chars)
+[2026-11-04T18:15:23+0000] turn 3: python; runs 3, passes 0/0, tool-free True
+[2026-11-04T18:15:23+0000] turn 4: resume (6,550 chars)
+[2026-11-04T18:15:32+0000] turn 4: python; runs 4, passes 0/0, tool-free True
+[2026-11-04T18:15:32+0000] turn 5: resume (10,362 chars)
+[2026-11-04T18:15:41+0000] turn 5: python; runs 5, passes 0/0, tool-free True
+[2026-11-04T18:15:41+0000] turn 6: resume (8,504 chars)

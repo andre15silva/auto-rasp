@@ -1,0 +1,44 @@
+OUTPUT of Python run 1 of at most 120:
+```
+3.11.18 (main, Oct 26 2026, 15:28:55) [GCC 13.3.0]
+/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/__init__.py
+[]
+total 4
+drwxr-xr-x 2 0 0 4096 Nov  4 18:11 .
+drwxr-xr-x 9 0 0  240 Nov  4 18:11 ..
+__init__.py
+compiler
+craft
+examples
+rasp
+transformer
+utils
+__init__.py
+assemble.py
+assemble_test.py
+basis_inference.py
+basis_inference_test.py
+compiling.py
+craft_graph_to_model.py
+craft_graph_to_model_test.py
+craft_model_to_transformer.py
+expr_to_craft_graph.py
+expr_to_craft_graph_test.py
+lib.py
+lib_test.py
+nodes.py
+rasp_to_craft_integration_test.py
+rasp_to_graph.py
+rasp_to_graph_test.py
+rasp_to_transformer_integration_test.py
+test_cases.py
+validating.py
+validating_test.py
+4
+               total        used        free      shared  buff/cache   available
+Mem:              15           1          13           0           1          14
+Swap:              0           0           0
+
+['json', 'os', 'sys', 'time', 'importlib', 'np', 'rasp', 'compiling', 'VOCAB', 'MAX_SEQ_LEN', 'BOS', 'PASS', 'pt', 'compile_program', 'subprocess', 'tracr']
+
+```
