@@ -72,3 +72,7 @@
 [2026-11-04T20:12:27+0000] turn 35: resume (2,352 chars)
 [2026-11-04T20:13:32+0000] turn 35: python; runs 33, passes 3/25, tool-free True
 [2026-11-04T20:13:32+0000] turn 36: resume (308 chars)
+[2026-11-04T20:16:35+0000] turn 36: games; runs 33, passes 4/25, tool-free True
+[2026-11-04T20:16:35+0000] turn 37: resume (1,537 chars)
+[2026-11-04T20:16:47+0000] turn 37: python; runs 34, passes 4/25, tool-free True
+[2026-11-04T20:16:47+0000] turn 38: resume (1,790 chars)
