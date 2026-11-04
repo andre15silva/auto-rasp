@@ -2,7 +2,7 @@
 from tracr.rasp import rasp
 GT, LT, GEQ, LEQ, EQ = (rasp.Comparison.GT, rasp.Comparison.LT, rasp.Comparison.GEQ,
                         rasp.Comparison.LEQ, rasp.Comparison.EQ)
-R_ROUNDS = 8
+R_ROUNDS = 6
 EPS_DEC = 8e-5      # decode threshold is EPS_DEC/2
 NEAR_N = 30        # keys averaged for the near-one constant (theta = BOS share)
 UNIT = 1.0 / 16
@@ -74,15 +74,18 @@ def sum_tree(xs):
         if len(xs) % 2: nx.append(xs[-1])
         xs = nx
     return xs[0]
-def decode_distinct(state, nvals):
-    """state: soft categorical over 0..nvals-1, 'D' (real filler) and 'Z' (never produced).
-    -> categorical count (0..3) of values with mass above EPS_DEC/2"""
+def decode_bits(state, nvals):
     bits = []
     for c in range(nvals):
         m = nmap(lambda v, c=c: 1.0 if v == c else (EPS_DEC if v == 'Z' else 0.0), state)
         bits.append(nmap(lambda x: UNIT if x > EPS_DEC / 2 else 0.0, m))
-    tot = sum_tree(bits)
+    return bits
+def decode_distinct(state, nvals):
+    """state: soft categorical over 0..nvals-1, 'D' (real filler) and 'Z' (never produced).
+    -> categorical count (0..3) of values with mass above EPS_DEC/2"""
+    tot = sum_tree(decode_bits(state, nvals))
     return cmap(lambda x: min(3, int(round(x / UNIT))), tot)
+COLCODE = {'.': 0, 'x': 16, 'o': 32, 'B': 48, 'W': 48}
 def clean_bool(x):
     """categorical bool with soft magnitude -> exact one-hot bool"""
     return cmap(lambda v: v > 0.5, nmap(lambda b: 1.0 if b else 0.0, x))
@@ -94,7 +97,7 @@ CATS = ['E', 'X1', 'X2', 'X3', 'O1', 'O2', 'O3', 'N']
 def clean_cat(c):
     x = nmap(lambda v: 0.1 * CATS.index(v), c)
     return cmap(lambda y: CATS[min(7, max(0, int(round(y / 0.1))))], x)
-T_OFF = 30.0
+T_OFF = 20.0
 P_OFF = 6.0
 def split_num(catsop):
     """categorical SOp with numeric values -> numeric SOp (via positive & negative parts)"""
@@ -103,6 +106,18 @@ def split_num(catsop):
     return add(p, n, 1.0, -1.0)
 
 PASS_LOGIT = -2.0
+def build_triple_classes():
+    import itertools
+    triples = sorted({tuple(sorted(t)) for t in itertools.product(CATS, repeat=3)})
+    sig = {}
+    for t in triples:
+        key = tuple(tactic_score(msum(t, (e,))) for e in CATS)
+        sig.setdefault(key, []).append(t)
+    cls, rep = {}, {}
+    for k, (key, ts) in enumerate(sorted(sig.items())):
+        rep[k] = ts[0]
+        for t in ts: cls[t] = k
+    return cls, rep
 LINE_VAL = {0: -1.5, 1: -0.5, 2: 0.8, 3: 0.6, 4: 1.0}
 
 def tactic_score(ms):
@@ -148,6 +163,8 @@ def pos_score(ex2, eo2, hasx, haso, line):
     s += {0: -1.0, 1: -0.3, 2: 0.0, 3: 0.0, 4: 0.0}[line]
     return s
 
+TRIPLE_CLASS, TRIPLE_REP = build_triple_classes()
+
 def program():
     tok = rasp.tokens; idx = rasp.indices
     qA = cmap(lambda i: Q(i, 'A'), idx)
@@ -164,18 +181,17 @@ def program():
     selr = rasp.Select(ridr, ridr, EQ)
     selc = rasp.Select(ridc, ridc, EQ)
     # ---- liberty row/col sets, diffused within groups
-    def rowEf(i, t):
-        if i >= 81: return 'Z' if t == '.' else 'D'
-        return i // 9 if t == '.' else None
-    def colEf(i, t):
-        if i >= 81: return 'Z' if t == '.' else 'D'
-        return i % 9 if t == '.' else None
-    rowE = smap(rowEf, idx, tok)
-    colE = smap(colEf, idx, tok)
+    rowv = cmap(lambda i: 'P' if i >= 81 else i // 9, idx)
+    colv = cmap(lambda i: 'P' if i >= 81 else i % 9, idx)
+    def rcEf(v, t):
+        if v == 'P': return 'Z' if t == '.' else 'D'
+        return v if t == '.' else None
+    rowE = smap(rcEf, rowv, tok)
+    colE = smap(rcEf, colv, tok)
     seedsel = rasp.Select(idx, qB, LEQ)          # neighbours + index 81
     # near-one constant: one-hot 'c' with magnitude 1 - theta (theta = BOS attention share)
     constc = cmap(lambda i: 'c', idx)
-    nq = smap(lambda t, l: NEAR_N, tok, ltok)     # delayed one layer (spreads heads)
+    nq = cmap(lambda q: NEAR_N, qA)               # delayed one layer (spreads heads)
     nearone = rasp.Aggregate(rasp.Select(idx, nq, LT), constc).named('nearone')
     cleanf = lambda v, c: v
     def clean(x): return smap(cleanf, x, nearone)
@@ -186,32 +202,32 @@ def program():
         sel = selr if k % 2 == 0 else selc
         sr = clean(rasp.Aggregate(sel, sr)).named('sr%d' % k)
         sc = clean(rasp.Aggregate(sel, sc)).named('sc%d' % k)
-    nr = decode_distinct(sr, 9).named('nr')
+    colnum = nmap(lambda t: COLCODE[t] * UNIT, tok)
+    nrc = cmap(lambda x: (int(round(x / UNIT)) // 16, min(3, int(round(x / UNIT)) % 16)),
+               sum_tree(decode_bits(sr, 9) + [colnum])).named('nrc')
     nc = decode_distinct(sc, 9).named('nc')
     def lclass(a, b):
         if a == 0 or b == 0: return 0
         if a == 1 and b == 1: return 1
         if a >= 3 or b >= 3: return 3
         return 2
-    lcls = smap(lclass, nr, nc).named('lcls')
-    def catf(l, t):
-        if t == '.': return 'E'
-        if t in ('x', 'o'): return ('X' if t == 'x' else 'O') + str(max(l, 1))
+    def catf(cr, b):
+        col, a = cr
+        if col == 0: return 'E'
+        if col in (1, 2): return ('X' if col == 1 else 'O') + str(max(lclass(a, b), 1))
         return 'N'
-    cst = smap(catf, lcls, tok).named('cst')
+    cst = smap(catf, nrc, nc).named('cst')
     cN = rasp.Aggregate(rasp.Select(idx, qA, LT), cst).named('cN')
     cS = rasp.Aggregate(rasp.Select(idx, qB, LT), cst).named('cS')
     cW = rasp.Aggregate(rasp.Select(idx, qA, GT), cst).named('cW')
     cE = rasp.Aggregate(rasp.Select(idx, qB, GT), cst).named('cE')
-    cN, cS, cW, cE = clean_cat(cN), clean_cat(cS), clean_cat(cW), clean_cat(cE)
     pNS = smap(lambda a, b: msum((a,), (b,)), cN, cS)
-    tW = smap(lambda p, w: msum(p, (w,)), pNS, cW)
-    tcat = smap(lambda t, e: tactic_score(msum(t, (e,))), tW, cE).named('tcat')
+    tW = smap(lambda p, w: TRIPLE_CLASS[msum(p, (w,))], pNS, cW)
+    tcat = smap(lambda t, e: max(-20.0, tactic_score(msum(TRIPLE_REP[t], (e,)))), tW, cE).named('tcat')
     tact = nmap(lambda v: v + T_OFF, tcat).named('tact')
     # ---- positional (cheap, token based)
-    qC = smap(lambda i, s: Q(i, 'C'), idx, srow)               # delayed query (spreads heads over layers)
-    tadj = rasp.Aggregate(rasp.Select(idx, qC, GT), tok)      # soft token mix of on-board neighbours
-    t2 = rasp.Aggregate(rasp.Select(idx, qC, LT), tok)        # soft token mix within distance 2
+    tadj = rasp.Aggregate(rasp.Select(idx, qA, GEQ), tok)     # soft token mix of on-board neighbours
+    t2 = rasp.Aggregate(rasp.Select(idx, qB, GEQ), tok)       # soft token mix within distance 2
     def pres(col):
         return lambda v: 1.0 if v == col else (0.05 if v == 'W' else 0.0)
     thr = lambda x: int(x > 0.025)

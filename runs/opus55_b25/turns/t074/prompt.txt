@@ -1,0 +1,6 @@
+OUTPUT of Python run 63 of at most 120:
+```
+net {'contact_any': 0.719, 'diag_own': 0.177, 'jump_own': 0.15, 'line0': 0.045, 'line1': 0.343, 'line2': 0.432, 'line3': 0.155, 'line4': 0.024, 'opp_adj': 0.353, 'own_adj': 0.606}
+opponent {'contact_any': 0.865, 'diag_own': 0.177, 'jump_own': 0.138, 'line0': 0.066, 'line1': 0.396, 'line2': 0.298, 'line3': 0.214, 'line4': 0.025, 'opp_adj': 0.574, 'own_adj': 0.664}
+
+```

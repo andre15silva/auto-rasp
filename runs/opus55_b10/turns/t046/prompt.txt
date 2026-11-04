@@ -1,0 +1,45 @@
+OUTPUT of Python run 44 of at most 120:
+```
+1 tot_mlp 991 [('mlp', 'map_36', 82), ('mlp', 'map_42', 82), ('mlp', 'sequence_map_152', 410), ('mlp', 'sequence_map_153', 410)] n_items 6
+2 tot_mlp 0 [('attn', 'aggregate_72', ''), ('attn', 'aggregate_137', ''), ('attn', 'aggregate_149', ''), ('attn', 'aggregate_150', '')] n_items 4
+3 tot_mlp 1 [] n_items 1
+4 tot_mlp 0 [('attn', 'nearone_82', '')] n_items 1
+5 tot_mlp 160 [('mlp', 'sequence_map_147', 55), ('mlp', 'sequence_map_148', 55)] n_items 4
+7 tot_mlp 24 [] n_items 4
+9 tot_mlp 6 [] n_items 2
+11 tot_mlp 492 [('mlp', 'sequence_map_45', 164), ('mlp', 'sequence_map_122', 164), ('mlp', 'sequence_map_131', 164)] n_items 3
+12 tot_mlp 0 [('attn', 'aggregate_30', ''), ('attn', 'aggregate_39', ''), ('series', 'ridc_114', [('AttentionHead', ''), ('MLP', 166)]), ('series', 'ridr_123', [('AttentionHead', ''), ('MLP', 166)])] n_items 4
+14 tot_mlp 0 [('attn', 'aggregate_143', ''), ('attn', 'aggregate_144', '')] n_items 2
+15 tot_mlp 4 [] n_items 4
+17 tot_mlp 42 [] n_items 6
+18 tot_mlp 0 [('attn', 'aggregate_138', ''), ('attn', 'aggregate_139', '')] n_items 2
+19 tot_mlp 8 [] n_items 2
+21 tot_mlp 46 [] n_items 3
+22 tot_mlp 0 [('attn', 'aggregate_132', ''), ('attn', 'aggregate_133', '')] n_items 2
+23 tot_mlp 84 [('mlp', 'pcat_5', 84)] n_items 1
+25 tot_mlp 23 [] n_items 3
+26 tot_mlp 0 [('attn', 'aggregate_124', ''), ('attn', 'aggregate_125', '')] n_items 2
+27 tot_mlp 22 [] n_items 2
+28 tot_mlp 0 [('attn', 'aggregate_115', ''), ('attn', 'aggregate_117', '')] n_items 2
+29 tot_mlp 22 [] n_items 2
+30 tot_mlp 0 [('attn', 'aggregate_81', ''), ('attn', 'aggregate_91', '')] n_items 2
+31 tot_mlp 22 [] n_items 2
+33 tot_mlp 18 [] n_items 18
+35 tot_mlp 90 [] n_items 18
+37 tot_mlp 32 [] n_items 8
+39 tot_mlp 16 [] n_items 4
+41 tot_mlp 8 [] n_items 2
+43 tot_mlp 8 [] n_items 2
+45 tot_mlp 38 [] n_items 2
+47 tot_mlp 16 [] n_items 1
+49 tot_mlp 20 [] n_items 1
+50 tot_mlp 0 [('attn', 'cE_20', ''), ('attn', 'cW_27', ''), ('attn', 'cN_33', ''), ('attn', 'cS_34', '')] n_items 4
+51 tot_mlp 4 [] n_items 4
+53 tot_mlp 60 [] n_items 4
+55 tot_mlp 64 [('mlp', 'sequence_map_10', 64)] n_items 1
+57 tot_mlp 288 [('mlp', 'sequence_map_6', 288)] n_items 1
+59 tot_mlp 416 [('mlp', 'tcat_4', 416)] n_items 1
+61 tot_mlp 1 [] n_items 1
+63 tot_mlp 4 [] n_items 1
+
+```

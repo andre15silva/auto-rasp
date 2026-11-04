@@ -1,0 +1,6 @@
+OUTPUT of Python run 58 of at most 120:
+```
+["    zsa = cat(rasp.SequenceMap(lambda s, z: 'thr' if (s == TAC_SA and z == 'opp') else 'no', tab2, zoneP)).named('zsa')", "    zsaR = num(rasp.Map(lambda v: SA_OPP_BONUS if v == 'thr' else 0.0, zsa)).named('zsaR')", "    b0 = num(rasp.LinearSequenceMap(b00, zsaR, 1.0, 1.0)).named('b0')"]
+compiled: {'layers': 27, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 462, 'residual_dims': 801, 'dense_params': 49205070, 'nonzero_params': 171254, 'mlp_exactness': 100, 'compile_seconds': 14.7, 'seconds_per_1000_positions': 22.61, 'output_label': 'logit_1'}
+
+```

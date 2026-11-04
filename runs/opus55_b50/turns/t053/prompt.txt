@@ -1,0 +1,7 @@
+OUTPUT of Python run 51 of at most 120:
+```
+bad cr 0 bad nb 0 bad t1 0 of 1208
+class vs true libs: [(('B', np.int64(3)), 106), (('B', 4), 594), (('O1', np.int64(1)), 161), (('O2', np.int64(2)), 59), (('Ox', np.int64(2)), 67), (('Ox', np.int64(3)), 14), (('X1', np.int64(1)), 101), (('X2', np.int64(2)), 108), (('X2', np.int64(3)), 14), (('X3', np.int64(3)), 132), (('X3', np.int64(4)), 676)]
+nan logits: 0 max 14.0 min 0.0
+
+```

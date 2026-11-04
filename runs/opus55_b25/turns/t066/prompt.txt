@@ -1,0 +1,8 @@
+OUTPUT of Python run 56 of at most 120:
+```
+6 n 96 blow 26 nb wins 13 / 70 nb margin -6.4 rep 4 rep losses 3 lost 18.2 capt 7.5
+7 n 128 blow 36 nb wins 21 / 92 nb margin -5.1 rep 6 rep losses 4 lost 16.7 capt 7.2
+8 n 128 blow 37 nb wins 14 / 91 nb margin -6.4 rep 8 rep losses 7 lost 21.2 capt 8.0
+10 n 128 blow 31 nb wins 11 / 97 nb margin -6.2 rep 11 rep losses 9 lost 21.6 capt 7.6
+
+```

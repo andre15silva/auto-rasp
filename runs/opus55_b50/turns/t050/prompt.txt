@@ -1,0 +1,12 @@
+OUTPUT of Python run 48 of at most 120:
+```
+['C0_0_338', 'C0_2_280', 'C0_4_221', 'C0_6_161', 'C0_8_99', 'C0_a1_318', 'C0_a2_300', 'C0_a3_260', 'C0_a4_241', 'C0_a5_201'] 336
+
+[stderr]
+Traceback (most recent call last):
+  File "<string>", line 70, in <module>
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/numpy/lib/_npyio_impl.py", line 243, in __getitem__
+    raise KeyError(f"{key} is not a file in the archive") from None
+KeyError: 'nbinfo is not a file in the archive'
+
+```

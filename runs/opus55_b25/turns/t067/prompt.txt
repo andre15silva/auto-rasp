@@ -1,0 +1,20 @@
+OUTPUT of Python run 57 of at most 120:
+```
+game 6 net black res -1 len 130 same [123, 124] [(124, 'n', 'P', 1.0), (125, 'o', (2, 4), 0), (126, 'n', 'P', 1.0), (127, 'o', (0, 4), 0), (128, 'n', (2, 3), 1.0), (129, 'o', 'P', 0), (130, 'n', (0, 3), 1.0)]
+game 9 net black res -1 len 84 same [80, 81] [(81, 'o', 'P', 0), (82, 'n', (0, 8), 0.9989), (83, 'o', (2, 8), 0), (84, 'n', (1, 8), 1.0)]
+game 34 net black res -1 len 90 same [85] [(86, 'n', (0, 1), 1.0), (87, 'o', (6, 8), 0), (88, 'n', (7, 8), 1.0), (89, 'o', (0, 2), 0), (90, 'n', (8, 8), 0.9953)]
+game 36 net black res -1 len 70 same [67] [(68, 'n', (3, 8), 1.0), (69, 'o', (1, 8), 0), (70, 'n', (2, 8), 0.8133)]
+game 60 net black res 1 len 55 same [52] [(53, 'o', (0, 2), 0), (54, 'n', (0, 0), 1.0), (55, 'o', (0, 1), 0)]
+game 62 net black res -1 len 90 same [86, 87] [(87, 'o', 'P', 0), (88, 'n', (8, 0), 0.9988), (89, 'o', (6, 0), 0), (90, 'n', (7, 0), 1.0)]
+
+. O O . . O O O .   . O O . . O O O .   . O O . . O O O X   . O O . . O O O .   . O O . . O O O .
+X O O O O O O O X   X O O O O O O O X   X O O O O O O O X   X O O O O O O O .   X O O O O O O O X
+O O O O O O X X .   O O O O O O X X .   O O O O O O X X .   O O O O O O X X O   O O O O O O X X .
+X O O O X X X X X   X O O O X X X X X   X O O O X X X X X   X O O O X X X X X   X O O O X X X X X
+X O O O X X . X .   X O O O X X . X .   X O O O X X . X .   X O O O X X . X .   X O O O X X . X .
+X O O O X . X X X   X O O O X . X X X   X O O O X . X X X   X O O O X . X X X   X O O O X . X X X
+X X O O X X X X .   X X O O X X X X .   X X O O X X X X .   X X O O X X X X .   X X O O X X X X .
+. X O X X X X X X   . X O X X X X X X   . X O X X X X X X   . X O X X X X X X   . X O X X X X X X
+X . X . X . X X .   X . X . X . X X .   X . X . X . X X .   X . X . X . X X .   X . X . X . X X .
+
+```

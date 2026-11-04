@@ -1,0 +1,7 @@
+OUTPUT of Python run 39 of at most 120:
+```
+{'A': 35, 'B': 70, 'C': 35} ['o1s', 'o1b', 'x1s', 'r'] {'e': 'e', 'o1s': 'o', 'o1b': 'o', 'o3': 'o', 'x1s': 'x', 'x1b': 'x', 'x2': 'x', 'x3': 'x', 'edge': 'edge'}
+compiled: {'layers': 21, 'heads': 3, 'key_size': 84, 'mlp_hidden_size': 542, 'residual_dims': 2671, 'dense_params': 117722202, 'nonzero_params': 189464, 'mlp_exactness': 100, 'compile_seconds': 124.8, 'seconds_per_1000_positions': 34.79, 'output_label': 'linear_sequence_map_1'}
+{'layers': 21, 'heads': 3, 'key_size': 84, 'mlp_hidden_size': 542, 'residual_dims': 2671, 'dense_params': 117722202, 'nonzero_params': 189464, 'mlp_exactness': 100, 'compile_seconds': 124.8, 'seconds_per_1000_positions': 34.79, 'output_label': 'linear_sequence_map_1'}
+
+```

@@ -1,0 +1,7 @@
+OUTPUT of Python run 41 of at most 120:
+```
+compiled: {'layers': 21, 'heads': 3, 'key_size': 84, 'mlp_hidden_size': 542, 'residual_dims': 2671, 'dense_params': 117722202, 'nonzero_params': 189464, 'mlp_exactness': 100, 'compile_seconds': 153.0, 'seconds_per_1000_positions': 42.69, 'output_label': 'linear_sequence_map_1'}
+{'dense_params': 117722202, 'compile_seconds': 153.0, 'seconds_per_1000_positions': 42.69}
+[('sequence_map_48', 83), ('sequence_map_64', 83), ('aggregate_35', 82), ('aggregate_43', 82), ('aggregate_45', 82), ('aggregate_49', 82), ('aggregate_51', 82), ('aggregate_53', 82), ('aggregate_60', 82), ('aggregate_65', 82), ('aggregate_68', 82), ('aggregate_70', 82), ('aggregate_76', 82), ('aggregate_78', 82), ('aggregate_80', 82), ('aggregate_82', 82), ('aggregate_84', 82), ('aggregate_85', 82), ('aggregate_88', 82), ('aggregate_89', 82), ('aggregate_91', 82), ('aggregate_95', 82), ('indices', 82), ('sequence_map_100', 82), ('sequence_map_50', 82), ('sequence_map_61', 82), ('sequence_map_81', 82), ('sequence_map_87', 82), ('sequence_map_92', 82), ('sequence_map_97', 82), ('aggregate_8', 19), ('map_13', 19), ('aggregate_11', 16), ('map_19', 16), ('aggregate_20', 9), ('sequence_map_23', 9), ('aggregate_9', 8), ('map_15', 8), ('sequence_map_25', 8), ('tokens', 7), ('sequence_map_27', 6), ('aggregate_10', 5), ('aggregate_21', 5), ('aggregate_99', 5), ('map_17', 5)]
+
+```

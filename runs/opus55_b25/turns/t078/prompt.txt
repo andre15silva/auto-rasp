@@ -1,0 +1,25 @@
+OUTPUT of Python run 66 of at most 120:
+```
+game 10 net black res 1 margin 4.5 len 73 same [70] [(71, 'o', (8, 8), 0), (72, 'n', (6, 8), 1.0), (73, 'o', (7, 8), 0)]
+game 19 net black res -1 margin 12.5 len 80 same [77] [(78, 'n', (0, 1), 1.0), (79, 'o', (0, 3), 0), (80, 'n', (0, 2), 0.493)]
+game 24 net black res 1 margin 16.5 len 65 same [62] [(63, 'o', (8, 8), 0), (64, 'n', (6, 8), 1.0), (65, 'o', (7, 8), 0)]
+game 42 net black res -1 margin 11.5 len 80 same [74] [(75, 'o', (2, 3), 0), (76, 'n', (7, 5), 1.0), (77, 'o', (0, 3), 0), (78, 'n', (2, 2), 1.0), (79, 'o', (7, 6), 0), (80, 'n', (0, 2), 1.0)]
+game 66 net white res -1 margin 37.5 len 89 same [86] [(87, 'n', (6, 0), 1.0), (88, 'o', (4, 0), 0), (89, 'n', (5, 0), 1.0)]
+game 72 net white res -1 margin 35.5 len 79 same [73] [(74, 'o', (5, 0), 0), (75, 'n', (1, 0), 1.0), (76, 'o', (1, 8), 0), (77, 'n', (4, 0), 1.0), (78, 'o', (0, 0), 0), (79, 'n', (2, 8), 1.0)]
+game 91 net white res -1 margin 27.5 len 81 same [78] [(79, 'n', (0, 8), 1.0), (80, 'o', (0, 6), 0), (81, 'n', (0, 7), 0.6319)]
+game 99 net white res -1 margin 30.5 len 93 same [87] [(88, 'o', (8, 6), 0), (89, 'n', (1, 0), 1.0), (90, 'o', (2, 8), 0), (91, 'n', (8, 5), 1.0), (92, 'o', (2, 0), 0), (93, 'n', (1, 8), 1.0)]
+game 102 net white res -1 margin 22.5 len 105 same [100] [(101, 'n', (0, 8), 1.0), (102, 'o', (0, 2), 0), (103, 'n', 'P', 1.0), (104, 'o', (0, 7), 0), (105, 'n', (0, 1), 1.0)]
+game 107 net white res 1 margin 23.5 len 64 same [61] [(62, 'o', (6, 0), 0), (63, 'n', (8, 0), 1.0), (64, 'o', (7, 0), 0)]
+game 115 net white res -1 margin 14.5 len 129 same [124] [(125, 'n', (0, 8), 1.0), (126, 'o', (6, 5), 0), (127, 'n', 'P', 1.0), (128, 'o', (0, 7), 0), (129, 'n', (6, 6), 1.0)]
+game 118 net white res -1 margin 4.5 len 101 same [96] [(97, 'n', (2, 0), 1.0), (98, 'o', (6, 8), 0), (99, 'n', 'P', 0.9921), (100, 'o', (3, 0), 0), (101, 'n', (5, 8), 1.0)]
+X . X X X O . O .   X . X X X O . O .   X . X X X O . O .   X . X X X O . O .
+. X . X O O O . O   . X . X O O O . O   . X . X O O O . O   . X . X O O O . O
+X . X X O O O . O   X . X X O O O . O   X . X X O O O . O   X . X X O O O . O
+. X . X O O . . O   . X . X O O . . O   . X . X O O . . O   . X . X O O . . O
+X . X X O O . O .   X . X X O O . O .   X . X X O O . O .   X . X X O O . O .
+X X X . X O O O O   X X X . X O O O O   X X X . X O O O O   X X X . X O O O O
+. X X X X O O O .   . X X X X O O O .   . X X X X O O O X   . X X X X O O O .
+. X X X . X O X O   . X X X . X O X O   . X X X . X O X .   . X X X . X O X O
+. . X . X . X X .   . . X . X . X X O   . . X . X . X X .   . . X . X . X X .
+
+```

@@ -1,0 +1,34 @@
+OUTPUT of Python run 59 of at most 120:
+```
+game 0 black len 142 big captures [(76, 9), (98, 22), (134, 4)]
+. . O O X . X X .   . . O O X . X X .   . O O O X . X X .   . O O O X . X X X
+. O O X . X O O O   . O O X . X O O O   O O O X . X O O O   O O O X . X . . .
+O . O X X X O O .   O . O X X X O O O   O . O X X X O O O   O . O X X X . . .
+O O O X O O X O O   O O O X O O X O O   O O O X O O X O O   O O O X O O X . .
+O O O O O O X O .   O O O O O O X O .   O O O O O O X O X   O O O O O O X . X
+X X O O X X X X O   X X O O X X X X O   X X O O X X X X .   X X O O X X X X .
+. X X X X X X X X   . X X X X X X X X   . X X X X X X X X   . X X X X X X X X
+X X . X . X X . .   X X . X . X X X .   X X X X . X X X .   X X X X . X X X .
+. . . . . . . X X   . . . . . . . X X   . . . . . . . X X   . . . . . . . X X
+game 9 black len 110 big captures [(76, 25)]
+. X X . X . X . X   . X X . X . X O .   O X X . X . X . X   . X X . X . X . X
+O O X X X X X X .   O O X X X X X X O   O O X X X X X X .   . . X X X X X X .
+O O O X O O X O X   O O O X O O X O .   O O O X O O X O X   . . . X . . X . X
+. O O O O O O O O   O O O O O O O O O   O O O O O O O O O   . . . . . . . . .
+X X X O O O O O .   X X X O O O O O .   X X X O O O O O .   X X X . . . . . X
+. X . X X X X O .   . X . X X X X O .   . X . X X X X O O   . X . X X X X . .
+X . X X . X X X X   X . X X X X X X X   X . X X X X X X X   X . X X X X X X X
+. X . . . X . X .   . X X . . X . X .   . X X . . X . X .   . X X . . X . X .
+. . . . . . X . X   . . . . . . X . X   . . . . . . X . X   . . . . . . X . X
+game 12 black len 116 big captures [(34, 6), (72, 4), (86, 4), (98, 14)]
+. . . . . . . . .   . . O . . . . . .   . . O . . . . . .   . . O . . . . . .
+. O X . . . O . .   . O X X . . O . .   O O X X X . O . .   O O X X X . O . .
+. X X O . . . . .   O X X O . . . . .   O X X O O . . . .   O X X . . X . . .
+. O X O O O X O .   . O X O O O X O .   . O X O O O X O .   . O X . . . X O .
+. O O X O . X . .   . O O X O . X O .   . O O X O X X O .   . O O X . X X O .
+. . X . X X . . .   . . X . X X . . .   . . X . X X . . .   . . X . X X . . .
+. . X X . . X . .   . . X X . . X X .   . . X X . . X X .   . . X X . . X X .
+. . . . . . . . .   . . . . . . . . .   . . . . . . . . .   . . . . . . . . .
+. . . . . . . . .   . . . . . . . . .   . . . . . . . . .   . . . . . . . . .
+
+```

@@ -1,0 +1,11 @@
+OUTPUT of Python run 50 of at most 120:
+```
+["('O', 3)" "('E', 0)" "('O', 2)" "('O', 2)" "('O', 2)" "('X', 3)" "('X', 3)" "('X', 3)" "('X', 3)" "('O', 3)"] ['3' '0' '2' '2' '2' '2' '2' '2' '2' '3'] ['B' 'E' 'Ox' 'Ox' 'Ox' 'X3' 'X3' 'X3' 'X3' 'B'] ['none' 'opp' 'none' 'none' 'none' 'none' 'none' 'none' 'none' 'none'] ['0' '1' '2' '2' '2' '5' '5' '5' '5' '9']
+cr mismatch pos 0 pt 2 ('O', 2) ('O', np.int64(2))
+cr mismatch pos 0 pt 3 ('O', 2) ('O', np.int64(2))
+cr mismatch pos 0 pt 4 ('O', 2) ('O', np.int64(2))
+cr mismatch pos 0 pt 12 ('O', 2) ('O', np.int64(2))
+cr mismatch pos 0 pt 13 ('O', 2) ('O', np.int64(2))
+{'cr': 1057, 'cc3': 0, 'region': 0} 2032
+
+```
