@@ -349,7 +349,7 @@ def program():
             if k == 0:
                 if q == col or q == 'P': return 0.1 + 3.2 * 0.5
                 if q == 'E': return 0.1 - 3.2 * 0.5
-                return 0.1 - 3.2 * 0.5 - 8.0
+                return 0.1 - 3.2 * 0.5
             if k == 1: return 0.6
             return None
         return p

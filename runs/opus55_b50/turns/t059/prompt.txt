@@ -1,0 +1,5 @@
+The games pass request failed and was not counted:
+```
+your compiled network takes 73.3 s per 1,000 positions, over the limit of 60 s; its games were not counted
+```
+Passes left: 48.
