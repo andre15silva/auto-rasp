@@ -5,7 +5,8 @@ from . import go
 from .policies import sample
 
 
-def play(net, opp, n_games, seed, record=False, topk=5):
+def play(net, opp, n_games, seed, record=False, topk=5, collect=False):
+    """collect=True also returns every position the net faced: positions = (boards, colors, legal)."""
     assert n_games % 2 == 0, "n_games must be even"
     rng = np.random.default_rng(seed)
     g = go.Batch(n_games)
@@ -17,6 +18,7 @@ def play(net, opp, n_games, seed, record=False, topk=5):
     moves = np.full((n_games, go.MAX_PLIES), -1, np.int16)
     boards = np.zeros((n_games, go.MAX_PLIES, go.N_POINTS), np.int8) if record else None
     tops = {} if record else None
+    seen = [] if collect else None
     for ply in range(go.MAX_PLIES):
         active = ~done
         if not active.any():
@@ -26,6 +28,8 @@ def play(net, opp, n_games, seed, record=False, topk=5):
         actions = np.full(n_games, go.PASS, np.int64)
         for who, sel in ((net, active & net_turn), (opp, active & ~net_turn)):
             if sel.any():
+                if collect and who is net:
+                    seen.append((board[sel], color[sel], legal[sel]))
                 z = who.logits(board[sel], color[sel], legal[sel])
                 a, p = sample(z, legal[sel], rng)
                 actions[sel] = a
@@ -56,6 +60,8 @@ def play(net, opp, n_games, seed, record=False, topk=5):
                first_pass_ply=first_pass_ply, moves=moves)
     if record:
         out["boards"], out["tops"] = boards, tops
+    if collect:
+        out["positions"] = tuple(np.concatenate([x[i] for x in seen]) for i in range(3))
     return out
 
 
