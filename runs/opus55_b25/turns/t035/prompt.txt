@@ -1,0 +1,34 @@
+OUTPUT of Python run 32 of at most 120:
+```
+game 9 net black margin -6.5 end two_passes len 91 first pass 56
+. . . . . . . . .   . . . . . . . . .   . O . . . . . . X   . O O O O X . X X
+. . . . . . . . .   . X O O O . X . .   . X O O O . X . .   O O O O O X X . X
+. X O O O . . . .   . X O O O . X . .   O X O O O X X . .   O . O O O X X X .
+. . O X . X . . .   . . O X X X . . .   O O O X X X . . .   O O O X X X X . X
+. . O . . X . X .   . . O O X X . X .   . X O O X X . X .   O O O O X X . X .
+. . . O . X . . .   . . X O . X . . .   X . X O X X . . .   . O O O X X X . X
+. . X O . . X . .   . . X O X X X . .   O X X O X X X . .   O O . O X X X X .
+. . . O . . . . .   . O O O O . . . .   O O O O O . X . .   O O O O O X X . X
+. . . . . . . . .   . . . . . . . . .   . . . O . . . . .   . . . O O X . X .
+game 10 net black margin -2.5 end two_passes len 94 first pass 80
+. . . . . . . . .   . . . . . . . . .   . . X . X . . . .   X . X . X X . X .
+. . . . . . . . .   . X O X . . . . .   . X . X O X X . .   X X . X O X X . X
+. . X . . O . . .   . X X O . O O X .   O X X O . O O X .   O X X O O O O X .
+. . . O O O X . .   . . O O O O X . X   . O O O O O X . X   O O O O O O X . X
+. O X O O . X . .   . O X O O . X X .   . O X O O . X X .   O O O O O X X X .
+. . . O . . X . .   . . X O . . X . .   X X X O O . X . .   O O . O O X X . X
+. . X X . X . . .   . . X X O X X . .   . O X X O X X . .   O O O . O X X . .
+. . . . . . . . .   . . . O . . . . .   . O O O X . . . .   . O O O O O X X .
+. . . . . . . . .   . . . . . . . . .   . . . O . . . . .   . . . O O X X . X
+game 11 net black margin -10.5 end two_passes len 75 first pass 66
+. . . . . . . . .   . . . . . . . . .   . . . . . X . . .   . O . O X X X . X
+. . . . . . . . .   . . . O . . . . .   . . X O O O X X .   . O . O O O X X .
+. . X O . . X . .   . . X O O X X . .   O O X O O X X . .   O O . O O X X . .
+. . O O . X . . .   . . O O . X . . .   O O O O O X . . .   O O O O O X . . .
+. . O O X . X . .   . X O O X . X . .   X X O O X X X . .   . O O O X X X . .
+. . X O . . . . .   . X X O X . . . .   . X X O X . . . .   O . X O X . X . .
+. . X O . . X . .   . O X O X X X . .   X . X O X X X . .   . O . O X X X . .
+. . . O . . . . .   . X O O O O X . .   . X O O O O X . .   O . O O O O X X .
+. . . . . . . . .   . . . O . . . . .   . . . O . . . . .   . O . O O O X X .
+
+```

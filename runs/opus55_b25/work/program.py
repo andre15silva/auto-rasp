@@ -100,6 +100,19 @@ def pred_yes(target):
         return None
     return p
 
+PROTOS_B = [t for t in itertools.product(range(5), repeat=3) if sum(t) == 4]
+def catB(v): return 'O2' if v == 'O2' else ('X2' if v == 'X2' else 'R')
+CATSB = ['O2', 'X2', 'R']
+def pred_protoB(k, q):
+    if k > len(PROTOS_B): return None
+    t = PROTOS_B[k] if k < len(PROTOS_B) else (0, 0, 4)
+    m = [x / 4 for x in t]
+    sq = sum(x * x for x in m)
+    return C1 * (2 * m[CATSB.index(catB(q))] - sq) + 0.5
+def labelB(k):
+    t = PROTOS_B[k] if k < len(PROTOS_B) else (0, 0, 4)
+    return (int(t[0] >= 1), int(t[1] >= 1))
+
 ZTH, ZC = 0.12, 10.0
 def pred_zone(k, q):
     fx = {'X': 1.0, 'O': -2.0}.get(q, 0.0)
@@ -110,14 +123,15 @@ def pred_zone(k, q):
     return None
 
 def LV(i):
-    if i >= 81: return 3.0
+    if i >= 81: return 0.0
     r, c = divmod(i, 9)
     e = min(r, c, 8 - r, 8 - c)
-    return 3.0 + [-2.0, -0.5, 0.5, 0.7, 1.0][e]
+    return 10.0 + [-2.0, -0.5, 0.5, 0.7, 1.0][e]
 
-TAC_CAP1, TAC_CAP2, TAC_EYE, TAC_SA, TAC_ESC, TAC_ATK = 20, 26, -25, -20, 14, 5
+TAC_CAP1, TAC_CAP2, TAC_EYE, TAC_SA, TAC_ESC, TAC_ATK, TAC_DEF = 20, 26, -25, -20, 14, 5, 6
 PASSV = 0.0
 GAINW = 8.0
+DANGW = 20.0
 SCALE = 2.0
 
 def program():
@@ -134,6 +148,7 @@ def program():
     rv2 = cat(rasp.Map(lambda k: 'c2' if k < NPAIR else 'c0', idx)).named('rv2')
     rvu = cat(rasp.Map(lambda k: 'lo' if k < NPAIR else 'hi', idx)).named('rvu')
     labmap = cat(rasp.Map(lambda k: labelA(PROTOS[k]) if k < len(PROTOS) else (0, 0, 0, 2), idx)).named('labmap')
+    labBmap = cat(rasp.Map(lambda k: labelB(k) if k <= len(PROTOS_B) else (0, 0), idx)).named('labBmap')
     ynmap = cat(rasp.Map(lambda k: 'yes' if k == 0 else 'no', idx)).named('ynmap')
     zmap = cat(rasp.Map(lambda k: ['own', 'opp', 'neu'][k] if k < 3 else 'neu', idx)).named('zmap')
     linev = num(rasp.Map(LV, idx)).named('linev')
@@ -177,23 +192,23 @@ def program():
     HB = cat(rasp.Aggregate(sel_hist(), stB)).named('HB')
     labA = cat(rasp.Aggregate(mksel(idx, HA, pred_proto), labmap)).named('labA')
     escO = cat(rasp.Aggregate(mksel(idx, HA, pred_yes('X1')), ynmap)).named('escO')
-    o2O = cat(rasp.Aggregate(mksel(idx, HB, pred_yes('O2')), ynmap)).named('o2O')
+    ox2 = cat(rasp.Aggregate(mksel(idx, HB, pred_protoB), labBmap)).named('ox2')
 
     def ftab1(lab, ru):
         capc, xn, eye, nEc = lab
         if capc >= 1: la = 3
         elif xn: la = 1 if ru == 'lo' else 2
         else: la = max(1, min(nEc, 2))
-        return (capc, eye, la)
+        return (capc, eye, la, int(nEc >= 2))
     tab1 = cat(rasp.SequenceMap(ftab1, labA, RU)).named('tab1')
-    EO = cat(rasp.SequenceMap(lambda a, b: (a == 'yes', b == 'yes'), escO, o2O)).named('EO')
+    EO = cat(rasp.SequenceMap(lambda a, b: (int(a == 'yes'), b[0], b[1]), escO, ox2)).named('EO')
     def ftab2(s, eo):
-        capc, eye, la = s
-        esc, o2 = eo
+        capc, eye, la, ne2 = s
+        esc, o2, x2 = eo
         if capc >= 1: return TAC_CAP2 if capc >= 2 else TAC_CAP1
         if eye: return TAC_EYE
         if la <= 1: return TAC_SA
-        return TAC_ESC * int(esc) + TAC_ATK * int(o2)
+        return TAC_ESC * esc + TAC_ATK * o2 + TAC_DEF * int(x2 and ne2 and not esc)
     tab2 = cat(rasp.SequenceMap(ftab2, tab1, EO)).named('tab2')
     tacP = num(rasp.Map(lambda s: float(max(s, 0)), tab2)).named('tacP')
     tacN = num(rasp.Map(lambda s: float(max(-s, 0)), tab2)).named('tacN')
@@ -208,12 +223,14 @@ def program():
     zoneP = cat(rasp.SequenceMap(fz, kind, zone)).named('zoneP')
     GainM = cat(rasp.Aggregate(sel_kernel(1.5, pad=True), zoneP)).named('GainM')
     gainR = num(rasp.Map(lambda z: {'neu': 1.0, 'opp': 0.5, 'own': 0.15}.get(z, 0.0), GainM)).named('gainR')
-    zpen = num(rasp.Map(lambda z: {'own': 5.0, 'opp': 2.0}.get(z, 0.0), zoneP)).named('zpen')
+    zpen = num(rasp.Map(lambda z: {'own': 2.0}.get(z, 0.0), zoneP)).named('zpen')
+    DTH = 0.05
+    dang = num(rasp.Map(lambda v: {'O': 1.0 - DTH, 'X': -1.0 - DTH}.get(v, -DTH), InfM)).named('dang')
     passv = num(rasp.Map(lambda kd: PASSV if kd == 'P' else 0.0, kind)).named('passv')
 
     a1 = num(rasp.LinearSequenceMap(tacP, tacN, 1.0, -1.0)).named('a1')
     a2 = num(rasp.LinearSequenceMap(gainR, zpen, GAINW, -1.0)).named('a2')
-    a3 = num(rasp.LinearSequenceMap(linev, passv, 1.0, 1.0)).named('a3')
+    a3 = num(rasp.LinearSequenceMap(linev, dang, 1.0, -DANGW)).named('a3')
     b1 = num(rasp.LinearSequenceMap(a1, a2, 1.0, 1.0)).named('b1')
     out = num(rasp.LinearSequenceMap(b1, a3, SCALE, SCALE)).named('logit')
     return out

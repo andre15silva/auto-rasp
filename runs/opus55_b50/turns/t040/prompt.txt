@@ -1,0 +1,7 @@
+OUTPUT of Python run 39 of at most 120:
+```
+toy ncat 0 {'dense': 21.10108, 'rc': np.float64(1.531327), 'rows': np.float64(1.78547), 'cols': np.float64(6.570411), 'L': 13}
+toy ncat 2 {'dense': 187.883496, 'rc': np.float64(2.262115), 'rows': np.float64(7.840934), 'cols': np.float64(43.843355), 'L': 18}
+full {'dense': 307.240128, 'rc': np.float64(2.971598), 'rows': np.float64(9.96057), 'cols': np.float64(43.429614), 'L': 26} 227.96564984321594
+
+```

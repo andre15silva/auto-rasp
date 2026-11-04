@@ -1,0 +1,52 @@
+OUTPUT of Python run 31 of at most 120:
+```
+game 8 strong net black result -1 len 82
+ last moves [(75, 'o', 69), (76, 'n', 78), (77, 'o', 27), (78, 'n', 53), (79, 'o', 9), (80, 'n', 35), (81, 'o', 17), (82, 'n', 26)]
+ same as plies [79]
+X X . X X . X . X
+O X X X . X . X O
+. O O X X X X O .
+O O O O O O X O .
+. O X X O O O O O
+O O X . X O X X X
+O . . X . X X . X
+. X . . . X . X .
+. . . . . . X . X
+game 18 strong net black result -1 len 88
+ last moves [(81, 'o', 81), (82, 'n', 8), (83, 'o', 75), (84, 'n', 81), (85, 'o', 2), (86, 'n', 9), (87, 'o', 27), (88, 'n', 18)]
+ same as plies [85]
+O O O O X . X . X
+. O O O X X X X .
+. O O X X X X . X
+O X O O X O X X X
+X . X O O O O X .
+. X X O X O O O X
+X X O O X X X X .
+O O O O O O X . X
+. . . O O O O X .
+game 29 strong net black result -1 len 76
+ last moves [(69, 'o', 2), (70, 'n', 8), (71, 'o', 53), (72, 'n', 1), (73, 'o', 7), (74, 'n', 81), (75, 'o', 2), (76, 'n', 8)]
+ same as plies [71]
+O . O X . X X O .
+O O X . X X . X O
+O O X X X X X O O
+. O O O O O X O .
+. O O O O O O O .
+X X X O X O X O O
+X X X X X X X O X
+. . . . X X . X .
+. . . . . . X . X
+game 45 strong net white result -1 len 97
+ last moves [(90, 'o', 5), (91, 'n', 81), (92, 'o', 54), (93, 'n', 6), (94, 'o', 36), (95, 'n', 81), (96, 'o', 5), (97, 'n', 45)]
+ same as plies [92]
+O O O O O X . X X
+O . O . O O X X .
+. O . O O X X X X
+O O O X X X O O X
+X O O X X O . O X
+. X X X O O O O .
+X O . X O . O . O
+X X X X X O . O .
+. X . O O . O . O
+
+```
