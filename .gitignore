@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+# fetched by scripts/fetch_networks.sh (CC BY 4.0, from the paper's logs repository)
+networks/paper/
+# large or regenerable run artifacts
+runs/*/compiled/
+runs/*/work/pass_*/games.json
+runs/*/work/pass_*/boards.npy
+runs/*/work/pass_*/valid.npy
+runs/*/work/pass_*/compiled.npz
+runs/*/work/pass_*/rasp.npz
+runs/*/work/__pycache__/
+runs/*/work/**/*.npz
+runs/*/work/**/*.npy
+runs/driver_*.log

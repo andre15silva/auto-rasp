@@ -1,0 +1,106 @@
+{
+ "budget_0_vs_ppo_same_size_lr3e-5_s0": {
+  "ours": {
+   "games": 2000,
+   "score": 0.428,
+   "wins": 856,
+   "losses": 1144,
+   "score_as_black": 0.306,
+   "score_as_white": 0.55,
+   "mean_margin": 11.3945,
+   "mean_length": 92.3085,
+   "stones_captured_per_game": 24.2325,
+   "stones_lost_per_game": 7.6125,
+   "passes_per_game": 4.9965,
+   "games_with_a_pass_before_move_60": 95,
+   "end_two_passes": 1973,
+   "end_repetition": 27,
+   "end_move_limit": 0
+  },
+  "paper": [
+   0.4255,
+   0.311,
+   0.54
+  ],
+  "diff": 0.0025000000000000022,
+  "se": 0.011055535943589528
+ },
+ "budget_0_vs_ppo_same_size_lr3e-5_s1": {
+  "ours": {
+   "games": 2000,
+   "score": 0.249,
+   "wins": 498,
+   "losses": 1502,
+   "score_as_black": 0.165,
+   "score_as_white": 0.333,
+   "mean_margin": 1.6455,
+   "mean_length": 88.434,
+   "stones_captured_per_game": 14.905,
+   "stones_lost_per_game": 9.531,
+   "passes_per_game": 5.3755,
+   "games_with_a_pass_before_move_60": 124,
+   "end_two_passes": 1977,
+   "end_repetition": 23,
+   "end_move_limit": 0
+  },
+  "paper": [
+   0.263,
+   0.146,
+   0.38
+  ],
+  "diff": -0.014000000000000012,
+  "se": 0.009844567029585404
+ },
+ "budget_50_vs_ppo_same_size_lr3e-5_s0": {
+  "ours": {
+   "games": 2000,
+   "score": 0.7255,
+   "wins": 1451,
+   "losses": 549,
+   "score_as_black": 0.694,
+   "score_as_white": 0.757,
+   "mean_margin": 42.3295,
+   "mean_length": 111.68,
+   "stones_captured_per_game": 55.6935,
+   "stones_lost_per_game": 11.302,
+   "passes_per_game": 1.8355,
+   "games_with_a_pass_before_move_60": 0,
+   "end_two_passes": 1957,
+   "end_repetition": 32,
+   "end_move_limit": 11
+  },
+  "paper": [
+   0.7415,
+   0.705,
+   0.778
+  ],
+  "diff": -0.016000000000000014,
+  "se": 0.009789733142430389
+ },
+ "budget_50_vs_ppo_same_size_lr3e-5_s2": {
+  "ours": {
+   "games": 2000,
+   "score": 0.8025,
+   "wins": 1605,
+   "losses": 395,
+   "score_as_black": 0.805,
+   "score_as_white": 0.8,
+   "mean_margin": 51.41,
+   "mean_length": 113.752,
+   "stones_captured_per_game": 62.2325,
+   "stones_lost_per_game": 8.64,
+   "passes_per_game": 1.657,
+   "games_with_a_pass_before_move_60": 0,
+   "end_two_passes": 1972,
+   "end_repetition": 22,
+   "end_move_limit": 6
+  },
+  "paper": [
+   0.7855,
+   0.808,
+   0.763
+  ],
+  "diff": 0.017000000000000015,
+  "se": 0.009178500694557909
+ }
+}
