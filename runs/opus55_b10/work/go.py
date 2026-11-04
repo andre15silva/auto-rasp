@@ -274,8 +274,10 @@ def program():
     cst = smap(catf, nrc, nc).named('cst')
     cN = rasp.Aggregate(rasp.Select(idx, qA, LT), cst).named('cN')
     cS = rasp.Aggregate(rasp.Select(idx, qB, LT), cst).named('cS')
-    cW = rasp.Aggregate(rasp.Select(idx, qA, GT), cst).named('cW')
-    cE = rasp.Aggregate(rasp.Select(idx, qB, GT), cst).named('cE')
+    cst_d1 = cmap(lambda c: c, cst)
+    cst_d2 = cmap(lambda c: c, cst_d1)
+    cW = rasp.Aggregate(rasp.Select(idx, qA, GT), cst_d1).named('cW')
+    cE = rasp.Aggregate(rasp.Select(idx, qB, GT), cst_d2).named('cE')
     pNS = smap(lambda a, b: msum((a,), (b,)), cN, cS)
     tW = smap(lambda p, w: TRIPLE_CLASS[msum(p, (w,))], pNS, cW)
     tcat = smap(lambda t, e: max(-20.0, tactic_score(msum(TRIPLE_REP[t], (e,)))), tW, cE).named('tcat')
@@ -288,32 +290,15 @@ def program():
     fsoft = rasp.Aggregate(rasp.Select(idx, qA, GEQ), flag)
     savecap = nmap(lambda v: SAVECAP_SCALE if v == 'F' else 0.0, fsoft).named('savecap')
     # ---- positional (cheap, token based)
-    # ---- positional (token based, scheduled into idle attention slots)
-    rtok = rasp.Aggregate(rasp.Select(idx, qB, GT), tok)
-    dtok = rasp.Aggregate(rasp.Select(idx, qB, LT), tok)
+    # ---- positional (token based)
     tok_d2 = cmap(lambda t: t, cmap(lambda t: t, tok))                  # delay chain (depth 2)
-    t2 = rasp.Aggregate(rasp.Select(idx, qB, GEQ), tok_d2)             # soft token mix within distance 2
-    utok_d = cmap(lambda t: t, utok); dtok_d = cmap(lambda t: t, dtok)  # depth 3
-    nw = rasp.Aggregate(rasp.Select(idx, qA, GT), utok_d)               # token at (r-1, c-1)
-    ne = rasp.Aggregate(rasp.Select(idx, qB, GT), utok_d)               # (r-1, c+1)
-    sw = rasp.Aggregate(rasp.Select(idx, qA, GT), dtok_d)               # (r+1, c-1)
-    se = rasp.Aggregate(rasp.Select(idx, qB, GT), dtok_d)               # (r+1, c+1)
-    def pair(a, b):
-        return 'XX' if (a == 'x' and b == 'x') else ('OO' if (a == 'o' and b == 'o') else '-')
-    def quad(p, dg):
-        if p == 'XX' and dg == 'o': return 'our'
-        if p == 'OO' and dg == 'x': return 'their'
-        return '-'
-    qne = smap(quad, smap(pair, utok, rtok), ne); qnw = smap(quad, smap(pair, utok, ltok), nw)
-    qse = smap(quad, smap(pair, dtok, rtok), se); qsw = smap(quad, smap(pair, dtok, ltok), sw)
-    def cmb(a, b):
-        sa = set(a) if isinstance(a, tuple) else {a}; sb = set(b) if isinstance(b, tuple) else {b}
-        return tuple(sorted((sa | sb) - {'-'}))
-    cuts = smap(cmb, smap(cmb, qne, qnw), smap(lambda a, z: a, smap(cmb, qse, qsw), dly)).named('cuts')
-    def presence(a, b):
-        return (int('x' in (a, b)), int('o' in (a, b)))
-    adj = smap(lambda p, q: (max(p[0], q[0]), max(p[1], q[1])),
-               smap(presence, ltok, rtok), smap(presence, utok, dtok))
+    tok_d3 = cmap(lambda t: t, tok_d2)
+    t2 = rasp.Aggregate(rasp.Select(idx, qB, GEQ), tok_d3)             # soft token mix within distance 2
+    tadj = rasp.Aggregate(rasp.Select(idx, qA, GEQ), tok_d3)           # soft token mix of on-board neighbours
+    def pres(col):
+        return lambda v: 1.0 if v == col else (0.05 if v == 'W' else 0.0)
+    thr = lambda x: int(x > 0.025)
+    adj = smap(lambda a, b: (a, b), cmap(thr, nmap(pres('x'), tadj)), cmap(thr, nmap(pres('o'), tadj)))
     def dens(col):
         return lambda v: 1.0 if v == col else ({'B': 0.1, 'W': 0.4}.get(v, 0.0))
     def lev(x):
@@ -333,13 +318,12 @@ def program():
     contested = smap(lambda e, a: int(e[0] > 0 and e[1] > 0), e2, adj)
     lph = smap(lambda l, p: 'P' if l == 'P' else (l, p), lin, phase)
     adjcat = smap(lambda lp, cont: 0.0 if lp == 'P' else LINE_PHASE_ADJ(lp[0], lp[1], cont), lph, contested)
-    cutcat = smap(lambda c, cont: CUT_VAL(c, cont), cuts, contested)
     def gbit(col):
         m = nmap(lambda v: 1.0 if v == col else (EPS_G if v == 'Z' else 0.0), sg)
         return cmap(lambda x: int(x > EPS_G / 2), m)
     region = smap(lambda a, b: (a, b), gbit('X'), gbit('O')).named('region')
     regcat = smap(lambda r, p: TERR_VAL(r, p), region, phase)
-    cutcat = smap(lambda c, r: c + r, cutcat, regcat)
+    cutcat = regcat
     extra = add(nmap(lambda v: v + 6.0, adjcat), nmap(lambda v: v + 12.0, cutcat))
     pos = add(nmap(lambda v: v + P_OFF, pcat), extra).named('pos')
     return add(add(tact, pos), savecap).named('logit')
