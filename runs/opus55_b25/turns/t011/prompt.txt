@@ -1,0 +1,15 @@
+OUTPUT of Python run 11 of at most 120:
+```
+
+[stderr]
+Traceback (most recent call last):
+  File "<string>", line 82, in <module>
+  File "<string>", line 25, in _compile_no_forward
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/compiling.py", line 115, in compile_rasp_to_model
+    return craft_model_to_transformer.craft_model_to_transformer(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/craft_model_to_transformer.py", line 38, in craft_model_to_transformer
+    raise ValueError(
+ValueError: Failed to find a node with label tokens. This is probably because your RASP program does not include rasp.tokens. A program must include rasp.tokens to be compiled.
+
+```

@@ -1,0 +1,26 @@
+OUTPUT of Python run 21 of at most 120:
+```
+game 0 strong net black -25.5
+9           19          29          39          49          59          69          106      
+.........   ....O..X.   .X.OO..X.   .X.OO..X.   .X.OO..X.   XX.OO..X.   XX.OOX.XX   O.OOOXXXX
+...O.....   .o.O.....   .O.O.X...   .O.O.X.O.   .O.O.X.O.   .O.O.X.OX   .OXO.XOOX   OO.OOXXXX
+......X..   .....XX..   .....XX..   ....XXX..   ..X.XXX..   .OXoXXX..   .OXOXXX.o   OOXOXXXXX
+....O....   ....O.X..   ....O.X..   ...XOXX..   o.OXOXXX.   OXXXOXXX.   OXXXOXXX.   OOO.OXXXX
+X........   X.....O..   X..X..O..   XoXX.OO..   .OXXOOO.X   .OXXOOO.X   OOXXOOO.X   OOOOOOOXX
+...O.o...   ...O.O...   ...O.O.o.   ..XO.OOO.   OOXO.OOO.   OOXO.OOO.   OOXO.OOO.   OOOOOOOOX
+X......X.   X.O..X.X.   XOOX.X.XO   XOOXOX.XO   XOOXOX.XO   XOOXOOOXO   XOO.OOOXO   XOO.OOOXX
+X.O......   XXO......   XXO.O....   XXO.O....   XXO.O.XX.   XXO.OOXX.   XXOOOOXXX   .OOOOOXXX
+.........   .......O.   ......XO.   ......XO.   ......XO.   ......XO.   ...X.OXO.   .OX.OOXO.
+game 5 strong net black -0.5
+9           19          29          39          49          59          69          88       
+.........   .....O...   .....O...   .....OO..   .....OO..   .O..OOO..   .O.OOOOX.   .OOOOOOX.
+X........   X........   X........   X.Oo.....   XOOO.o...   XOOO.O...   XOOO.O..O   XOOOOOOOO
+....X...O   ..X.X...O   .OX.X.oXO   .OXOX.OXO   XO.OX.OXO   XOOOXOOXO   XOOOXOOXO   XOOOXOOOO
+...O...O.   ...O...O.   ...OXXOO.   O.XOXXOO.   OO.OXXOO.   OO.OXXOO.   OO.OXXOOO   OOOOXXOOO
+.oO......   .OO.X.X..   .OO.X.X..   .OOXX.XX.   .OOXX.XX.   .OOXX.XX.   oOOXX.XX.   OOOXXXXXO
+.......X.   .......X.   .....X.X.   .....XXX.   ...OXXXX.   .oX.XXXX.   OOXXXXXX.   OOXXXXXXX
+.........   O..O..X..   O..OO.X..   O..OO.X..   O.OOO.X..   OX...XX..   OX...XX.X   OXXX.XXXX
+.......X.   o......X.   O...X..X.   O..XX..X.   O..XX.XXX   O.XXX.XXX   O.XXX.XXX   OXXXXXXXX
+...X.....   X..XO....   X..XO.O..   X..XO.O..   X..X.XO..   X.XX.XO..   X.XX.X.X.   X.XXXXXX.
+
+```
