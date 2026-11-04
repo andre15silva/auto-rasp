@@ -44,3 +44,11 @@
 [2026-11-04T19:03:33+0000] turn 21: resume (189 chars)
 [2026-11-04T19:03:46+0000] turn 21: python; runs 21, passes 1/50, tool-free True
 [2026-11-04T19:03:46+0000] turn 22: resume (1,987 chars)
+[2026-11-04T19:19:08+0000] turn 22: python; runs 22, passes 1/50, tool-free True
+[2026-11-04T19:19:08+0000] turn 23: resume (319 chars)
+[2026-11-04T19:20:15+0000] turn 23: python; runs 23, passes 1/50, tool-free True
+[2026-11-04T19:20:15+0000] turn 24: resume (603 chars)
+[2026-11-04T19:34:20+0000] turn 24: python; runs 24, passes 1/50, tool-free True
+[2026-11-04T19:34:20+0000] turn 25: resume (1,730 chars)
+[2026-11-04T19:39:14+0000] turn 25: python; runs 25, passes 1/50, tool-free True
+[2026-11-04T19:39:14+0000] turn 26: resume (319 chars)

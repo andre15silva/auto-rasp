@@ -1,0 +1,74 @@
+OUTPUT of Python run 15 of at most 120:
+```
+1 ok 5.426218509674072 TransformerConfig(num_heads=4, num_layers=4, key_size=84, mlp_hidden_size=208, dropout_rate=0.0, activation_function=<jax._src.custom_derivatives.custom_jvp object at 0x7f30a2f11c90>, layer_norm=False, causal=False) 170
+         1016881 function calls (1006189 primitive calls) in 5.361 seconds
+
+   Ordered by: cumulative time
+   List reduced from 2927 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    5.426    5.426 <string>:24(_compile_no_forward)
+        1    0.000    0.000    5.426    5.426 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/compiling.py:34(compile_rasp_to_model)
+        1    0.000    0.000    5.082    5.082 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/craft_model_to_transformer.py:26(craft_model_to_transformer)
+        1    0.057    0.057    5.082    5.082 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/assemble.py:210(assemble_craft_model)
+  374/169    0.001    0.000    4.745    0.028 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/traceback_util.py:191(reraise_with_filtered_traceback)
+   264/77    0.002    0.000    4.722    0.061 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/pjit.py:250(cache_miss)
+  264/125    0.004    0.000    4.531    0.036 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/pjit.py:130(_run_python_pjit)
+       77    0.003    0.000    4.518    0.059 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/pjit.py:1137(_pjit_call_impl_python)
+        1    0.000    0.000    4.379    4.379 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/transform.py:163(init_fn)
+        1    0.000    0.000    4.379    4.379 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/transform.py:413(init_fn)
+        1    0.000    0.000    4.376    4.376 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/assemble.py:261(forward)
+     85/6    0.002    0.000    4.357    0.726 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/module.py:435(wrapped)
+     85/6    0.000    0.000    4.356    0.726 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/module.py:295(run_interceptors)
+  403/308    0.005    0.000    4.343    0.014 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/profiler.py:417(wrapper)
+     51/1    0.001    0.000    4.320    4.320 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/source_info_util.py:288(wrapper)
+        1    0.000    0.000    4.320    4.320 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/transformer/model.py:176(__call__)
+        1    0.000    0.000    3.575    3.575 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/transformer/model.py:73(__call__)
+       77    0.001    0.000    3.486    0.045 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/interpreters/pxla.py:1209(compile)
+       77    0.008    0.000    3.484    0.045 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/interpreters/pxla.py:1686(from_hlo)
+       77    0.003    0.000    3.440    0.045 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/interpreters/pxla.py:1499(_cached_compilation)
+       77    0.008    0.000    3.403    0.044 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/compiler.py:387(compile_or_get_cached)
+       77    0.002    0.000    3.336    0.043 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/compiler.py:727(_compile_and_write_cache)
+       77    3.329    0.043    3.329    0.043 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/compiler.py:292(backend_compile_and_load)
+       24    0.002    0.000    2.735    0.114 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/basic.py:159(__call__)
+       50    0.001    0.000    2.351    0.047 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/base.py:606(get_parameter)
+
+
+
+2 ok 6.704615831375122 TransformerConfig(num_heads=4, num_layers=6, key_size=84, mlp_hidden_size=1800, dropout_rate=0.0, activation_function=<jax._src.custom_derivatives.custom_jvp object at 0x7f30a2f11c90>, layer_norm=False, causal=False) 380
+         2746861 function calls (2729121 primitive calls) in 6.277 seconds
+
+   Ordered by: cumulative time
+   List reduced from 2085 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    6.703    6.703 <string>:24(_compile_no_forward)
+        1    0.000    0.000    6.702    6.702 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/compiling.py:34(compile_rasp_to_model)
+        1    0.000    0.000    3.463    3.463 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/craft_model_to_transformer.py:26(craft_model_to_transformer)
+        1    0.188    0.188    3.463    3.463 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/assemble.py:210(assemble_craft_model)
+       85    0.078    0.001    2.974    0.035 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/vectorspace_fns.py:70(from_action)
+        1    0.000    0.000    2.847    2.847 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/transform.py:163(init_fn)
+        1    0.000    0.000    2.847    2.847 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/transform.py:413(init_fn)
+        1    0.000    0.000    2.844    2.844 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/assemble.py:261(forward)
+    121/6    0.005    0.000    2.812    0.469 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/module.py:435(wrapped)
+    121/6    0.001    0.000    2.811    0.469 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/module.py:295(run_interceptors)
+  304/132    0.001    0.000    2.780    0.021 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/traceback_util.py:191(reraise_with_filtered_traceback)
+     71/1    0.001    0.000    2.778    2.778 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/source_info_util.py:288(wrapper)
+        1    0.000    0.000    2.778    2.778 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/transformer/model.py:176(__call__)
+   194/37    0.002    0.000    2.761    0.075 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/pjit.py:250(cache_miss)
+   194/82    0.002    0.000    2.646    0.032 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/pjit.py:130(_run_python_pjit)
+       37    0.001    0.000    2.636    0.071 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/pjit.py:1137(_pjit_call_impl_python)
+  201/148    0.002    0.000    2.559    0.017 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/profiler.py:417(wrapper)
+        1    0.000    0.000    2.530    2.530 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/craft_graph_to_model.py:200(craft_graph_to_model)
+       13    0.000    0.000    2.515    0.193 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/vectorspace_fns.py:91(combine_in_parallel)
+        6    0.000    0.000    2.500    0.417 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/transformers.py:170(combine_in_parallel)
+        1    0.001    0.001    2.481    2.481 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/transformer/model.py:73(__call__)
+     3216    0.021    0.000    2.444    0.001 /opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/vectorspace_fns.py:109(action)
+       36    0.006    0.000    2.351    0.065 /opt/venvs/sandbox/lib/python3.11/site-packages/haiku/_src/basic.py:159(__call__)
+       37    0.001    0.000    2.180    0.059 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/interpreters/pxla.py:1209(compile)
+       37    0.003    0.000    2.179    0.059 /opt/venvs/sandbox/lib/python3.11/site-packages/jax/_src/interpreters/pxla.py:1686(from_hlo)
+
+
+
+
+```

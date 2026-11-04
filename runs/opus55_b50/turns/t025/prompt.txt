@@ -1,0 +1,14 @@
+OUTPUT of Python run 24 of at most 120:
+```
+{'extra_d': 0, 'extra_m': 0, 'nflags': 14, 'nsteps': 8}
+compiled: {'layers': 13, 'heads': 14, 'key_size': 84, 'mlp_hidden_size': 28, 'residual_dims': 341, 'dense_params': 21186864, 'nonzero_params': 745133, 'mlp_exactness': 1000, 'compile_seconds': 8.2, 'seconds_per_1000_positions': 1.46, 'output_label': 'linear_sequence_map_1'}
+{'extra_d': 800, 'extra_m': 0, 'nflags': 14, 'nsteps': 8}
+compiled: {'layers': 14, 'heads': 14, 'key_size': 84, 'mlp_hidden_size': 4100, 'residual_dims': 4493, 'dense_params': 812324374, 'nonzero_params': 761674, 'mlp_exactness': 1000, 'compile_seconds': 653.2, 'seconds_per_1000_positions': 15.14, 'output_label': 'linear_sequence_map_253'}
+{'extra_d': 0, 'extra_m': 80, 'nflags': 14, 'nsteps': 8}
+compiled: {'layers': 14, 'heads': 14, 'key_size': 84, 'mlp_hidden_size': 3200, 'residual_dims': 466, 'dense_params': 72591676, 'nonzero_params': 758226, 'mlp_exactness': 1000, 'compile_seconds': 42.6, 'seconds_per_1000_positions': 3.34, 'output_label': 'linear_sequence_map_509'}
+{'extra_d': 0, 'extra_m': 0, 'nflags': 28, 'nsteps': 8}
+compiled: {'layers': 14, 'heads': 28, 'key_size': 84, 'mlp_hidden_size': 56, 'residual_dims': 593, 'dense_params': 79204582, 'nonzero_params': 1490178, 'mlp_exactness': 1000, 'compile_seconds': 12.3, 'seconds_per_1000_positions': 2.33, 'output_label': 'linear_sequence_map_766'}
+{'extra_d': 0, 'extra_m': 0, 'nflags': 14, 'nsteps': 16}
+compiled: {'layers': 21, 'heads': 14, 'key_size': 84, 'mlp_hidden_size': 28, 'residual_dims': 565, 'dense_params': 56626656, 'nonzero_params': 1490045, 'mlp_exactness': 1000, 'compile_seconds': 12.5, 'seconds_per_1000_positions': 3.23, 'output_label': 'linear_sequence_map_1270'}
+
+```

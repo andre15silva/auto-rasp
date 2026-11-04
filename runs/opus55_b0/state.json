@@ -3,13 +3,13 @@
  "model": "claude-opus-5-5",
  "effort": "xhigh",
  "session_id": "2293c19a-6660-440f-b81a-f40f47fbf0a7",
- "turn": 15,
- "runs": 15,
+ "turn": 17,
+ "runs": 17,
  "passes": 0,
  "requests": 0,
  "done": false,
- "next": "OUTPUT of Python run 15 of at most 120:\n```\ncompiled: {'layers': 2, 'heads': 1, 'key_size': 84, 'mlp_hidden_size': 4, 'residual_dims': 93, 'dense_params': 73238, 'nonzero_params': 6916, 'mlp_exactness': 100, 'compile_seconds': 5.8, 'seconds_per_1000_positions': 0.09, 'output_label': 'linear_sequence_map_1'}\n<class 'dict'>\nlayers 2\nheads 1\nkey_size 84\nmlp_hidden_size 4\nresidual_dims 93\ndense_params 73238\nnonzero_params 6916\nmlp_exactness 100\ncompile_seconds 5.8\nseconds_per_1000_positions 0.09\noutput_label linear_sequence_map_1\nresidual_labels (93, ['aggregate_2', 'indices:0', 'indices:1', 'indices:2', 'indices:3', 'indices:4', 'indices:5', 'indices:6', 'indices:7', 'indices:8', 'indices:9', 'indices:10', 'indices:11', 'indices:12', 'indices:13', 'indices:14', 'indices:15', 'indices:16', 'indices:17', 'indices:18', 'indices:19', 'indices:20', 'indices:21', 'indices:22', 'indices:23', 'indices:24', 'indices:25', 'indices:26', 'indices:27', 'indices:28'])\n\n```",
+ "next": "OUTPUT of Python run 17 of at most 120:\n```\ncompiled: {'layers': 15, 'heads': 3, 'key_size': 84, 'mlp_hidden_size': 492, 'residual_dims': 1670, 'dense_params': 50118720, 'nonzero_params': 109146, 'mlp_exactness': 100, 'compile_seconds': 11.6, 'seconds_per_1000_positions': 15.39, 'output_label': 'linear_sequence_map_1'}\n{'layers': 15, 'heads': 3, 'key_size': 84, 'mlp_hidden_size': 492, 'residual_dims': 1670, 'dense_params': 50118720, 'nonzero_params': 109146, 'mlp_exactness': 100, 'compile_seconds': 11.6, 'seconds_per_1000_positions': 15.39, 'output_label': 'linear_sequence_map_1'}\n\n```",
  "started": "2026-11-04T18:11:08+0000",
  "session_started": true,
- "acted": 14
+ "acted": 16
 }

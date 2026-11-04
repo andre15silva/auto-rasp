@@ -1,0 +1,7 @@
+OUTPUT of Python run 11 of at most 120:
+```
+compiled: {'layers': 15, 'heads': 3, 'key_size': 85, 'mlp_hidden_size': 492, 'residual_dims': 1174, 'dense_params': 35450175, 'nonzero_params': 14813, 'mlp_exactness': 1000000, 'compile_seconds': 40.8, 'seconds_per_1000_positions': 11.28, 'output_label': 'linear_sequence_map_1'}
+{'layers': 15, 'heads': 3, 'key_size': 85, 'mlp_hidden_size': 492, 'residual_dims': 1174, 'dense_params': 35450175, 'nonzero_params': 14813, 'mlp_exactness': 1000000, 'compile_seconds': 40.8, 'seconds_per_1000_positions': 11.28, 'output_label': 'linear_sequence_map_1'}
+[('selector_width_105', 83), ('selector_width_53', 83), ('sequence_map_172', 83), ('sequence_map_178', 83), ('sequence_map_182', 83), ('aggregate_107', 82), ('aggregate_14', 82), ('aggregate_176', 82), ('aggregate_28', 82), ('aggregate_55', 82), ('indices', 82), ('map_173', 82), ('tokens', 7), ('aggregate_180', 5), ('aggregate_184', 5)]
+
+```

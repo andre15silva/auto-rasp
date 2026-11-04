@@ -1,0 +1,18 @@
+OUTPUT of Python run 12 of at most 120:
+```
+
+[stderr]
+Traceback (most recent call last):
+  File "<string>", line 269, in <module>
+  File "<string>", line 46, in compile_program
+  File "/harness/tracr_policy.py", line 35, in compile_sop
+    return compiling.compile_rasp_to_model(sop, vocab=set(VOCAB), max_seq_len=MAX_SEQ_LEN, compiler_bos=BOS,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 25, in _compile_no_forward
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/compiling.py", line 95, in compile_rasp_to_model
+    raise NotImplementedError(error_message)
+NotImplementedError: Unsupported RASP expressions:
+sequence_map: (Non-linear) SequenceMap only supports categorical inputs/outputs.
+sequence_map: (Non-linear) SequenceMap only supports categorical inputs/outputs.
+
+```

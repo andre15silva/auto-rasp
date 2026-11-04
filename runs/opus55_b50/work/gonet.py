@@ -31,46 +31,58 @@ def shift(sop, d, name):
         return SEL if (isinstance(q, int) and k == nb_target(q, d)) else UNSEL
     return rasp.categorical(rasp.Aggregate(rasp.Select(rasp.indices, rasp.indices, pred), sop)).named(name)
 
+THR_LOW = 1.0/9
 def thr(agg, name, cat=False):
-    f = (lambda x: bool(x > 0.001)) if cat else (lambda x: 1 if x > 0.001 else 0)
+    def f(x, cat=cat):
+        if abs(x) < 1e-12: return False if cat else 0
+        if abs(x - THR_LOW) < 1e-12: return True if cat else 1
+        return None
     enc = rasp.categorical if cat else rasp.numerical
     return enc(rasp.Map(f, agg)).named(name)
 
-def build():
+def build(stop=None):
     tok, idx = rasp.tokens, rasp.indices
     COL = {'.': 'E', 'x': 'X', 'o': 'O', 'B': 'S', 'W': 'S'}
     color = rasp.categorical(rasp.Map(lambda t: COL[t], tok)).named('color')
-    stoneidx = rasp.categorical(rasp.SequenceMap(lambda t, i: i if (t in ('x', 'o') and i < 81) else 'none', tok, idx)).named('stoneidx')
-    emptyidx = rasp.categorical(rasp.SequenceMap(lambda t, i: i if (t == '.' and i < 81) else 'none', tok, idx)).named('emptyidx')
     isE = rasp.numerical(rasp.Map(lambda t: 1 if t == '.' else 0, tok)).named('isE')
     isX = rasp.numerical(rasp.Map(lambda t: 1 if t == 'x' else 0, tok)).named('isX')
     isO = rasp.numerical(rasp.Map(lambda t: 1 if t == 'o' else 0, tok)).named('isO')
     offs = rasp.numerical(rasp.Map(lambda t: {'.': 20, 'x': 0, 'o': 10, 'B': 30, 'W': 30}[t], tok)).named('offs')
 
     nc = {d: shift(color, v, 'nc' + d) for d, v in ORTH.items()}
-    dc = {d: shift(color, v, 'dc' + d) for d, v in DIAG.items()}
 
-    # ---- initial flags: liberty rows/cols for stones, touch-X / touch-O for empty points
+    # ---- initial flags via MLPs (no heads)
+    eNS = rasp.categorical(rasp.SequenceMap(lambda a, b: (a == 'E', b == 'E'), nc['N'], nc['S'])).named('eNS')
+    eWE = rasp.categorical(rasp.SequenceMap(lambda a, b: (a == 'E', b == 'E'), nc['W'], nc['E'])).named('eWE')
+    xNS = rasp.categorical(rasp.SequenceMap(lambda a, b: (a == 'X' or b == 'X', a == 'O' or b == 'O'), nc['N'], nc['S'])).named('xNS')
+    xWE = rasp.categorical(rasp.SequenceMap(lambda a, b: (a == 'X' or b == 'X', a == 'O' or b == 'O'), nc['W'], nc['E'])).named('xWE')
+    rowc = rasp.categorical(rasp.SequenceMap(lambda c, i: (i // 9) if (c in ('X', 'O') and i < 81) else -1, color, idx)).named('rowc')
+    colc = rasp.categorical(rasp.SequenceMap(lambda c, i: (i % 9) if (c in ('X', 'O') and i < 81) else -1, color, idx)).named('colc')
+    ecol = rasp.categorical(rasp.Map(lambda c: c == 'E', color)).named('ecol')
+    # pattern for rows: (row, N empty, S empty, W or E empty)
+    patR = rasp.categorical(rasp.SequenceMap(lambda ns, we: (ns[0], ns[1], we[0] or we[1]), eNS, eWE)).named('patR')
+    patC = rasp.categorical(rasp.SequenceMap(lambda ns, we: (we[0], we[1], ns[0] or ns[1]), eNS, eWE)).named('patC')
+    patRr = rasp.categorical(rasp.SequenceMap(lambda p, r: (r,) + p, patR, rowc)).named('patRr')
+    patCc = rasp.categorical(rasp.SequenceMap(lambda p, c: (c,) + p, patC, colc)).named('patCc')
+    patT = rasp.categorical(rasp.SequenceMap(lambda a, b: (a[0] or b[0], a[1] or b[1]), xNS, xWE)).named('patT')
+    patTe = rasp.categorical(rasp.SequenceMap(lambda p, e: p if e else (False, False), patT, ecol)).named('patTe')
     flags = []
     for r in range(9):
-        def pr(k, q, r=r):
-            if not isinstance(q, int) or k >= 81: return UNSEL
-            return SEL if (k in ONB[q] and k // 9 == r) else UNSEL
-        a = rasp.numerical(rasp.Aggregate(rasp.Select(idx, stoneidx, pr), isE, default=0)).named(f'R{r}_a0')
-        flags.append(thr(a, f'R{r}_0'))
+        def fr(p, r=r):
+            rr, n, s_, we = p
+            if rr < 0: return 0
+            return 1 if ((n and r == rr - 1) or (s_ and r == rr + 1) or (we and r == rr)) else 0
+        flags.append(rasp.numerical(rasp.Map(fr, patRr)).named(f'R{r}_0'))
     for c in range(9):
-        def pc(k, q, c=c):
-            if not isinstance(q, int) or k >= 81: return UNSEL
-            return SEL if (k in ONB[q] and k % 9 == c) else UNSEL
-        a = rasp.numerical(rasp.Aggregate(rasp.Select(idx, stoneidx, pc), isE, default=0)).named(f'C{c}_a0')
-        flags.append(thr(a, f'C{c}_0'))
-    def pn(k, q):
-        if not isinstance(q, int) or k >= 81: return UNSEL
-        return SEL if k in ONB[q] else UNSEL
-    for nm, v in (('TX', isX), ('TO', isO)):
-        a = rasp.numerical(rasp.Aggregate(rasp.Select(idx, emptyidx, pn), v, default=0)).named(nm + '_a0')
-        flags.append(thr(a, nm + '_0'))
+        def fc(p, c=c):
+            cc, w, e, ns = p
+            if cc < 0: return 0
+            return 1 if ((w and c == cc - 1) or (e and c == cc + 1) or (ns and c == cc)) else 0
+        flags.append(rasp.numerical(rasp.Map(fc, patCc)).named(f'C{c}_0'))
+    flags.append(rasp.numerical(rasp.Map(lambda p: 1 if p[0] else 0, patTe)).named('TX_0'))
+    flags.append(rasp.numerical(rasp.Map(lambda p: 1 if p[1] else 0, patTe)).named('TO_0'))
 
+    if stop == 'init': return flags[0]
     # ---- runs
     hsb = rasp.categorical(rasp.SequenceMap(lambda w, c: True if c == 'S' else (w != c), nc['W'], color)).named('hsb')
     vsb = rasp.categorical(rasp.SequenceMap(lambda n, c: True if c == 'S' else (n != c), nc['N'], color)).named('vsb')
@@ -86,12 +98,16 @@ def build():
         if q == 81 or k == 81: return 6.9 if (q == 81 and k == 81) else UNSEL
         if k % 9 == q % 9 and k <= q: return 6.9 - 0.7 * ((q - k) // 9)
         return UNSEL
+    color4 = rasp.categorical(rasp.SequenceMap(lambda b, c: c, hsb, color)).named('color4')
+    dc = {d: shift(color4, v, 'dc' + d) for d, v in DIAG.items()}
     hrun = rasp.categorical(rasp.Aggregate(rasp.Select(hkey, idx, ph), idx)).named('hrun')
     vrun = rasp.categorical(rasp.Aggregate(rasp.Select(vkey, idx, pv), idx)).named('vrun')
     eq = lambda k, q: SEL if k == q else UNSEL
     selH = rasp.Select(hrun, hrun, eq)
     selV = rasp.Select(vrun, vrun, eq)
 
+    if stop == 'runs':
+        return rasp.numerical(rasp.Map(lambda v: 0.0 if v == 'no' else 1.0, rasp.categorical(rasp.SequenceMap(lambda a, b: a, hkey, hrun))))
     # ---- propagation
     names = [f'R{r}' for r in range(9)] + [f'C{c}' for c in range(9)] + ['TX', 'TO']
     for s in range(1, N_PROP + 1):
@@ -102,6 +118,7 @@ def build():
             new.append(thr(a, f'{names[j]}_{s}', cat=(s == N_PROP and j >= 18)))
         flags = new
     R, C, TXc, TOc = flags[:9], flags[9:18], flags[18], flags[19]
+    if stop == 'prop': return flags[0]
 
     def lsm(a, b, name): return rasp.numerical(rasp.LinearSequenceMap(a, b, 1, 1)).named(name)
     def tree(leaves, name):
@@ -128,6 +145,7 @@ def build():
             return 'Ox' if (nr == 2 and ncl == 2) else 'O2'
         return 'X3' if col == 'X' else 'B'
     nbinfo = rasp.categorical(rasp.SequenceMap(nbcls, cr, cc3)).named('nbinfo')
+    if stop == 'nbinfo': return rasp.numerical(rasp.Map(lambda v: 1.0 if v == 'E' else 0.0, nbinfo))
     nbs = {d: shift(nbinfo, v, 'nb' + d) for d, v in ORTH.items()}
     srt = lambda a, b: tuple(sorted((a, b)))
     pNS = rasp.categorical(rasp.SequenceMap(srt, nbs['N'], nbs['S'])).named('pNS')

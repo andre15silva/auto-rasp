@@ -13,8 +13,7 @@ def nbr_sel(dr, dc):
 DIRS = [(-1,0),(1,0),(0,-1),(0,1)]
 def program():
     x = rasp.categorical(rasp.Map(lambda t: {'.':0,'x':1,'o':2}.get(t, 3), rasp.tokens))
-    acc = None
-    for it in range(10):
+    for it in range(2):
         nb = [rasp.categorical(rasp.Aggregate(nbr_sel(dr, dc), x)) for dr, dc in DIRS]
         a = rasp.categorical(rasp.SequenceMap(lambda u, v: (u * 5 + v) % 30, nb[0], nb[1]))
         b = rasp.categorical(rasp.SequenceMap(lambda u, v: (u * 3 + v) % 30, nb[2], nb[3]))

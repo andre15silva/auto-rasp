@@ -1,0 +1,15 @@
+OUTPUT of Python run 16 of at most 120:
+```
+
+import math
+from tracr.rasp import rasp
+
+KS = 84
+LSC = 100.0 / math.sqrt(KS)
+N = 81
+PASSI = 81
+
+def nbrs(s):
+    if s >
+
+```
