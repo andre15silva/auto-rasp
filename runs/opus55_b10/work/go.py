@@ -234,6 +234,9 @@ def program():
         sel = selr if k % 2 == 0 else selc
         sr = clean(rasp.Aggregate(sel, sr)).named('sr%d' % k)
         sc = clean(rasp.Aggregate(sel, sc)).named('sc%d' % k)
+    # exact zero / constant available only after the diffusion: used to schedule the positional tail late
+    zr = nmap(lambda v: 0.0, sr).named('zr')
+    dly = cmap(lambda x: 0, zr)
     colnum = nmap(lambda t: COLCODE[t] * UNIT, tok)
     nrc = cmap(lambda x: (int(round(x / UNIT)) // 16, min(3, int(round(x / UNIT)) % 16)),
                sum_tree(decode_bits(sr, 9) + [colnum])).named('nrc')
@@ -279,7 +282,7 @@ def program():
     def cmb(a, b):
         sa = set(a) if isinstance(a, tuple) else {a}; sb = set(b) if isinstance(b, tuple) else {b}
         return tuple(sorted((sa | sb) - {'-'}))
-    cuts = smap(cmb, smap(cmb, qne, qnw), smap(cmb, qse, qsw)).named('cuts')
+    cuts = smap(cmb, smap(cmb, qne, qnw), smap(lambda a, z: a, smap(cmb, qse, qsw), dly)).named('cuts')
     def presence(a, b):
         return (int('x' in (a, b)), int('o' in (a, b)))
     adj = smap(lambda p, q: (max(p[0], q[0]), max(p[1], q[1])),
@@ -289,14 +292,14 @@ def program():
     def lev(x):
         return 0 if x < 0.05 else (1 if x < 0.25 else (2 if x < 0.7 else 3))
     nx2 = cmap(lev, nmap(dens('x'), t2)); no2 = cmap(lev, nmap(dens('o'), t2))
+    no2 = smap(lambda a, z: a, no2, dly)
     e2 = smap(lambda a, b: (a, b), nx2, no2)
     sit = smap(lambda e, a: POS_CLASS[(e[0], e[1], a[0], a[1])], e2, adj)
     lin = cmap(lambda i: 'P' if i >= 81 else line_of(i), idx)
     pcat = smap(lambda c, l: PASS_LOGIT if l == 'P' else POS_ROW[c][l], sit, lin).named('pcat')
     # game phase from the number of stones on the board
     isst = nmap(lambda t: 1.0 if t in ('x', 'o') else 0.0, tok)
-    isst_d = isst
-    for _ in range(6): isst_d = nmap(lambda v: v, isst_d)               # delay (aggregate lands at depth 8)
+    isst_d = add(isst, zr, 1.0, 0.0)
     q81 = cmap(lambda q: 81, qA)
     frac = rasp.numerical(rasp.Aggregate(rasp.Select(idx, q81, LT), isst_d, default=0))
     phase = cmap(lambda x: 0 if x < 0.16 else (1 if x < 0.4 else 2), frac).named('phase')

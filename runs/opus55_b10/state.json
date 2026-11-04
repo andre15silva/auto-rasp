@@ -3,13 +3,13 @@
  "model": "claude-opus-5-5",
  "effort": "xhigh",
  "session_id": "8b6ea6d0-13cb-4aef-801d-eb0b3903f233",
- "turn": 74,
- "runs": 70,
+ "turn": 76,
+ "runs": 72,
  "passes": 4,
  "requests": 4,
  "done": false,
- "next": "OUTPUT of Python run 70 of at most 120:\n```\ncompiled: {'layers': 30, 'heads': 4, 'key_size': 85, 'mlp_hidden_size': 478, 'residual_dims': 1449, 'dense_params': 100938810, 'nonzero_params': 25561, 'mlp_exactness': 1000000, 'compile_seconds': 129.7, 'seconds_per_1000_positions': 37.76, 'output_label': 'logit_1'}\n{'layers': 30, 'heads': 4, 'key_size': 85, 'mlp_hidden_size': 478, 'residual_dims': 1449, 'dense_params': 100938810, 'nonzero_params': 25561, 'mlp_exactness': 1000000, 'compile_seconds': 129.7, 'seconds_per_1000_positions': 37.76, 'output_label': 'logit_1'}\n[('ridc_144', 83), ('ridr_155', 83), ('sequence_map_154', 83), ('sequence_map_164', 83), ('indices', 82), ('map_23', 82), ('map_33', 82), ('sequence_map_7', 52), ('pcat_9', 36), ('sequence_map_12', 36), ('tcat_4', 29), ('sequence_map_16', 18), ('nrc_24', 16), ('sequence_map_26', 16), ('sequence_map_28', 16), ('aggregate_117', 11), ('aggregate_129', 11), ('aggregate_145', 11), ('aggregate_148', 11), ('aggregate_156', 11), ('aggregate_158', 11), ('aggregate_165', 11), ('aggregate_166', 11), ('aggregate_172', 11), ('aggregate_173', 11)]\n630 819 174\n\n```",
+ "next": "OUTPUT of Python run 72 of at most 120:\n```\n(264535273, 190)\nlayers 27 max mlp 416 max heads 4\n[(2, 4), (4, 4), (6, 4), (12, 2), (14, 2), (16, 2), (18, 2), (20, 2), (22, 2), (24, 2), (30, 1), (42, 4)]\n[(1, 198), (3, 107), (5, 210), (7, 130), (9, 102), (11, 346), (13, 332), (15, 22), (17, 22), (19, 22), (21, 22), (23, 22), (25, 22), (27, 19), (29, 95), (31, 44), (33, 213), (35, 154), (37, 156), (39, 101), (41, 68), (43, 4), (45, 64), (47, 288), (49, 416), (51, 1), (53, 4)]\n\n```",
  "started": "2026-11-04T18:11:10+0000",
  "session_started": true,
- "acted": 73
+ "acted": 75
 }

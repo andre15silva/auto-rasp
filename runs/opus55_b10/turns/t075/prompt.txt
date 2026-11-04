@@ -1,0 +1,12 @@
+OUTPUT of Python run 71 of at most 120:
+```
+
+[stderr]
+Traceback (most recent call last):
+  File "<string>", line 78, in <module>
+  File "/work/go.py", line 282, in program
+    cuts = smap(cmb, smap(cmb, qne, qnw), smap(lambda a, z: a, smap(cmb, qse, qsw), dly)).named('cuts')
+                                                                                    ^^^
+UnboundLocalError: cannot access local variable 'dly' where it is not associated with a value
+
+```
