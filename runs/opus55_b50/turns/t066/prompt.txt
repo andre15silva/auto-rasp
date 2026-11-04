@@ -1,0 +1,31 @@
+OUTPUT of Python run 62 of at most 120:
+```
+
+[stderr]
+Traceback (most recent call last):
+  File "<string>", line 80, in <module>
+  File "<string>", line 46, in compile_program
+  File "/harness/tracr_policy.py", line 35, in compile_sop
+    return compiling.compile_rasp_to_model(sop, vocab=set(VOCAB), max_seq_len=MAX_SEQ_LEN, compiler_bos=BOS,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 25, in _compile_no_forward
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/compiling.py", line 100, in compile_rasp_to_model
+    basis_inference.infer_bases(
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/basis_inference.py", line 98, in infer_bases
+    value_set = compute_value_set(expr)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/basis_inference.py", line 57, in compute_value_set
+    res = errors.ignoring_arithmetic_errors(sop.f)(x)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/utils/errors.py", line 28, in fun_wrapped
+    return fun(*args)
+           ^^^^^^^^^^
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/rasp/rasp.py", line 359, in <lambda>
+    self.f = lambda t: f(inner_f(t))
+                       ^^^^^^^^^^^^^
+  File "/work/gonet.py", line 196, in <lambda>
+    fXc = rasp.categorical(rasp.Map(lambda v: v > 0.5, flags[NBUCK])).named('fXc')
+                                              ^^^^^^^
+TypeError: '>' not supported between instances of 'NoneType' and 'float'
+
+```

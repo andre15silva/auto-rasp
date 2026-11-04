@@ -5,6 +5,8 @@ GT, LT, GEQ, LEQ, EQ = (rasp.Comparison.GT, rasp.Comparison.LT, rasp.Comparison.
 R_ROUNDS = 6
 EPS_DEC = 8e-5      # decode threshold is EPS_DEC/2
 NEAR_N = 30        # keys averaged for the near-one constant (theta = BOS share)
+NEAR_N2 = 15
+EPS_G = 4e-4
 UNIT = 1.0 / 16
 
 def nbrs(i):
@@ -181,6 +183,11 @@ def CUT_VAL(cuts, contested):
     if 'our' in cuts: v += 1.5
     if 'their' in cuts: v += 1.2
     return v
+def TERR_VAL(region, phase):
+    hx, ho = region
+    if phase == 2 and hx and not ho: return -8.0
+    if phase == 2 and ho and not hx: return -6.0
+    return 0.0
 TRIPLE_CLASS, TRIPLE_REP = build_triple_classes()
 def build_pos_classes():
     cls, rows = {}, {}
@@ -204,8 +211,8 @@ def program():
     # ---- runs (exact start flags -> exact SelectorWidth counts)
     ltok = rasp.Aggregate(rasp.Select(idx, qA, GT), tok)
     utok = rasp.Aggregate(rasp.Select(idx, qA, LT), tok)
-    srow = clean_bool(smap(lambda t, l: (t not in ('x', 'o')) or (t != l), tok, ltok))
-    scol = clean_bool(smap(lambda t, u: (t not in ('x', 'o')) or (t != u), tok, utok))
+    srow = clean_bool(smap(lambda t, l: t != l, tok, ltok))
+    scol = clean_bool(smap(lambda t, u: t != u, tok, utok))
     ksr = smap(lambda i, s: i if s else 999, idx, srow)
     ksc = smap(lambda i, s: i if s else -1, idx, scol)
     ridr = rasp.SelectorWidth(rasp.Select(ksr, idx, LEQ)).named('ridr')
@@ -228,11 +235,21 @@ def program():
     cleanf = lambda v, c: v
     def clean(x): return smap(cleanf, x, nearone)
     stonly = lambda v, t: v if t in ('x', 'o') else 'D'
+    nq2 = cmap(lambda q: NEAR_N2, qA)
+    nearone2 = rasp.Aggregate(rasp.Select(idx, nq2, LT), constc).named('nearone2')
+    def clean2(x): return smap(cleanf, x, nearone2)
+    def gEf(v, t):
+        if v == 'P': return 'D' if t in ('B', 'W') else 'Z'
+        return 'X' if t == 'x' else ('O' if t == 'o' else None)
+    gE = smap(gEf, rowv, tok)
+    emonly = lambda v, t: v if t == '.' else 'D'
+    sg = clean2(smap(emonly, rasp.Aggregate(seedsel, gE), tok)).named('seed_g')
     sr = clean(smap(stonly, rasp.Aggregate(seedsel, rowE), tok)).named('seed_r')
     sc = clean(smap(stonly, rasp.Aggregate(seedsel, colE), tok)).named('seed_c')
     for k in range(R_ROUNDS):
         sel = selr if k % 2 == 0 else selc
         sr = clean(rasp.Aggregate(sel, sr)).named('sr%d' % k)
+        sg = clean2(rasp.Aggregate(sel, sg)).named('sg%d' % k)
         sc = clean(rasp.Aggregate(sel, sc)).named('sc%d' % k)
     # exact zero / constant available only after the diffusion: used to schedule the positional tail late
     zr = nmap(lambda v: 0.0, sr).named('zr')
@@ -307,6 +324,12 @@ def program():
     lph = smap(lambda l, p: 'P' if l == 'P' else (l, p), lin, phase)
     adjcat = smap(lambda lp, cont: 0.0 if lp == 'P' else LINE_PHASE_ADJ(lp[0], lp[1], cont), lph, contested)
     cutcat = smap(lambda c, cont: CUT_VAL(c, cont), cuts, contested)
-    extra = add(nmap(lambda v: v + 6.0, adjcat), nmap(lambda v: v + 3.0, cutcat))
+    def gbit(col):
+        m = nmap(lambda v: 1.0 if v == col else (EPS_G if v == 'Z' else 0.0), sg)
+        return cmap(lambda x: int(x > EPS_G / 2), m)
+    region = smap(lambda a, b: (a, b), gbit('X'), gbit('O')).named('region')
+    regcat = smap(lambda r, p: TERR_VAL(r, p), region, phase)
+    cutcat = smap(lambda c, r: c + r, cutcat, regcat)
+    extra = add(nmap(lambda v: v + 6.0, adjcat), nmap(lambda v: v + 12.0, cutcat))
     pos = add(nmap(lambda v: v + P_OFF, pcat), extra).named('pos')
     return add(tact, pos).named('logit')

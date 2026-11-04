@@ -6,7 +6,9 @@ MLP_EXACTNESS = 100
 NCLS = 13
 T_HOPS = 6
 F_HOPS = 4
-FGAIN = 1e6
+F2_HOPS = 8
+FGAIN = 1e9
+FCAP_PEN = 52.0
 BIG = 1e8
 
 def rc(i): return divmod(i, 9)
@@ -233,16 +235,20 @@ def program():
     def fgm(kd, v):
         if v != 'n' and v[0] == kd: return v
         return 'n'
-    for t in range(1, F_HOPS + 1):
+    G2_4 = None
+    for t in range(1, F2_HOPS + 1):
         A2 = cat(rasp.Aggregate(sel_closed(), G2)).named(f'FA2_{t}')
-        A3 = cat(rasp.Aggregate(sel_closed(), G3)).named(f'FA3_{t}')
         G2 = cat(rasp.SequenceMap(fgm, kind, A2)).named(f'G2_{t}')
-        G3 = cat(rasp.SequenceMap(fgm, kind, A3)).named(f'G3_{t}')
+        if t == F_HOPS: G2_4 = G2
+        if t <= F_HOPS:
+            A3 = cat(rasp.Aggregate(sel_closed(), G3)).named(f'FA3_{t}')
+            G3 = cat(rasp.SequenceMap(fgm, kind, A3)).named(f'G3_{t}')
     def pred_flag(k, q):
         if k == 0: return (-0.4 + FGAIN) if q != 'n' else -0.4
         if k == 1: return 0.6
         return None
-    FR2 = cat(rasp.Aggregate(mksel(idx, G2, pred_flag), ynmap)).named('FR2')
+    FR2 = cat(rasp.Aggregate(mksel(idx, G2_4, pred_flag), ynmap)).named('FR2')
+    FR2b = cat(rasp.Aggregate(mksel(idx, G2, pred_flag), ynmap)).named('FR2b')
     FR3 = cat(rasp.Aggregate(mksel(idx, G3, pred_flag), ynmap)).named('FR3')
 
     # ---- chain size >= 3 detection (local, 2-hop) ----
@@ -276,6 +282,13 @@ def program():
         return kb
     stA = cat(rasp.SequenceMap(fstA, kbig, FR2)).named('stA')
     stB = cat(rasp.SequenceMap(fstB, kbig, FR3)).named('stB')
+    stC = cat(rasp.SequenceMap(lambda kd, r: 'Oc' if (kd == 'O' and r == 'no') else 'n', kind, FR2b)).named('stC')
+    HC = cat(rasp.Aggregate(sel_hist(), stC)).named('HC')
+    def pred_anyc(k, q):
+        if k == 0: return (0.1 + 3.2) if q == 'Oc' else 0.1
+        if k == 1: return 0.6
+        return None
+    confO = cat(rasp.Aggregate(mksel(idx, HC, pred_anyc), ynmap)).named('confO')
     HA = cat(rasp.Aggregate(sel_hist(), stA)).named('HA')
     HB = cat(rasp.Aggregate(sel_hist(), stB)).named('HB')
     labA = cat(rasp.Aggregate(mksel(idx, HA, pred_proto), labmap)).named('labA')
@@ -285,7 +298,9 @@ def program():
 
     def ftab1(lab, ru):
         capc, xn, eye, nEc, on = lab
-        if capc >= 1: return ('cap', capc, int(nEc == 0 and not xn))
+        if capc >= 1:
+            sa = (ru == 'lo') if xn else (nEc <= 1)
+            return ('cap', capc, int(nEc == 0 and not xn), int(sa))
         if eye: return ('eye',)
         if xn: la = {'lo': 1, 'mid': 2, 'hi': 3}[ru]
         else: la = max(1, min(nEc, 3))
@@ -342,11 +357,14 @@ def program():
     dang = num(rasp.Map(lambda v: {'O': 1.0 - DTH, 'X': -1.0 - DTH}.get(v, -DTH), InfM)).named('dang')
     passv = num(rasp.Map(lambda kd: PASSV if kd == 'P' else 0.0, kind)).named('passv')
 
+    fcap = cat(rasp.SequenceMap(lambda s, c: 'fc' if (s[0] == 'cap' and s[3] and c == 'no') else 'n', tab1, confO)).named('fcap')
+    fcapR = num(rasp.Map(lambda v: FCAP_PEN if v == 'fc' else 0.0, fcap)).named('fcapR')
     a1 = num(rasp.LinearSequenceMap(tacP, tacN, 1.0, -1.0)).named('a1')
     c1 = num(rasp.LinearSequenceMap(bigR2, contR, 1.0, 1.0)).named('c1')
     a2 = num(rasp.LinearSequenceMap(gainR, zpen, GAINW, -1.0)).named('a2')
     a3 = num(rasp.LinearSequenceMap(linev, dang, 1.0, -DANGW)).named('a3')
     d1 = num(rasp.LinearSequenceMap(a2, a3, 1.0, 1.0)).named('d1')
-    e1 = num(rasp.LinearSequenceMap(a1, c1, 1.0, 1.0)).named('e1')
+    e0 = num(rasp.LinearSequenceMap(a1, c1, 1.0, 1.0)).named('e0')
+    e1 = num(rasp.LinearSequenceMap(e0, fcapR, 1.0, -1.0)).named('e1')
     out = num(rasp.LinearSequenceMap(e1, d1, SCALE, SCALE)).named('logit')
     return out

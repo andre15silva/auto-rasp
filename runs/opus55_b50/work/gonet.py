@@ -8,6 +8,7 @@ FIXSEL = False
 NOGRADE = False            # for selectors that may select nothing (BOS must win cleanly)
 G_LO, G_HI = 10.6, 10.6 + 10.2 * 8
 N_PROP = 6
+TINY = 1.6e-5
 NBUCK = 8
 def bucket(i): return (i // 9 + 3 * (i % 9)) % NBUCK
 
@@ -94,10 +95,12 @@ PRIOR = [-1.5, -0.3, 0.5, 0.5, 0.3]
 def lineof(i):
     if i >= 81: return 9
     r, c = rc(i); return min(r, c, 8 - r, 8 - c)
-def score23(e, line):
+REG = {'own': -1.5, 'opp': -1.0, 'both': 0.0, 'none': 0.0}
+def score23(aux, line):
+    e, rg = aux
     if e == 'side': return PASS_LOGIT
     if e == 'eye': return -12.0
-    return round(PRIOR[line] if line < 9 else 0.0, 2)
+    return round(REG[rg] + (PRIOR[line] if line < 9 else 0.0), 2)
 
 def build(stop=None):
     tok, idx = rasp.tokens, rasp.indices
@@ -108,13 +111,19 @@ def build(stop=None):
 
     ncW = shift(color, ORTH['W'], 'ncW')
     ncN = shift(color, ORTH['N'], 'ncN')
-    # initial liberty buckets: for each bucket h, does q have an empty orthogonal neighbour with bucket h
-    flags = []
-    for h in range(NBUCK):
-        def pb(k, q, h=h):
-            if not isinstance(q, int) or q >= 81 or k >= 81: return UNSEL_B
-            return SEL if (k in ONB[q] and bucket(k) == h) else UNSEL_B
-        flags.append(rasp.numerical(rasp.Aggregate(rasp.Select(idx, idx, pb), isE, default=0)).named(f'b{h}_0'))
+    # bundle value: bucket id for empty points, X/O for stones, S for side token, D dummy (unreachable)
+    def bvf(t, i):
+        if i == 81: return 'S' if t in ('B', 'W') else 'D'
+        if t == '.': return bucket(i)
+        if t == 'x': return 'X'
+        if t == 'o': return 'O'
+        return 'D'
+    bv = rasp.categorical(rasp.SequenceMap(bvf, tok, idx)).named('bv')
+    def pinit(k, q):
+        if not isinstance(q, int): return UNSEL
+        if q == 81: return SEL if k == 81 else UNSEL
+        return SEL if k in ONB[q] else UNSEL
+    bund = rasp.categorical(rasp.Aggregate(rasp.Select(idx, idx, pinit), bv)).named('bund0')
 
     hsb = rasp.categorical(rasp.SequenceMap(lambda w, c: True if c == 'S' else (w != c), ncW, color)).named('hsb')
     vsb = rasp.categorical(rasp.SequenceMap(lambda n, c: True if c == 'S' else (n != c), ncN, color)).named('vsb')
@@ -132,8 +141,6 @@ def build(stop=None):
         if q == 81 or k == 81: return G_HI if (q == 81 and k == 81) else UNSEL
         if k % 9 == q % 9 and k <= q: return G_HI - gstep * ((q - k) // 9)
         return UNSEL
-    if NOGRADE:
-        ph = pv = (lambda k, q: SEL if k == q else UNSEL_B)
     hrun = rasp.categorical(rasp.Aggregate(rasp.Select(hkey, idx, ph), idx)).named('hrun')
     vrun = rasp.categorical(rasp.Aggregate(rasp.Select(vkey, idx, pv), idx)).named('vrun')
     ncS = shift(color4, ORTH['S'], 'ncS')
@@ -142,26 +149,25 @@ def build(stop=None):
     eq = lambda k, q: SEL if k == q else UNSEL
     selH = rasp.Select(hrun, hrun, eq)
     selV = rasp.Select(vrun, vrun, eq)
-    if FIXSEL:
-        def fx(k, q):
-            if k >= 81 or q >= 81: return SEL if k == q else UNSEL
-            return SEL if abs(k//9 - q//9) + abs(k%9 - q%9) <= 1 else UNSEL
-        selH = selV = rasp.Select(idx, idx, fx)
-
-    low = 1.0
-    for s in range(1, N_PROP + 1):
-        sel = selH if s % 2 == 1 else selV
-        low = low / 9
-        new = []
-        for j, f in enumerate(flags):
-            a = rasp.numerical(rasp.Aggregate(sel, f, default=0)).named(f'b{j}_a{s}')
-            new.append(thr(a, f'b{j}_{s}', low) if s % 2 == 0 else a)
-        if s % 2 == 0: low = 1.0
-        flags = new
-    if stop == 'prop': return flags[0]
-
-    tot = tree(list(flags), 'sb')
-    cnt3 = rasp.categorical(rasp.Map(lambda v: min(int(round(v)), 3), tot)).named('cnt3')
+    for s_ in range(1, N_PROP + 1):
+        bund = rasp.categorical(rasp.Aggregate(selH if s_ % 2 == 1 else selV, bund)).named(f'bund{s_}')
+    if stop == 'prop': return rasp.numerical(rasp.Map(lambda v: 1 if v == 0 else 0, bund))
+    # extraction + threshold
+    flags = []
+    for h in list(range(NBUCK)) + ['X', 'O']:
+        def fx(v, h=h):
+            if v == h: return 1
+            if v == 'D': return TINY
+            return 0
+        xh = rasp.numerical(rasp.Map(fx, bund)).named(f'x{h}')
+        def gthr(x):
+            if abs(x) < 1e-12: return 0
+            if abs(x - TINY) < 1e-15: return 1
+            return None
+        flags.append(rasp.numerical(rasp.Map(gthr, xh, simplify=False)).named(f'f{h}'))
+    lv1 = [lsm(flags[2 * i], flags[2 * i + 1], f'sb0_{i}', 0.01, 0.01) for i in range(NBUCK // 2)]
+    tot = tree(lv1, 'sb')
+    cnt3 = rasp.categorical(rasp.Map(lambda v: min(int(round(v * 100)), 3), tot)).named('cnt3')
     nbinfo = rasp.categorical(rasp.SequenceMap(nbcls, cnt3, color)).named('nbinfo')
     nbs = {d: shift(nbinfo, v, 'nb' + d) for d, v in ORTH.items()}
     srt = lambda a, b: tuple(sorted((a, b)))
@@ -187,6 +193,10 @@ def build(stop=None):
         if o == 'eye_e': return 'eye' if n < 1 else 'no'
         return 'no'
     eye = rasp.categorical(rasp.SequenceMap(eyef, orth, diagO)).named('eye')
-    t23c = rasp.categorical(rasp.SequenceMap(score23, eye, linec)).named('t23c')
+    fXc = rasp.categorical(rasp.Map(lambda v: v > 0.5, flags[NBUCK], simplify=False)).named('fXc')
+    fOc = rasp.categorical(rasp.Map(lambda v: v > 0.5, flags[NBUCK + 1], simplify=False)).named('fOc')
+    region = rasp.categorical(rasp.SequenceMap(lambda a, b: ('own' if a and not b else 'opp' if b and not a else 'both' if a else 'none'), fXc, fOc)).named('region')
+    aux = rasp.categorical(rasp.SequenceMap(lambda e, r: (e, r), eye, region)).named('aux')
+    t23c = rasp.categorical(rasp.SequenceMap(score23, aux, linec)).named('t23c')
     t23 = rasp.numerical(rasp.Map(lambda v: v, t23c)).named('t23')
     return lsm(t1, t23, 'logits')

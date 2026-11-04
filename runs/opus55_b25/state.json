@@ -3,13 +3,13 @@
  "model": "claude-opus-5-5",
  "effort": "xhigh",
  "session_id": "75fe5168-548a-4409-9122-1a4e4ad26e69",
- "turn": 111,
- "runs": 91,
- "passes": 18,
- "requests": 20,
+ "turn": 115,
+ "runs": 94,
+ "passes": 19,
+ "requests": 21,
  "done": false,
- "next": "OUTPUT of Python run 91 of at most 120:\n```\n-20.0 * FSC True\nBIG = 1e8 True\nFGAIN = 1e6 True\nZC = 0.12, 2.3 True\nSCALE = 3.0 True\ncompiled: {'layers': 27, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 471, 'residual_dims': 829, 'dense_params': 51326847, 'nonzero_params': 174536, 'mlp_exactness': 100, 'compile_seconds': 17.1, 'seconds_per_1000_positions': 22.45, 'output_label': 'logit_1'}\n\n```",
+ "next": "OUTPUT of Python run 94 of at most 120:\n```\n1 True True\n0 mlp  ['linev_13(1)', 'ynmap_30(2)', 'kind_32(4)', 'labmap_38(25)', 'zmap_43(3)', 'rvu_49(2)', 'rvu3_51(2)', 'labAbmap_55(6)', 'labBmap_57(8)', 'labBbmap_59(4)', 'ekind_74(410)', 'rv1_143(2)', 'rv2_149(2)']\n1 attn ['InfM_23', 'KH_126', 'M0_147']\n2 attn ['zone_33']\n2 mlp  ['dang_14(1)', 'same_119(16)', 'T0_145(64)']\n3 attn ['d2_105', 'A1_139']\n3 mlp  ['a3_7(4)', 'zoneP_22(12)']\n4 attn ['GainM_21']\n4 mlp  ['zpen_12(1)', 'flagD_98(8)', 'T1_136(108)']\n5 attn ['FD_90', 'A2_128']\n5 mlp  ['gainR_11(1)']\n6 mlp  ['a2_6(4)', 'FDm_84(12)', 'T2_123(108)']\n7 attn ['bigR_72', 'A3_114']\n7 mlp  ['d1_3(4)']\n8 mlp  ['kbig_65(8)', 'T3_109(108)']\n9 attn ['A4_100']\n9 mlp  ['T4_94(108)']\n10 attn ['A5_86']\n10 mlp  ['T5_81(108)']\n11 attn ['A6_75']\n11 mlp  ['W_68(432)']\n12 attn ['U_62', 'RS1_138', 'RS2_146']\n13 attn ['RU2_39', 'RU3_40']\n13 mlp  ['G2_0_134(8)', 'G3_0_141(8)']\n14 attn ['FA2_1_127', 'FA3_1_137']\n14 mlp  ['RU_28(4)']\n15 mlp  ['G2_1_121(12)', 'G3_1_131(12)']\n16 attn ['FA2_2_113', 'FA3_2_125']\n16 mlp  ['G2_2_107(12)', 'G3_2_118(12)']\n17 attn ['FA2_3_99', 'FA3_3_111']\n17 mlp  ['G2_3_92(12)', 'G3_3_104(12)']\n18 attn ['FA2_4_85', 'FA3_4_96']\n18 mlp  ['G2_4_79(12)', 'G3_4_89(12)']\n19 attn ['FR2_66', 'FR3_77', 'FA2_5_124']\n19 mlp  ['stA_61(12)', 'stB_71(12)', 'G2_5_116(12)']\n20 attn ['HA_47', 'HB_64', 'FA2_6_110']\n21 attn ['labA_27', 'labAb_44', 'ox2_45', 'labBb_46']\n21 mlp  ['G2_6_102(12)']\n22 attn ['FA2_7_95']\n22 mlp  ['tab1_19(75)', 'contact_26(75)', 'EO_35(48)', 'bigbits_36(24)']\n23 mlp  ['contR_18(1)', 'tab2_24(256)', 'bigt_25(256)', 'G2_7_88(12)']\n24 attn ['FA2_8_82']\n24 mlp  ['tacP_15(1)', 'tacN_16(1)', 'bigR2_17(1)']\n25 mlp  ['a1_8(4)', 'c1_9(4)', 'G2_8_76(12)']\n26 attn ['FR2b_63']\n26 mlp  ['e0_4(4)']\n27 mlp  ['stC_53(8)']\n28 attn ['HC_41']\n29 attn ['confO_20']\n29 mlp  ['fcap_10(32)']\n30 mlp  ['fcapR_5(1)']\n31 mlp  ['e1_2(4)']\n32 mlp  ['logit_1(4)']\ncompiled: {'layers': 33, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 525, 'residual_dims': 867, 'dense_params': 68680575, 'nonzero_params': 209808, 'mlp_exactness': 100, 'compile_seconds': 11.0, 'seconds_per_1000_positions': 11.33, 'output_label': 'logit_151'}\n\n```",
  "started": "2026-11-04T18:11:12+0000",
  "session_started": true,
- "acted": 110
+ "acted": 114
 }

@@ -1,0 +1,49 @@
+OUTPUT of Python run 76 of at most 120:
+```
+[(2, -2.5), (8, -2.5), (9, -2.5), (14, -0.5), (15, -1.5), (17, -1.5), (22, -1.5), (26, -2.5), (36, -1.5), (39, -2.5)]
+game 2 margin -2.5 plies 90 passes [(86, 'n'), (88, 'n'), (89, 'o')]
+    ....OX.XX    XX.XXX.XX
+    .XXOXXXX.    .XXOXXXX.
+    XXXOXOXX.    XXXOXOXXX
+    X.XOOOOO.    X.XOOOOOO
+    .XOOOXOO.    .XOOO.OOO
+    .XXOXXXOX    XXXOOO.O.
+    X.XOOOXOO    X.XOOO.OO
+    .XXXOXXOO    .XXXO..OO
+    .OXXOO...    X.XXOO.O.
+   last moves [('n', 3, 3), ('o', 17, ''), ('n', 78, 78), ('o', 79, ''), ('n', 26, 26), ('o', 35, ''), ('n', 72, 72), ('o', 2, ''), ('n', 4, 1), ('o', 36, ''), ('n', 1, 1), ('o', 50, ''), ('n', 45, 45), ('o', 9, ''), ('n', 0, 0), ('o', 49, ''), ('n', 81, 81), ('o', 44, ''), ('n', 81, 81), ('o', 81, '')]
+game 8 margin -2.5 plies 87 passes [(77, 'o'), (83, 'o'), (85, 'o'), (86, 'n')]
+    ..O.O..O.    ..O.O..O.
+    OOO.OO..O    OOO.OO..O
+    OOOXOO.O.    OOOXOO.O.
+    XOXOOOOOO    XOXOOOOOO
+    XXXXXXXOO    XXXXXXXOO
+    .XX.X.XOO    .XX.X.XOO
+    ...XXXOOX    X.XXXXOOX
+    .....XXX.    XX.X.XXXX
+    .......XX    ..X.X.XXX
+   last moves [('o', 77, ''), ('n', 71, 71), ('o', 54, ''), ('n', 78, 76), ('o', 65, ''), ('n', 76, 76), ('o', 45, ''), ('n', 56, 55), ('o', 67, ''), ('n', 66, 66), ('o', 81, ''), ('n', 64, 55), ('o', 55, ''), ('n', 63, 63), ('o', 45, ''), ('n', 54, 54), ('o', 81, ''), ('n', 74, 74), ('o', 81, ''), ('n', 81, 81)]
+game 9 margin -2.5 plies 93 passes [(89, 'o'), (91, 'o'), (92, 'n')]
+    .XX......    .XX.X.X.X
+    XX.X....O    XX.X.XXXX
+    XOXX.XX.O    XOXXXXXX.
+    XOOXXX.XX    XOOXXX.XX
+    OOOX.XXXX    OOOX.XXXX
+    O.OOXXXOX    OOOOXXXOX
+    OOOOOOOOO    OOOOOOOOO
+    XXXOOOOOO    .O.OOOOOO
+    .X.XOO...    O.O.OOO..
+   last moves [('o', 74, ''), ('n', 15, 16), ('o', 72, ''), ('n', 25, 16), ('o', 78, ''), ('n', 16, 16), ('o', 3, ''), ('n', 8, 8), ('o', 46, ''), ('n', 4, 4), ('o', 13, ''), ('n', 14, 22), ('o', 64, ''), ('n', 22, 22), ('o', 5, ''), ('n', 6, 6), ('o', 81, ''), ('n', 17, 81), ('o', 81, ''), ('n', 81, 81)]
+game 14 margin -0.5 plies 81 passes [(66, 'n'), (75, 'o'), (79, 'o'), (80, 'n')]
+    .X.X.....    .X.XX.XX.
+    X.XXX..X.    X.XXXX.XX
+    .XXOXX...    .XXOXXX.X
+    XXOOXXX..    XXOOXXXX.
+    OOOXX.XXX    OOOXX.XXX
+    OOOOXXXOO    OOOOXXXOO
+    ...OXXOOO    O..OXXOOO
+    OOOOOOOO.    OOOOOOOO.
+    ..X.XOO..    .O.OOOO..
+   last moves [('o', 75, ''), ('n', 26, 34), ('o', 35, ''), ('n', 34, 34), ('o', 76, ''), ('n', 81, 81), ('o', 73, ''), ('n', 6, 81), ('o', 15, ''), ('n', 24, 24), ('o', 8, ''), ('n', 14, 14), ('o', 54, ''), ('n', 17, 17), ('o', 81, ''), ('n', 7, 7), ('o', 5, ''), ('n', 4, 4), ('o', 81, ''), ('n', 81, 81)]
+
+```

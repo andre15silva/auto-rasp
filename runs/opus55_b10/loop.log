@@ -154,3 +154,13 @@
 [2026-11-04T22:01:16+0000] turn 76: resume (481 chars)
 [2026-11-04T22:04:03+0000] turn 76: python; runs 73, passes 4/10, tool-free True
 [2026-11-04T22:04:03+0000] turn 77: resume (572 chars)
+[2026-11-04T22:14:48+0000] turn 77: games; runs 73, passes 5/10, tool-free True
+[2026-11-04T22:14:48+0000] turn 78: resume (1,849 chars)
+[2026-11-04T22:15:00+0000] turn 78: python; runs 74, passes 5/10, tool-free True
+[2026-11-04T22:15:00+0000] turn 79: resume (632 chars)
+[2026-11-04T22:15:15+0000] turn 79: python; runs 75, passes 5/10, tool-free True
+[2026-11-04T22:15:15+0000] turn 80: resume (1,450 chars)
+[2026-11-04T22:15:31+0000] turn 80: python; runs 76, passes 5/10, tool-free True
+[2026-11-04T22:15:31+0000] turn 81: resume (2,672 chars)
+[2026-11-04T22:17:12+0000] turn 81: python; runs 77, passes 5/10, tool-free True
+[2026-11-04T22:17:12+0000] turn 82: resume (205 chars)

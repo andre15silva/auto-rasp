@@ -1,0 +1,34 @@
+OUTPUT of Python run 60 of at most 120:
+```
+
+[stderr]
+Traceback (most recent call last):
+  File "<string>", line 140, in <module>
+  File "<string>", line 46, in compile_program
+  File "/harness/tracr_policy.py", line 35, in compile_sop
+    return compiling.compile_rasp_to_model(sop, vocab=set(VOCAB), max_seq_len=MAX_SEQ_LEN, compiler_bos=BOS,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 25, in _compile_no_forward
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/compiling.py", line 107, in compile_rasp_to_model
+    expr_to_craft_graph.add_craft_components_to_rasp_graph(
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/expr_to_craft_graph.py", line 110, in add_craft_components_to_rasp_graph
+    block = categorical_mlp.map_categorical_to_numerical_mlp(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/chamber/categorical_mlp.py", line 82, in map_categorical_to_numerical_mlp
+    first_layer = vectorspace_fns.Linear.from_action(input_space, output_space,
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/vectorspace_fns.py", line 81, in from_action
+    out_vector = action(direction)
+                 ^^^^^^^^^^^^^^^^^
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/chamber/categorical_mlp.py", line 79, in operation_fn
+    return operation(direction.value) * out_vec
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/bases.py", line 129, in __rmul__
+    return self * scalar
+           ~~~~~^~~~~~~~
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/bases.py", line 126, in __mul__
+    return self.copy_with_new_magnitudes(self.magnitudes * scalar)
+                                         ~~~~~~~~~~~~~~~~^~~~~~~~
+TypeError: unsupported operand type(s) for *: 'float' and 'NoneType'
+
+```
