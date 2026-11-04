@@ -90,3 +90,11 @@
 [2026-11-04T20:20:18+0000] turn 44: resume (104 chars)
 [2026-11-04T20:26:41+0000] turn 44: games; runs 39, passes 6/25, tool-free True
 [2026-11-04T20:26:41+0000] turn 45: resume (1,539 chars)
+[2026-11-04T20:27:51+0000] turn 45: python; runs 40, passes 6/25, tool-free True
+[2026-11-04T20:27:51+0000] turn 46: resume (3,247 chars)
+[2026-11-04T20:28:22+0000] turn 46: python; runs 41, passes 6/25, tool-free True
+[2026-11-04T20:28:22+0000] turn 47: resume (7,671 chars)
+[2026-11-04T20:29:47+0000] turn 47: python; runs 42, passes 6/25, tool-free True
+[2026-11-04T20:29:47+0000] turn 48: resume (309 chars)
+[2026-11-04T20:32:37+0000] turn 48: games; runs 42, passes 7/25, tool-free True
+[2026-11-04T20:32:37+0000] turn 49: resume (1,156 chars)

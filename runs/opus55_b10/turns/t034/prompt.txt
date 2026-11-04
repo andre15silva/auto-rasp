@@ -1,0 +1,7 @@
+OUTPUT of Python run 33 of at most 120:
+```
+(164163941, 137)
+compiled: {'layers': 28, 'heads': 4, 'key_size': 85, 'mlp_hidden_size': 990, 'residual_dims': 1298, 'dense_params': 121634748, 'nonzero_params': 26395, 'mlp_exactness': 1000000, 'compile_seconds': 99.9, 'seconds_per_1000_positions': 30.64, 'output_label': 'logit_1'}
+{'layers': 28, 'heads': 4, 'key_size': 85, 'mlp_hidden_size': 990, 'residual_dims': 1298, 'dense_params': 121634748, 'nonzero_params': 26395, 'mlp_exactness': 1000000, 'compile_seconds': 99.9, 'seconds_per_1000_positions': 30.64, 'output_label': 'logit_1'}
+
+```

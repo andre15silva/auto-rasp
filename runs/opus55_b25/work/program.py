@@ -130,11 +130,11 @@ def LV(i):
     e = min(r, c, 8 - r, 8 - c)
     return 10.0 + [-2.0, -0.5, 0.5, 0.7, 1.0][e]
 
-TAC_CAP1, TAC_CAP2, TAC_EYE, TAC_SA, TAC_ESC, TAC_ATK, TAC_DEF = 20, 26, -25, -20, 14, 5, 6
+TAC_CAP1, TAC_CAP2, TAC_EYE, TAC_SA, TAC_ESC, TAC_ATK, TAC_DEF = 20, 26, -25, -20, 14, 2, 3
 PASSV = 0.0
 GAINW = 8.0
 DANGW = 20.0
-SCALE = 2.0
+SCALE = 3.0
 
 def program():
     tok, idx = rasp.tokens, rasp.indices
@@ -247,7 +247,7 @@ def program():
         return 'S' + kd
     zoneP = cat(rasp.SequenceMap(fz, kind, zone)).named('zoneP')
     GainM = cat(rasp.Aggregate(sel_kernel(1.5, pad=True), zoneP)).named('GainM')
-    gainR = num(rasp.Map(lambda z: {'neu': 1.0, 'opp': 0.5, 'own': 0.15}.get(z, 0.0), GainM)).named('gainR')
+    gainR = num(rasp.Map(lambda z: {'neu': 1.0, 'opp': 0.5, 'own': 0.35}.get(z, 0.0), GainM)).named('gainR')
     zpen = num(rasp.Map(lambda z: {'own': 2.0}.get(z, 0.0), zoneP)).named('zpen')
     DTH = 0.05
     dang = num(rasp.Map(lambda v: {'O': 1.0 - DTH, 'X': -1.0 - DTH}.get(v, -DTH), InfM)).named('dang')

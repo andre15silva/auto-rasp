@@ -1,0 +1,44 @@
+OUTPUT of Python run 40 of at most 120:
+```
+game 0 margin -12.5 len 93 moves [50, 48, 40, 30, 22, 20, 47, 39, 59, 23, 51, 31, 41, 57, 13, 21]
+. . . . . . . . .   . . . . . . . . .   . . . . . . . . .   . O O O O O X X .
+. . . . . . . . .   . . . . X . . . .   . X O O X X . . .   O . O O X X X X X
+. . O . X O . . .   . . O O X O X . .   . . O O X . X . .   O O O O X . X X X
+. . . O . . . . .   . . . O O . . . .   . X O O O X . . .   O . O O O X X X .
+. . . O X . . . .   . . . O X X . . .   . X O O X X . . .   O O O O X X X X X
+. . X O . X . . .   . . X O . X X . .   . X X O . X X . .   O O O O X X X X .
+. . . . . X . . .   . . . O X X . . .   . . O O X X X . .   O O O O X X X X X
+. . . . . . . . .   . . . O O . . . .   . . O O O O . X .   O O O O O O X X .
+. . . . . . . . .   . . . . . . . . .   . . . . . O . . .   O . . O O O X . X
+game 2 margin -17.5 len 96 moves [39, 48, 33, 30, 38, 47, 59, 40, 29, 49, 21, 31, 51, 32, 20, 24]
+. . . . . . . . .   . . . . . . . . .   . . . X . . . . .   . . O O . O X X .
+. . . . . . . . .   . . . . . . . . .   . . X . X X O X .   O O . O O O O X X
+. . . . . . . . .   . O X X . . O . .   . O X X O X O O .   O O . O O O O O O
+. . X O . . X . .   . . X O O O X . .   . . X O O O X O .   O O . O O O X O O
+. . X X O . . . .   . O X X O . X . .   . O X X O O X . .   O O O O O O X X X
+. . O O O . . . .   . . O O O . X . .   . . O O O X X . .   . O O O O X X X X
+. . . . . X . . .   . . . . . X X . .   . . . O . X X . .   X O O O X X X X .
+. . . . . . . . .   . . . . . . . . .   . X O . . . . . .   . X O O X X X X X
+. . . . . . . . .   . . . . . . . . .   . . . . . . . . .   X X X X X X . X X
+game 3 margin -10.5 len 79 moves [50, 48, 24, 66, 30, 29, 40, 20, 23, 57, 60, 21, 31, 12, 37, 22]
+. . . . . . . . .   . . . . . . . . .   . . . . . . . . .   . O O O O O X X .
+. . . . . . . . .   . . . O O . . . .   . . . O O O . X .   . . O O O O X X X
+. . O . . X X . .   . . O O O X X . .   O . O O O X X . .   O O O O O X X X .
+. . O X . . . . .   . . O X X . . . .   . O O X X . X X .   O O O X X . X X X
+. . . . X . . . .   . X X O X . . . .   X X X O X . . . .   O O O O X X X X .
+. . . O . X . . .   . . . O . X . . .   O O O O . X . . .   O O O O X X X X X
+. . . O . . . . .   . . . O . X X . .   . X O O X X X . .   O O O O X X X X .
+. . . O . . . . .   . . . O . . . . .   . X O O . X . . .   O . O O O X X X X
+. . . . . . . . .   . . . . . . . . .   . . . . . . . . .   . O O O O X . X .
+game 4 margin -9.5 len 95 moves [39, 48, 57, 40, 30, 47, 21, 49, 52, 29, 23, 41, 42, 32, 24, 31]
+. . . . . . . . .   . . . . . . . . .   . . . . . . X . .   X . X X X . X O .
+. . . . . . . . .   . . . X . . . . .   . . . X . X . X .   . X X X . X O O O
+. . . X . . . . .   . . . X . X X . .   . . X X . X X O .   X X X X X X X O O
+. . O X . . . . .   . . O X O O O . .   . X . X O O O O .   X X . X O O O O O
+. . . X O . . . .   . . . X O O X . .   . . X X O O X . .   . X X X O O O O O
+. . O O O . . X .   . . O O O O X X .   . . O O O O X X .   X X O O O O . O .
+. . . X . . . . .   . . . X . . . . .   . O O X . O O . .   X O O . O O O O X
+. . . . . . . . .   . . . . . . . . .   . X O X . . . . .   X X O O . O O O X
+. . . . . . . . .   . . . . . . . . .   . . . . . . . . .   . X O O O O O X .
+
+```
