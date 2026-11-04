@@ -1,0 +1,24 @@
+OUTPUT of Python run 87 of at most 120:
+```
+game 8 black [(57, 'o', (6, 3), [[None, None]]), (59, 'o', (0, 1), [[None, None]]), (61, 'o', (8, 2), [[None, None]]), (63, 'o', (3, 0), [[None, None]]), (65, 'o', (8, 6), [[None, None]]), (67, 'o', (8, 1), [[None, None]])]
+. . O X . X . . .   . . O X . X . . .   . O O X . X . . .   . O O X . X . . .   . O O X . X . . .   . O O X . X . . .
+. O O X X . X . .   . O O X X . X . .   . O O X X . X . .   . O O X X . X . .   . O O X X . X . .   . O O X X . X . .
+O O X X . X . . .   O O X X . X . . .   O O X X . X . . .   O O X X . X x . .   O O X X . X X . .   O O X X . X X . .
+. O O O X . X . .   . O O O X . X . .   . O O O X . X . .   . O O O X . X . .   O O O O X . X . .   O O O O X . X x .
+O X O O X X . . .   O X O O X X . . .   O X O O X X . . .   O X O O X X . . .   O X O O X X x . .   O X O O X X X . .
+X X X O O X X . .   X X X O O X X . .   X X X O O X X . .   X X X O O X X . .   X X X O O X X . .   X X X O O X X . .
+X X O . O X X x .   X X O O O X X X .   X X O O O X X X .   X X O O O X X X .   X X O O O X X X .   X X O O O X X X .
+. X O . O O X O .   . X O . O O X O .   . X O . O O X . x   . X O . O O X . X   . X O . O O X . X   . X O . O O X . X
+X . . O O . . . .   X . . O O . . x .   X . . O O . . X .   X . O O O . . X .   X . O O O . . X .   X . O O O . O X .
+game 52 black [(49, 'o', (6, 0), [[None, None]]), (51, 'o', (0, 2), [[None, None]]), (53, 'o', (4, 0), [[None, None]]), (55, 'o', (8, 1), [[None, None]]), (57, 'o', (0, 1), [[None, None]]), (59, 'o', (0, 3), [[None, None]])]
+. . . . . . . . .   . . . . . . . . .   . . O . . . . . .   . . O . . . x . .   . . O . . x X . .   . O O . x X X . .
+X X O O O O X . .   X X O O O O X . .   X X O O O O X . .   X X O O O O X . .   X X O O O O X . .   X X O O O O X . .
+O X X O O X X X .   O X X O O X X X .   O X X O O X X X .   O X X O O X X X .   O X X O O X X X .   O X X O O X X X .
+O O X O X X . . .   O O X O X X . . .   O O X O X X x . .   O O X O X X X . .   O O X O X X X . .   O O X O X X X . .
+. O O O O O X . .   . O O O O O X . .   . O O O O O X . .   O O O O O O X . .   O O O O O O X . .   O O O O O O X . .
+O X X O X X X . .   O X X O X X X . .   O X X O X X X . .   O X X O X X X . .   O X X O X X X . .   O X X O X X X . .
+. X O O O X . X .   O X O O O X . X .   O X O O O X . X .   O X O O O X . X .   O X O O O X . X .   O X O O O X . X .
+. X O . O O X x .   x X O . O O X X .   X X O . O O X X .   X X O . O O X X .   X X O . O O X X .   X X O . O O X X .
+. . . O . . . . .   . . . O . . . . .   . . . O . . . . .   . . . O . . . . .   . O . O . . . . .   . O . O . . . . .
+
+```

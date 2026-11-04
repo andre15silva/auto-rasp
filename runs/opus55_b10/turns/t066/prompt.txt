@@ -1,0 +1,11 @@
+OUTPUT of Python run 62 of at most 120:
+```
+early by line {0: 134, 1: 503, 2: 837, 3: 403, 4: 43} not-top5 frac 0.303 median p 0.11635000000000001
+strong 1 54 cap 68.5 lost 7.5 margin 57.8 len 114.1
+strong -1 26 cap 8.3 lost 25.2 margin -10.0 len 95.0
+weak 1 28 cap 71.5 lost 3.3 margin 70.2 len 113.5
+weak -1 4 cap 6.8 lost 9.5 margin -6.8 len 87.5
+[(0, 'black', -4.5, 'two_passes'), (1, 'black', -0.5, 'two_passes'), (3, 'black', -2.5, 'two_passes'), (5, 'black', -12.5, 'two_passes'), (8, 'black', -26.5, 'two_passes'), (12, 'black', -30.5, 'two_passes'), (13, 'black', -0.5, 'two_passes'), (14, 'black', -13.5, 'two_passes'), (17, 'black', -15.5, 'two_passes'), (19, 'black', -16.5, 'two_passes'), (21, 'black', -12.5, 'two_passes'), (25, 'black', -11.5, 'two_passes'), (28, 'black', -6.5, 'two_passes'), (33, 'black', -5.5, 'two_passes'), (34, 'black', -2.5, 'two_passes'), (36, 'black', -9.5, 'two_passes'), (41, 'white', -9.5, 'two_passes'), (50, 'white', -6.5, 'two_passes'), (56, 'white', -9.5, 'two_passes'), (58, 'white', -0.5, 'two_passes'), (59, 'white', -9.5, 'two_passes'), (60, 'white', -15.5, 'two_passes'), (63, 'white', -11.5, 'two_passes'), (64, 'white', -8.5, 'two_passes'), (75, 'white', -10.5, 'two_passes'), (79, 'white', -7.5, 'two_passes')]
+first move as black [(40, 5), (24, 5), (21, 5), (39, 5), (50, 4), (47, 4), (38, 4), (58, 3)]
+
+```

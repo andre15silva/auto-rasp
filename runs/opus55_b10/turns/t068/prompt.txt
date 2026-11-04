@@ -1,0 +1,44 @@
+OUTPUT of Python run 64 of at most 120:
+```
+game 5 net black margin -12.5 lost 16 cap 7
+    .........   .........   ..OO.OX..   .OOOOOOO.
+    .........   .........   OXOXXO...   OOOOOOO..
+    ....XX...   ..XOXX...   OXXOXXX..   OO.O.OOOO
+    ...O.O...   .OOOOOOO.   OOOOOOOO.   OOOOOOOOO
+    ..X.OOO..   .OXXOOOOX   OOXXOOOOX   OOXXOOOOX
+    ..XO.OXX.   .XX.XOXX.   XXX.XOXX.   XXX.XOXXX
+    ...X.X...   ...X.XX..   ...XXXX.X   XXXXXXX.X
+    ....O....   ....OX...   ....OX.X.   .X.X.X.X.
+    .........   ...X.....   ...X.....   .XXXX.X.X
+game 8 net black margin -26.5 lost 78 cap 8
+    .........   .........   .........   .XXX.X...
+    .........   ......X..   ...X..XX.   XX.XXXXXX
+    ...X.XO..   ...XXXXX.   .OXXXXXX.   OOXXXXXX.
+    ..OOOOX..   .OOOOOXOX   .OOOOOXOX   OOOOOOXOX
+    ..XXOO...   .OXXOOOO.   .OXXOOOO.   OOXXOOOO.
+    ..X.X....   ..X.XOXO.   OOXXXOXO.   OOX.OO.OO
+    ...X.....   ...XXO...   .OOXXOXO.   OOOOOO.OO
+    .........   .....X...   .XOX.XXO.   OOOOO.OOO
+    .........   .........   ..X.X.O..   O.....O.O
+game 12 net black margin -30.5 lost 29 cap 8
+    .........   .........   .........   .X.XXOOO.
+    .........   ..X.X....   .XXXX....   XXXXXOOOO
+    ..XOX....   ..XOX.X..   X.XOX.X..   X.XOXO..O
+    .XOOXOX..   .XOOXOX..   .XOOXOXX.   XXOOXOOOO
+    ..XOOO...   .XXOOOO..   .XXOOOO.O   .XXOOOO.O
+    ...OX....   .OOOXOO..   .OOOXOOOO   XOOOOOOOO
+    ....X....   .XXOXXX..   .XXOXXXXX   .XXO.O.O.
+    .........   ...OO....   X.XOOOOO.   X.XOOOOOO
+    .........   .........   .XOO.X...   .XOOO...O
+game 60 net white margin -15.5 lost 39 cap 9
+    .........   .........   .....X...   .XXX.XXO.
+    .....O...   ....OOX..   ..XOOOXOO   X.X.X.XOO
+    .....X...   .....XX..   ..XXXXXX.   .XXXXXXXO
+    .....O...   ....XOO..   ..XOXOOO.   XXX.XOOOO
+    ....XXO..   ..O.XXO..   ..OOXXOO.   XXXXXXOOO
+    ...X.O.O.   ..OXXO.O.   .OOXXO.O.   .XXXXO.O.
+    ....O.O..   ..XXOOO..   .XXXOOO..   XXXXOOO.O
+    ...XXO...   ..OXXO...   .XOXXO...   XXXXXO.O.
+    .........   ....X....   .O.XXO...   X.XXXOO.O
+
+```

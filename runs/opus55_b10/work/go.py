@@ -172,6 +172,15 @@ def pos_score(nx2, no2, ax, ao, line):
     if no2 >= 2 and nx2 <= 1: s += 0.3         # pushing into their side
     return s + {0: -1.5, 1: -0.5}.get(line, 0.0)
 
+def LINE_PHASE_ADJ(line, phase, contested):
+    if phase == 0: return {0: -2.5, 1: -1.5}.get(line, 0.0)
+    if phase == 1: return {0: -1.0, 1: -0.5}.get(line, 0.0) if not contested else {0: -0.5}.get(line, 0.0)
+    return 0.0
+def CUT_VAL(cuts, contested):
+    v = 0.0
+    if 'our' in cuts: v += 1.5
+    if 'their' in cuts: v += 1.2
+    return v
 TRIPLE_CLASS, TRIPLE_REP = build_triple_classes()
 def build_pos_classes():
     cls, rows = {}, {}
@@ -249,21 +258,51 @@ def program():
     tcat = smap(lambda t, e: max(-20.0, tactic_score(msum(TRIPLE_REP[t], (e,)))), tW, cE).named('tcat')
     tact = nmap(lambda v: v + T_OFF, tcat).named('tact')
     # ---- positional (cheap, token based)
-    tadj = rasp.Aggregate(rasp.Select(idx, qA, GEQ), tok)     # soft token mix of on-board neighbours
-    t2 = rasp.Aggregate(rasp.Select(idx, qB, GEQ), tok)       # soft token mix within distance 2
-    def pres(col):
-        return lambda v: 1.0 if v == col else (0.05 if v == 'W' else 0.0)
-    thr = lambda x: int(x > 0.025)
-    hasx = cmap(thr, nmap(pres('x'), tadj)); haso = cmap(thr, nmap(pres('o'), tadj))
+    # ---- positional (token based, scheduled into idle attention slots)
+    rtok = rasp.Aggregate(rasp.Select(idx, qB, GT), tok)
+    dtok = rasp.Aggregate(rasp.Select(idx, qB, LT), tok)
+    tok_d2 = cmap(lambda t: t, cmap(lambda t: t, tok))                  # delay chain (depth 2)
+    t2 = rasp.Aggregate(rasp.Select(idx, qB, GEQ), tok_d2)             # soft token mix within distance 2
+    utok_d = cmap(lambda t: t, utok); dtok_d = cmap(lambda t: t, dtok)  # depth 3
+    nw = rasp.Aggregate(rasp.Select(idx, qA, GT), utok_d)               # token at (r-1, c-1)
+    ne = rasp.Aggregate(rasp.Select(idx, qB, GT), utok_d)               # (r-1, c+1)
+    sw = rasp.Aggregate(rasp.Select(idx, qA, GT), dtok_d)               # (r+1, c-1)
+    se = rasp.Aggregate(rasp.Select(idx, qB, GT), dtok_d)               # (r+1, c+1)
+    def pair(a, b):
+        return 'XX' if (a == 'x' and b == 'x') else ('OO' if (a == 'o' and b == 'o') else '-')
+    def quad(p, dg):
+        if p == 'XX' and dg == 'o': return 'our'
+        if p == 'OO' and dg == 'x': return 'their'
+        return '-'
+    qne = smap(quad, smap(pair, utok, rtok), ne); qnw = smap(quad, smap(pair, utok, ltok), nw)
+    qse = smap(quad, smap(pair, dtok, rtok), se); qsw = smap(quad, smap(pair, dtok, ltok), sw)
+    def cmb(a, b):
+        sa = set(a) if isinstance(a, tuple) else {a}; sb = set(b) if isinstance(b, tuple) else {b}
+        return tuple(sorted((sa | sb) - {'-'}))
+    cuts = smap(cmb, smap(cmb, qne, qnw), smap(cmb, qse, qsw)).named('cuts')
+    def presence(a, b):
+        return (int('x' in (a, b)), int('o' in (a, b)))
+    adj = smap(lambda p, q: (max(p[0], q[0]), max(p[1], q[1])),
+               smap(presence, ltok, rtok), smap(presence, utok, dtok))
     def dens(col):
         return lambda v: 1.0 if v == col else ({'B': 0.1, 'W': 0.4}.get(v, 0.0))
     def lev(x):
         return 0 if x < 0.05 else (1 if x < 0.25 else (2 if x < 0.7 else 3))
     nx2 = cmap(lev, nmap(dens('x'), t2)); no2 = cmap(lev, nmap(dens('o'), t2))
-    adj = smap(lambda a, b: (a, b), hasx, haso)
     e2 = smap(lambda a, b: (a, b), nx2, no2)
     sit = smap(lambda e, a: POS_CLASS[(e[0], e[1], a[0], a[1])], e2, adj)
     lin = cmap(lambda i: 'P' if i >= 81 else line_of(i), idx)
     pcat = smap(lambda c, l: PASS_LOGIT if l == 'P' else POS_ROW[c][l], sit, lin).named('pcat')
-    pos = nmap(lambda v: v + P_OFF, pcat).named('pos')
+    # game phase from the number of stones on the board
+    isst = nmap(lambda t: 1.0 if t in ('x', 'o') else 0.0, tok)
+    isst_d = nmap(lambda v: v, nmap(lambda v: v, nmap(lambda v: v, isst)))   # delay (depth 4)
+    q81 = cmap(lambda q: 81, qA)
+    frac = rasp.numerical(rasp.Aggregate(rasp.Select(idx, q81, LT), isst_d, default=0))
+    phase = cmap(lambda x: 0 if x < 0.16 else (1 if x < 0.4 else 2), frac).named('phase')
+    contested = smap(lambda e, a: int(e[0] > 0 and e[1] > 0), e2, adj)
+    lph = smap(lambda l, p: 'P' if l == 'P' else (l, p), lin, phase)
+    adjcat = smap(lambda lp, cont: 0.0 if lp == 'P' else LINE_PHASE_ADJ(lp[0], lp[1], cont), lph, contested)
+    cutcat = smap(lambda c, cont: CUT_VAL(c, cont), cuts, contested)
+    extra = add(nmap(lambda v: v + 6.0, adjcat), nmap(lambda v: v + 3.0, cutcat))
+    pos = add(nmap(lambda v: v + P_OFF, pcat), extra).named('pos')
     return add(tact, pos).named('logit')

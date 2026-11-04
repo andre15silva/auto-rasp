@@ -167,6 +167,8 @@ TAC_CAP1, TAC_CAP2, TAC_EYE, TAC_SA, TAC_ESC, TAC_ATK, TAC_DEF = 20, 26, -25, -2
 BIG_CAP, BIG_ESC, BIG_DEF, BIG_ATK = 6, 8, 4, 3
 TAC_ESC_LADDER = 3
 TAC_KO = -15
+MKEYE = 4.0
+STEAL = 3.0
 PASSV = 0.0
 GAINW = 8.0
 DANGW = 20.0
@@ -340,13 +342,48 @@ def program():
     zpen = num(rasp.Map(lambda z: {'own': 2.0}.get(z, 0.0), zoneP)).named('zpen')
     DTH = 0.05
     dang = num(rasp.Map(lambda v: {'O': 1.0 - DTH, 'X': -1.0 - DTH}.get(v, -DTH), InfM)).named('dang')
+
+    # ---- eye making / eye stealing ----
+    def pred_aeye(col):
+        def p(k, q):
+            if k == 0:
+                if q == col or q == 'P': return 0.1 + 3.2 * 0.5
+                if q == 'E': return 0.1 - 3.2 * 0.5
+                return 0.1 - 3.2 * 0.5 - 8.0
+            if k == 1: return 0.6
+            return None
+        return p
+    aeX = cat(rasp.Aggregate(mksel(idx, KH, pred_aeye('X')), ynmap)).named('aeX')
+    aeO = cat(rasp.Aggregate(mksel(idx, KH, pred_aeye('O')), ynmap)).named('aeO')
+    aeXk = cat(rasp.SequenceMap(lambda kd, y: 'AE' if (kd == 'E' and y == 'yes') else 'n', kind, aeX)).named('aeXk')
+    aeOk = cat(rasp.SequenceMap(lambda kd, y: 'AO' if (kd == 'E' and y == 'yes') else 'n', kind, aeO)).named('aeOk')
+    HE = cat(rasp.Aggregate(sel_hist(), aeXk)).named('HE')
+    HO = cat(rasp.Aggregate(sel_hist(), aeOk)).named('HO')
+    def pred_any(target):
+        def p(k, q):
+            if k == 0: return (0.1 + 3.2) if q == target else 0.1
+            if k == 1: return 0.6
+            return None
+        return p
+    mkE = cat(rasp.Aggregate(mksel(idx, HE, pred_any('AE')), ynmap)).named('mkE')
+    stE = cat(rasp.Aggregate(mksel(idx, HO, pred_any('AO')), ynmap)).named('stE')
+    eyeT = cat(rasp.SequenceMap(lambda a, b: (a == 'yes', b == 'yes'), mkE, stE)).named('eyeT')
+    def feye(e, z):
+        mk, st = e
+        v = 0.0
+        if mk and z in ('neu', 'opp'): v += MKEYE
+        if st and z == 'neu': v += STEAL
+        return v
+    eyeV = cat(rasp.SequenceMap(feye, eyeT, zoneP)).named('eyeV')
+    eyeR = num(rasp.Map(lambda v: float(v), eyeV)).named('eyeR')
     passv = num(rasp.Map(lambda kd: PASSV if kd == 'P' else 0.0, kind)).named('passv')
 
     a1 = num(rasp.LinearSequenceMap(tacP, tacN, 1.0, -1.0)).named('a1')
     c1 = num(rasp.LinearSequenceMap(bigR2, contR, 1.0, 1.0)).named('c1')
     a2 = num(rasp.LinearSequenceMap(gainR, zpen, GAINW, -1.0)).named('a2')
     a3 = num(rasp.LinearSequenceMap(linev, dang, 1.0, -DANGW)).named('a3')
-    d1 = num(rasp.LinearSequenceMap(a2, a3, 1.0, 1.0)).named('d1')
+    d0 = num(rasp.LinearSequenceMap(a2, a3, 1.0, 1.0)).named('d0')
+    d1 = num(rasp.LinearSequenceMap(d0, eyeR, 1.0, 1.0)).named('d1')
     e1 = num(rasp.LinearSequenceMap(a1, c1, 1.0, 1.0)).named('e1')
     out = num(rasp.LinearSequenceMap(e1, d1, SCALE, SCALE)).named('logit')
     return out
