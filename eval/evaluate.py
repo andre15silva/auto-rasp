@@ -107,10 +107,12 @@ def main():
     ap.add_argument("--mlp")
     ap.add_argument("--name")
     ap.add_argument("--games", type=int, default=2000)
+    ap.add_argument("--ref-games", type=int, default=None, help="games vs the Astra reference networks "
+                    "(default: --games)")
     ap.add_argument("--workers", type=int, default=2)
     ap.add_argument("--opponents", default="ppo_s0,ppo_s2,random,astra_b0,astra_b10,astra_b25,astra_b50")
     args = ap.parse_args()
-    out = {"games": args.games}
+    out = {"games": args.games, "ref_games": args.ref_games or args.games}
     if args.run:
         run_dir = os.path.abspath(args.run)
         name = args.name or os.path.basename(run_dir.rstrip("/"))
@@ -125,7 +127,8 @@ def main():
     t0 = time.time()
     per, positions = {}, None
     with cf.ProcessPoolExecutor(args.workers, mp_context=mp.get_context("spawn")) as ex:
-        futs = [ex.submit(job, spec, o, args.games, 777 + j, o == "ppo_s0" and spec[0] == "tracr")
+        ng = lambda o: args.ref_games if (o.startswith("astra_") and args.ref_games) else args.games  # noqa: E731
+        futs = [ex.submit(job, spec, o, ng(o), 777 + j, o == "ppo_s0" and spec[0] == "tracr")
                 for j, o in enumerate(opps)]
         for f in cf.as_completed(futs):
             o, s, pos = f.result()

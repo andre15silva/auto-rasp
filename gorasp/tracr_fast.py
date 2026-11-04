@@ -4,7 +4,7 @@ tracr_policy.TracrModel unchanged, so nothing the writer observed changes mid-ru
 The only difference is flush-to-zero: queries, keys, attention weights and attention outputs below float32's smallest normal
 number (~1.2e-38) are set to 0. Subnormal floats are extremely slow on x86 CPUs, and Tracr's own JAX/XLA execution
 on CPU flushes them to zero as well, so this is, if anything, closer to Tracr's arithmetic. The logits are checked
-to be identical to TracrModel's on every evaluated network (eval/evaluate.py)."""
+against TracrModel's on every evaluated network (eval/evaluate.py); they agree up to float32 summation order."""
 import math
 
 import numpy as np
@@ -20,8 +20,9 @@ class FastTracrModel(TracrModel):
         k = x[:, h["rk"]] @ h["k"] + h["bk"]
         q[np.abs(q) < TINY] = 0.0
         k[np.abs(k) < TINY] = 0.0
-        q, k = q.reshape(n, T, -1), k.reshape(n, T, -1)
-        logit = np.matmul(q, k.transpose(0, 2, 1)) * np.float32(1.0 / math.sqrt(self.K))
+        q = q.reshape(n, T, -1)
+        kt = np.ascontiguousarray(k.reshape(n, T, -1).transpose(0, 2, 1))  # a contiguous operand keeps BLAS
+        logit = np.matmul(q, kt) * np.float32(1.0 / math.sqrt(self.K))
         logit -= logit.max(axis=-1, keepdims=True)
         w = np.exp(np.maximum(logit, -87.0))
         w[logit <= -87.0] = 0.0

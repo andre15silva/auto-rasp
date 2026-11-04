@@ -1,0 +1,40 @@
+OUTPUT of Python run 97 of at most 120:
+```
+game 11 our move ply 86 capture at 72 X = us
+    .OXXX.X..
+    OOOXXX...
+    OOOX.XX.X
+    OXOOXX...
+    XXOOXX.X.
+    X.XOXXX.X
+    XXXOXOXXX
+    OXOOOOOOO
+    *OOOOO.O.
+   O group size 1 libs [72] rows [7] cols [0]
+   prev opponent move 63
+game 83 our move ply 95 capture at 1 X = us
+    O*OOO.OOO
+    XOOOOXO.O
+    XXXO.XOOO
+    .XOOOOOOO
+    XXXXOXXXX
+    OOOOOOOOX
+    OO.OOXOOX
+    .O.OOXXXX
+    O..OOX.X.
+   O group size 1 libs [1] rows [0] cols [0]
+   prev opponent move 0
+game 60 our move ply 89 capture at 52 X = us
+    .XOOOOOOX
+    X.XXOOOXX
+    .X.XOXXXX
+    XXXOOOXX.
+    X.XXXOXOX
+    XX..XOO*O
+    .XXXXOOO.
+    .XOOO.O.O
+    .X.XO.OO.
+   O group size 1 libs [52] rows [4] cols [7]
+   prev opponent move 43
+
+```

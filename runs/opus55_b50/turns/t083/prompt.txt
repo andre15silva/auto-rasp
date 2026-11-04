@@ -1,0 +1,260 @@
+OUTPUT of Python run 77 of at most 120:
+```
+class Linear(VectorFunction):
+  """A linear function."""
+
+  def __init__(
+      self,
+      input_space: VectorSpaceWithBasis,
+      output_space: VectorSpaceWithBasis,
+      matrix: np.ndarray,
+  ):
+    """Initialises.
+
+    Args:
+      input_space: The input vector space.
+      output_space: The output vector space.
+      matrix: a [input, output] matrix acting in a (sorted) basis.
+    """
+    self.input_space = input_space
+    self.output_space = output_space
+    self.matrix = matrix
+
+  def __post_init__(self) -> None:
+    output_size, input_size = self.matrix.shape
+    assert input_size == self.input_space.num_dims
+    assert output_size == self.output_space.num_dims
+
+  def __call__(self, x: VectorInBasis) -> VectorInBasis:
+    if x not in self.input_space:
+      raise TypeError(f"x={x} not in self.input_space={self.input_space}.")
+    return self.output_space.make_vector(x.magnitudes @ self.matrix)
+
+  @classmethod
+  def from_action(
+      cls,
+      input_space: VectorSpaceWithBasis,
+      output_space: VectorSpaceWithBasis,
+      action: Callable[[BasisDirection], VectorInBasis],
+  ) -> "Linear":
+    """from_action(i, o)(action) creates a Linear."""
+
+    matrix = np.zeros((input_space.num_dims, output_space.num_dims))
+    for i, direction in enumerate(input_space.basis):
+      out_vector = action(direction)
+      if out_vector not in output_space:
+        raise TypeError(
+            f"image of {direction} from input_space={input_space} "
+            f"is not in output_space={output_space}"
+        )
+      matrix[i, :] = out_vector.magnitudes
+
+    return Linear(input_space, output_space, matrix)
+
+  @classmethod
+  def combine_in_parallel(cls, fns: Sequence["Linear"]) -> "Linear":
+    """Combines multiple parallel linear functions into a single one."""
+    joint_input_space = bases.join_vector_spaces(
+        *[fn.input_space for fn in fns]
+    )
+    joint_output_space = bases.join_vector_spaces(
+        *[fn.output_space for fn in fns]
+    )
+
+    # Cache properties for the parents to avoid recomputing for each child.
+    # Since the index_by_direction cached_property of the children is needed
+    # within the action, it would be computed for every single child. This is
+    # redundant as they share the same basis. By accessing the properties here,
+    # we ensure they are only computed once and passed on to the children.
+    _ = joint_input_space.index_by_direction
+    _ = joint_output_space.index_by_direction
+
+    def action(x: bases.BasisDirection) -> bases.VectorInBasis:
+      out = joint_output_space.null_vector()
+      for fn in fns:
+        if x in fn.input_space:
+          x_vec = fn.input_space.vector_from_basis_direction(x)
+          applied = fn(x_vec)
+          out = out.add_directions(applied)
+      return out
+
+    return cls.from_action(joint_input_space, joint_output_space, action)
+
+
+def project(
+    from_space: VectorSpaceWithBasis,
+    to_space: VectorSpaceWithBasis,
+) -> Linear:
+  """Creates a projection."""
+
+  def action(direction: bases.BasisDirection) -> VectorInBasis:
+    if direction in to_space:
+      return to_space.vector_from_basis_direction(direction)
+    else:
+      return to_space.null_vector()
+
+  return Linear.from_action(from_space, to_space, action=action)
+
+
+@dataclasses.dataclass
+class ScalarBilinear:
+  """A scalar-valued bilinear operator."""
+
+  left_space: VectorSpaceWithBasis
+  right_space: VectorSpaceWithBasis
+  matrix: np.ndarray
+
+  def __post_init__(self):
+    """Ensure matrix acts in sorted ba
+ual_space, self.fst.input_space)(x)
+    hidden = self.fst(x)
+    hidden = relu(hidden)
+    out = self.snd(hidden)
+    return project(self.snd.output_space, self.residual_space)(out)
+
+  @classmethod
+  def combine_in_parallel(cls, mlps: Sequence["MLP"]) -> "MLP":
+    fst = vectorspace_fns.Linear.combine_in_parallel(
+        [block.fst for block in mlps])
+    snd = vectorspace_fns.Linear.combine_in_parallel(
+        [block.snd for block in mlps])
+    return cls(fst=fst, snd=snd, residual_space=None)
+
+
+# Block that fits into a half-layer, without residual connections.
+HalfLayerBlock = Union[MLP, AttentionHead, MultiAttentionHead]
+
+
+@dataclasses.dataclass
+class SeriesWithResiduals(Block):
+  """A series of blocks with residual connections."""
+  blocks: List[HalfLayerBlock]
+
+  def __post_init__(self):
+    spaces = [block.residual_space for block in self.blocks]
+    self.residual_space = bases.join_vector_spaces(*spaces)
+
+  def apply(self, x: bases.VectorInBasis) -> bases.VectorInBasis:
+    x = x.project(self.residual_space)
+    for block in self.blocks:
+      x_in = x.project(block.residual_space)
+      x_out = block.apply(x_in).project(self.residual_space)
+      x = x + x_out
+    return x
+
+----- def join_vector_spaces
+def join_vector_spaces(*vs: VectorSpaceWithBasis) -> VectorSpaceWithBasis:
+  """Joins a set of vector spaces allowing them to overlap.
+
+  Assumes the basis elements of all input vector spaces are
+  orthogonal to each other. Does not maintain the order of the bases but
+  sorts them.
+
+  Args:
+    *vs: the vector spaces to sum.
+
+  Returns:
+    the combined vector space.
+  """
+  # Take the union of all the bases:
+  total_basis = list(set().union(*[set(v.basis) for v in vs]))
+  total_basis = sorted(total_basis)
+  return VectorSpaceWithBasis(total_basis)
+
+
+def ensure_dims(
+    vs: VectorSpaceWithBasis,
+    num_dims: int,
+    name: str = "vector space",
+) -> None:
+  """Raises ValueError if vs has t
+----- def __contains__
+def __contains__(self, item: Union[VectorInBasis, BasisDirection]) -> bool:
+    if isinstance(item, BasisDirection):
+      return item in self.basis_set
+    # item is a VectorInBasis, and its basis is sorted
+    # So, it's enough to compare the lists
+    return self.basis == item.basis_directions
+
+  def issubspace(self, other: "VectorSpaceWithBasis") -> bool:
+    return self.basis_set.issubset(other.basis_set)
+
+  def basis_vectors(self) -> Sequence[VectorInBasis]:
+    basis_vector_magnitudes = list(np.eye(self.num_dims))
+    return [self.make_vector(m) for m in basis_vector_magnitudes]
+
+  def vector_from_basis_direction(
+      self, basis_direction: BasisDirection
+  ) -> VectorInBasis:
+    i
+----- def project
+def project(
+      self,
+      basis_container: Union["VectorSpaceWithBasis", Sequence[BasisDirection]],
+  ) -> "VectorInBasis":
+    """Projects to the basis."""
+    if isinstance(basis_container, VectorSpaceWithBasis):
+      basis_directions = basis_container.basis
+    else:
+      basis_directions = basis_container
+    components = []
+
+    index_by_direction = self.index_by_direction
+    for direction in basis_directions:
+      if direction in self.basis_set:
+        components.append(self.magnitudes[..., index_by_direction[direction]])
+      else:
+        components.append(np.zeros_like(self.magnitudes[..., 0]))
+    if isinstance(basis_container, VectorSpaceWithBasis):
+      # If VectorSpa
+----- def vector_from_basis_direction
+def vector_from_basis_direction(
+      self, basis_direction: BasisDirection
+  ) -> VectorInBasis:
+    i = self.index_by_direction[basis_direction]
+    return self.make_vector(np.eye(self.num_dims)[i])
+
+  def null_vector(self) -> VectorInBasis:
+    return self.make_vector(np.zeros(self.num_dims))
+
+  @classmethod
+  def from_names(cls, names: Sequence[Name]) -> "VectorSpaceWithBasis":
+    """Creates a VectorSpace from a list of names for its basis directions."""
+    return cls([BasisDirection(n) for n in names])
+
+  @classmethod
+  def from_values(
+      cls,
+      name: Name,
+      values: Iterable[Value],
+  ) -> "VectorSpaceWithBasis":
+    """Creates a VectorSpace from a list of values for its
+----- def direct_sum
+def direct_sum(*vs: VectorSpaceWithBasis) -> VectorSpaceWithBasis:
+  """Create a direct sum of the vector spaces.
+
+  Assumes the basis elements of all input vector spaces are
+  orthogonal to each other. Maintains the order of the bases.
+
+  Args:
+    *vs: the vector spaces to sum.
+
+  Returns:
+    the combined vector space.
+
+  Raises:
+    Value error in case of overlapping bases.
+  """
+  # Take the union of all the bases:
+  total_basis = sum([v.basis for v in vs], [])
+
+  if len(total_basis) != len(set(total_basis)):
+    raise ValueError("Overlapping bases!")
+
+  return VectorSpaceWithBasis(total_basis)
+
+
+def join_vector_spaces(*vs: VectorSpaceWithBasis) -> VectorSpaceWithBasis:
+  """Joins a set
+
+```
