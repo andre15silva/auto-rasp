@@ -1,0 +1,8 @@
+OUTPUT of Python run 70 of at most 120:
+```
+compiled: {'layers': 30, 'heads': 4, 'key_size': 85, 'mlp_hidden_size': 478, 'residual_dims': 1449, 'dense_params': 100938810, 'nonzero_params': 25561, 'mlp_exactness': 1000000, 'compile_seconds': 129.7, 'seconds_per_1000_positions': 37.76, 'output_label': 'logit_1'}
+{'layers': 30, 'heads': 4, 'key_size': 85, 'mlp_hidden_size': 478, 'residual_dims': 1449, 'dense_params': 100938810, 'nonzero_params': 25561, 'mlp_exactness': 1000000, 'compile_seconds': 129.7, 'seconds_per_1000_positions': 37.76, 'output_label': 'logit_1'}
+[('ridc_144', 83), ('ridr_155', 83), ('sequence_map_154', 83), ('sequence_map_164', 83), ('indices', 82), ('map_23', 82), ('map_33', 82), ('sequence_map_7', 52), ('pcat_9', 36), ('sequence_map_12', 36), ('tcat_4', 29), ('sequence_map_16', 18), ('nrc_24', 16), ('sequence_map_26', 16), ('sequence_map_28', 16), ('aggregate_117', 11), ('aggregate_129', 11), ('aggregate_145', 11), ('aggregate_148', 11), ('aggregate_156', 11), ('aggregate_158', 11), ('aggregate_165', 11), ('aggregate_166', 11), ('aggregate_172', 11), ('aggregate_173', 11)]
+630 819 174
+
+```

@@ -295,7 +295,8 @@ def program():
     pcat = smap(lambda c, l: PASS_LOGIT if l == 'P' else POS_ROW[c][l], sit, lin).named('pcat')
     # game phase from the number of stones on the board
     isst = nmap(lambda t: 1.0 if t in ('x', 'o') else 0.0, tok)
-    isst_d = nmap(lambda v: v, nmap(lambda v: v, nmap(lambda v: v, isst)))   # delay (depth 4)
+    isst_d = isst
+    for _ in range(6): isst_d = nmap(lambda v: v, isst_d)               # delay (aggregate lands at depth 8)
     q81 = cmap(lambda q: 81, qA)
     frac = rasp.numerical(rasp.Aggregate(rasp.Select(idx, q81, LT), isst_d, default=0))
     phase = cmap(lambda x: 0 if x < 0.16 else (1 if x < 0.4 else 2), frac).named('phase')

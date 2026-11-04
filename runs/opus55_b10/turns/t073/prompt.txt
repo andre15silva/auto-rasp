@@ -1,0 +1,12 @@
+OUTPUT of Python run 69 of at most 120:
+```
+1 198 [('map_23', 82), ('map_33', 82), ('map_185', 10), ('map_186', 10), ('map_17', 6), ('map_119', 5)]
+5 213 [('sequence_map_38', 25), ('sequence_map_39', 25), ('sequence_map_72', 25), ('sequence_map_74', 25), ('sequence_map_76', 25), ('sequence_map_78', 25)]
+11 527 [('phase_40', 165), ('sequence_map_152', 164), ('sequence_map_161', 164), ('sequence_map_26', 16), ('sequence_map_41', 9), ('sequence_map_42', 9)]
+12 332 [('ridc_144*', 166), ('ridr_153*', 166)]
+13 162 [('sequence_map_16', 64), ('sequence_map_29', 64), ('sequence_map_28', 18), ('cuts_30', 16)]
+49 288 [('sequence_map_7', 288)]
+51 416 [('tcat_4', 416)]
+num layers 28
+
+```

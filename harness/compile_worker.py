@@ -39,12 +39,17 @@ def main(timing=True):
     res = {"ok": True, "stats": meta["stats"], "mlp_exactness": exact, "compile_seconds": round(t_compile, 1),
            "output_label": meta["output_label"]}
     if timing:
+        # best of 3: the machine is shared by concurrent runs, and contention can only make a timing slower
         tm = TP.TracrModel("/out/model.npz")
         toks = np.array([["."] * 81 + ["B"]] * 128)
         tm.logits_from_tokens(toks[:8])
-        t1 = time.time()
-        tm.logits_from_tokens(toks)
-        res["seconds_per_1000_positions"] = round((time.time() - t1) * 1000 / 128, 2)
+        times = []
+        for _ in range(3):
+            t1 = time.time()
+            tm.logits_from_tokens(toks)
+            times.append((time.time() - t1) * 1000 / 128)
+        res["seconds_per_1000_positions"] = round(min(times), 2)
+        res["timings_per_1000_positions"] = [round(t, 2) for t in times]
     rin = "/out/rasp_inputs.json"
     if os.path.exists(rin):
         rows = json.load(open(rin))

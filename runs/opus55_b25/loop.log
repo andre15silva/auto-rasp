@@ -210,3 +210,7 @@
 [2026-11-04T21:49:40+0000] turn 104: resume (2,621 chars)
 [2026-11-04T21:50:48+0000] turn 104: python; runs 88, passes 17/25, tool-free True
 [2026-11-04T21:50:48+0000] turn 105: resume (317 chars)
+[2026-11-04T21:57:42+0000] turn 105: error; runs 88, passes 17/25, tool-free True
+[2026-11-04T21:57:42+0000] turn 106: resume (183 chars)
+[2026-11-04T21:58:28+0000] turn 106: python; runs 89, passes 17/25, tool-free True
+[2026-11-04T21:58:28+0000] turn 107: resume (573 chars)
