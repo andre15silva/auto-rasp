@@ -7,6 +7,16 @@ from gowin import *
 
 MLP_EXACTNESS = 100
 
+def P_sz(k, q):
+    if q == PASSI: return 2.0 if k == "P" else -2.0
+    if k == q or k == "P": return 2.0
+    return -2.0
+
+def P_big(k, q):
+    if k == 0: return 100.0 if q == "c" else 0.0
+    if k == 1: return 250.0 if q == "d" else 0.0
+    return -10.0
+
 def program():
     tok, idx = rasp.tokens, rasp.indices
     isx = rasp.Map(lambda t: 1 if t == "x" else 0, tok)
@@ -48,8 +58,18 @@ def program():
     GLx = rasp.Aggregate(rasp.Select(Kx, Lx, P_group2), E)
     GLo = rasp.Aggregate(rasp.Select(Ko, Lo, P_group2), E)
 
-    AtX = rasp.Aggregate(rasp.Select(idx, GLx, P_atari), atval)
-    AtO = rasp.Aggregate(rasp.Select(idx, GLo, P_atari), atval)
+    szvx = rasp.Map(lambda t: "c" if t == "x" else "d", tok)
+    szvo = rasp.Map(lambda t: "c" if t == "o" else "d", tok)
+    AtX0 = rasp.Aggregate(rasp.Select(idx, GLx, P_atari), atval)
+    AtO0 = rasp.Aggregate(rasp.Select(idx, GLo, P_atari), atval)
+    szvx2 = rasp.SequenceMap(lambda a, b: a, szvx, AtX0)
+    szvo2 = rasp.SequenceMap(lambda a, b: a, szvo, AtO0)
+    SZx = rasp.Aggregate(rasp.Select(Kx, Lx, P_sz), szvx2)
+    SZo = rasp.Aggregate(rasp.Select(Ko, Lo, P_sz), szvo2)
+    bigv = rasp.Map(lambda i: "big" if i == 0 else "small", idx)
+    BIGx = rasp.Aggregate(rasp.Select(idx, SZx, P_big), bigv)
+    BIGo = rasp.Aggregate(rasp.Select(idx, SZo, P_big), bigv)
+    AtX, AtO = AtX0, AtO0
     M1x = rasp.Aggregate(rasp.Select(idx, GLx, P_minlib), idx)
     M1o = rasp.Aggregate(rasp.Select(idx, GLo, P_minlib), idx)
 
@@ -74,12 +94,18 @@ def program():
         return "edge"
     st1 = rasp.SequenceMap(f1, tok, AtX)
     st2 = rasp.SequenceMap(lambda s, a: ("o1" if a == "A" else "oS") if s == "o" else s, st1, AtO)
+    BIGxo = rasp.SequenceMap(lambda a, b: "xb" if a == "big" else ("ob" if b == "big" else "n"), BIGx, BIGo)
+    def fb(s, b):
+        if s == "x1": return "x1b" if b == "xb" else "x1s"
+        if s == "o1": return "o1b" if b == "ob" else "o1s"
+        return s
+    st2b = rasp.SequenceMap(fb, st2, BIGxo)
     T2xo = rasp.SequenceMap(lambda a, b: "x2" if a == "x2" else ("o2" if b == "o2" else "n"), T2x, T2o)
     def f3(s, t):
         if s == "xS": return "x2" if t == "x2" else "x3"
         if s == "oS": return "o2" if t == "o2" else "o3"
         return s
-    st = rasp.SequenceMap(f3, st2, T2xo)
+    st = rasp.SequenceMap(f3, st2b, T2xo)
     hist = rasp.Aggregate(sel_open, st)
 
     vals = []

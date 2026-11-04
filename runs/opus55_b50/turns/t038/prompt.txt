@@ -1,0 +1,6 @@
+OUTPUT of Python run 37 of at most 120:
+```
+prop {'dense': 16.130016, 'rc': np.float64(0.379355), 'rows': np.float64(1.285087), 'cols': np.float64(2.046725), 'L': 14}
+prop_fix {'dense': 6.524, 'rc': np.float64(0.203601), 'rows': np.float64(0.675557), 'cols': np.float64(0.621441), 'L': 14}
+
+```

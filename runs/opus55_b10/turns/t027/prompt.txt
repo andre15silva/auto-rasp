@@ -1,0 +1,22 @@
+OUTPUT of Python run 26 of at most 120:
+```
+tcat_4 31 sum 0.9824 max 0.9824 nonzero [('tcat_4:40.0', 0.9824)]
+   @81 sum 0.9762 [('tcat_4:40.0', 0.9762)]
+pcat_5 22 sum 0.997 max 0.997 nonzero [('pcat_5:12.0', 0.997)]
+   @81 sum 0.0 []
+cst_13 8 sum 1.0 max 1.0 nonzero [('cst_13:E', 1.0)]
+   @81 sum 1.0 [('cst_13:N', 1.0)]
+lcls_22 4 sum 1.0 max 1.0 nonzero [('lcls_22:1', 1.0)]
+   @81 sum 1.0 [('lcls_22:0', 1.0)]
+nr_29 4 sum 1.0 max 1.0 nonzero [('nr_29:1', 1.0)]
+   @81 sum 1.0 [('nr_29:0', 1.0)]
+cN_18 8 sum 0.9956 max 0.9956 nonzero [('cN_18:E', 0.9956)]
+   @81 sum 0.9956 [('cN_18:E', 0.0016), ('cN_18:N', 0.994)]
+tokens 7 sum 1.0 max 1.0 nonzero [('tokens:.', 1.0)]
+   @81 sum 1.0 [('tokens:B', 1.0)]
+one 1 sum 1.0 max 1.0 nonzero [('one', 1.0)]
+   @81 sum 1.0 [('one', 1.0)]
+indices 82 sum 1.0 max 1.0 nonzero [('indices:40', 1.0)]
+   @81 sum 1.0 [('indices:81', 1.0)]
+
+```

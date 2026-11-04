@@ -1,0 +1,8 @@
+OUTPUT of Python run 32 of at most 120:
+```
+
+import math
+from tracr.rasp import rasp
+from gocore import 
+
+```

@@ -1,0 +1,134 @@
+OUTPUT of Python run 27 of at most 120:
+```
+--- compiler/assemble.py:98
+def _get_model_config_and_module_names(
+    craft_model: transformers.SeriesWithResiduals
+) -> Tuple[model.TransformerConfig, List[str]]:
+  """Returns model config and locations (in params) for halflayers."""
+
+  multi_attn_heads: List[List[transformers.AttentionHead]] = []
+  mlps: List[transformers.MLP] = []
+  module_names: List[str] = []
+
+  candidate_module_names = []
+  for layer in range(len(craft_model.blocks)):
+    candidate_module_names.append(f"transformer/layer_{layer}/attn")
+    candidate_module_names.append(f"transformer/layer_{layer}/mlp")
+  candidate_module_names = iter(candidate_module_names)
+
+  for module in craft_model.blocks:
+    if isinstance(module, transformers.MLP):
+      mlps.append(module)
+      layer_type = "mlp"
+    else:
+      multi_attn_heads.append(list(module.as_multi().heads()))
+      layer_type = "attn"
+    # Find next layer with the necessary type. Modules in-between, that are not
+    # added to module_names will be disabled later by setting all weights to 0.
+    module_name = next(candidate_module_names)
+    while layer_type not in module_name:
+      module_name = next(candidate_module_names)
+    module_names.append(module_name)
+
+  num_layers = int(module_names[-1].split("_")[1].split("/")[0]) + 1
+  heads = sum(multi_attn_heads, [])
+
+  if multi_attn_heads:
+    num_heads = max(len(heads) for heads in multi_attn_heads)
+    key_size = max(max(head.w_qk.matrix.shape) for head in heads)
+  else:
+    num_heads, key_size = 1, 1
+
+  if mlps:
+    mlp_hidden_size = max(mlp.fst.output_space.num_dims for mlp in mlps)
+  else:
+    mlp_hidden_size = 1
+
+  model_config = model.TransformerConfig(
+      num_heads=num_heads,
+--- compiler/assemble.py:132
+  if multi_attn_heads:
+    num_heads = max(len(heads) for heads in multi_attn_heads)
+    key_size = max(max(head.w_qk.matrix.shape) for head in heads)
+  else:
+    num_heads, key_size = 1, 1
+
+  if mlps:
+    mlp_hidden_size = max(mlp.fst.output_space.num_dims for mlp in mlps)
+  else:
+    mlp_hidden_size = 1
+
+  model_config = model.TransformerConfig(
+      num_heads=num_heads,
+      num_layers=num_layers,
+      key_size=key_size,
+      mlp_hidden_size=mlp_hidden_size,
+      dropout_rate=0.,
+      activation_function=jax.nn.relu,
+      layer_norm=False,
+      causal=False,
+  )
+
+  return model_config, module_names
+
+
+def _make_embedding_modules(
+    residual_space: bases.VectorSpaceWithBasis,
+--- compiler/assemble.py:287
+          module.snd.matrix @ snd_output_to_residual)
+    else:  # Attention module
+      query, key, value, linear = [], [], [], []
+      for head in module.as_multi().heads():
+        key_size = head.w_qk.matrix.shape[1]
+        query_mat = np.zeros((residual_space.num_dims, model_config.key_size))
+        residual_to_query = project(head.w_qk.left_space)
+        query_mat[:, :key_size] = residual_to_query @ head.w_qk.matrix
+        query.append(query_mat)
+
+        key_mat = np.zeros((residual_space.num_dims, model_config.key_size))
+        key_mat[:, :key_size] = project(head.w_qk.right_space)
+        key.append(key_mat)
+
+        value_size = head.w_ov.matrix.shape[1]
+        value_mat = np.zeros((residual_space.num_dims, model_config.key_size))
+        residual_to_ov_input = project(head.w_ov.input_space)
+        value_mat[:, :value_size] = residual_to_ov_input @ head.w_ov.matrix
+        value.append(value_mat)
+
+        linear_mat = np.zeros((model_config.key_size, residual_space.num_dims))
+        linear_mat[:value_size, :] = project(head.w_ov.output_space).T
+        linear.append(linear_mat)
+
+      # Fill up heads that are not used with zero weights
+      for _ in range(model_config.num_heads - module.as_multi().num_heads):
+        query.append(np.zeros_like(query[0]))
+--- compiler/assemble.py:289
+      query, key, value, linear = [], [], [], []
+      for head in module.as_multi().heads():
+        key_size = head.w_qk.matrix.shape[1]
+        query_mat = np.zeros((residual_space.num_dims, model_config.key_size))
+        residual_to_query = project(head.w_qk.left_space)
+        query_mat[:, :key_size] = residual_to_query @ head.w_qk.matrix
+        query.append(query_mat)
+
+        key_mat = np.zeros((residual_space.num_dims, model_config.key_size))
+        key_mat[:, :key_size] = project(head.w_qk.right_space)
+        key.append(key_mat)
+
+        value_size = head.w_ov.matrix.shape[1]
+        value_mat = np.zeros((residual_space.num_dims, model_config.key_size))
+        residual_to_ov_input = project(head.w_ov.input_space)
+        value_mat[:, :value_size] = residual_to_ov_input @ head.w_ov.matrix
+        value.append(value_mat)
+
+        linear_mat = np.zeros((model_config.key_size, residual_space.num_dims))
+        linear_mat[:value_size, :] = project(head.w_ov.output_space).T
+        linear.append(linear_mat)
+
+      # Fill up heads that are not used with zero weights
+      for _ in range(model_config.num_heads - module.as_multi().num_heads):
+        query.append(np.zeros_like(query[0]))
+        key.append(np.zeros_like(key[0]))
+        value.append(np.zeros_like(value[0]))
+
+```
