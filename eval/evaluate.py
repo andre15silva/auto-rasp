@@ -25,10 +25,10 @@ sys.path.insert(0, REPO)
 
 def make_subject(spec):
     from gorasp.policies import MLPPolicy, RandomPolicy
-    from gorasp.tracr_policy import TracrPolicy
+    from gorasp.tracr_fast import FastTracrPolicy
     kind, path = spec
     if kind == "tracr":
-        p = TracrPolicy(path)
+        p = FastTracrPolicy(path)
         p.model.max_rows = 8192
         return p
     if kind == "mlp":
@@ -50,6 +50,19 @@ def job(spec, opp, games, seed, collect):
     s["seconds"] = round(time.time() - t, 1)
     pos = r.get("positions") if collect else None
     return opp, s, pos
+
+
+def check_fast(model_path, positions, n=256, seed=1):
+    """The evaluation's flush-to-zero runtime vs the reference runtime used in the passes, on real positions."""
+    from gorasp import go
+    from gorasp.tracr_fast import FastTracrModel
+    from gorasp.tracr_policy import TracrModel
+    boards, colors, _ = positions
+    idx = np.random.default_rng(seed).choice(len(boards), size=min(n, len(boards)), replace=False)
+    toks = go.tokens(boards[idx], colors[idx])
+    a = TracrModel(model_path, max_rows=8192).logits_from_tokens(toks)
+    b = FastTracrModel(model_path, max_rows=8192).logits_from_tokens(toks)
+    return {"positions": int(len(toks)), "max_abs_logit_diff": float(np.abs(a - b).max())}
 
 
 def faithfulness(run_dir, positions, n=256, seed=0):
@@ -125,6 +138,8 @@ def main():
     out["main"] = float(np.mean([per[o]["score"] for o in main_opps])) if main_opps else None
     out["seconds"] = round(time.time() - t0, 1)
     if spec[0] == "tracr" and positions is not None:
+        out["fast_runtime_check"] = check_fast(spec[1], positions)
+        print("fast runtime vs reference:", out["fast_runtime_check"], flush=True)
         out["faithfulness"] = faithfulness(run_dir, positions)
         print("faithfulness:", json.dumps(out["faithfulness"]), flush=True)
     d = os.path.join(REPO, "results", name)

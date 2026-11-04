@@ -5,8 +5,8 @@ import math, itertools
 MLP_EXACTNESS = 100
 NCLS = 13
 T_HOPS = 6
-F_HOPS = 8
-FGAIN = 1e6
+F_HOPS = 4
+FGAIN = 2000.0
 BIG = 1e6
 
 def rc(i): return divmod(i, 9)
@@ -169,7 +169,7 @@ TAC_ESC_LADDER = 3
 PASSV = 0.0
 GAINW = 8.0
 DANGW = 20.0
-CONTACT = 3
+CONTACT = 4
 SCALE = 3.0
 SA_OPP_BONUS = 0.0
 GAINF = {'neu': 1.0, 'opp': 0.5, 'own': 0.35}
