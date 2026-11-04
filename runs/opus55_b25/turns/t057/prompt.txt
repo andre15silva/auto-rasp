@@ -1,0 +1,15 @@
+OUTPUT of Python run 49 of at most 120:
+```
+net black len 126 first opp pass 123
+[(119, 'o', 59), (120, 'n', 68), (121, 'o', 27), (122, 'n', 28), (123, 'o', 81), (124, 'n', 44), (125, 'o', 81), (126, 'n', 81)]
+. X X O X X X . X   . X X . X X X . X   . X X . X X X . X   . X X . X X X . X   . X X . X X X . X
+X . X . X X X X .   X . X X X X X X .   X . X X X X X X .   X . X X X X X X .   X . X X X X X X .
+X X X X . X X X X   X X X X . X X X X   X X X X . X X X X   X X X X . X X X X   X X X X . X X X X
+. . X X X X . X O   O . X X X X . X O   . X X X X X . X O   . X X X X X . X .   . X X X X X . X .
+X X . X X . X . .   X X . X X . X . .   X X . X X . X . .   X X . X X . X . X   X X . X X . X . X
+. X X X . X X X .   . X X X . X X X .   . X X X . X X X .   . X X X . X X X .   . X X X . X X X .
+X X X X X . X X X   X X X X X . X X X   X X X X X . X X X   X X X X X . X X X   X X X X X . X X X
+. X X . X . X . X   . X X . X X X . X   . X X . X X X . X   . X X . X X X . X   . X X . X X X . X
+X X . X . X . X .   X X . X . X . X .   X X . X . X . X .   X X . X . X . X .   X X . X . X . X .
+
+```

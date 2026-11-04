@@ -176,18 +176,21 @@ def build(stop=None):
         if s % THR_EVERY == 0 or last: low = 1.0
         flags = new
     R, C, TXc, TOc = flags[:9], flags[9:18], flags[18], flags[19]
+    if stop == 'prop': return flags[0]
 
     totR = tree(R[:8] + [lsm(R[8], offs, 'R8off')], 'sR')
     totC = tree(C, 'sC')
     cr = rasp.categorical(rasp.Map(lambda v: ('XOES'[int(round(v)) // 10], min(int(round(v)) % 10, 3)), totR)).named('cr')
     cc3 = rasp.categorical(rasp.Map(lambda v: min(int(round(v)), 3), totC)).named('cc3')
     nbinfo = rasp.categorical(rasp.SequenceMap(nbcls, cr, cc3)).named('nbinfo')
+    if stop == 'nbinfo': return rasp.numerical(rasp.Map(lambda v: 1.0 if v == 'E' else 0.0, nbinfo))
     nbs = {d: shift(nbinfo, v, 'nb' + d) for d, v in ORTH.items()}
     srt = lambda a, b: tuple(sorted((a, b)))
     pNS = rasp.categorical(rasp.SequenceMap(srt, nbs['N'], nbs['S'])).named('pNS')
     pWE = rasp.categorical(rasp.SequenceMap(srt, nbs['W'], nbs['E'])).named('pWE')
     t1c = rasp.categorical(rasp.SequenceMap(tactical, pNS, pWE)).named('t1c')
     t1 = rasp.numerical(rasp.Map(lambda v: v, t1c)).named('t1')
+    if stop == 't1': return t1
 
     # ---- eye / region / prior
     oNS = rasp.categorical(rasp.SequenceMap(srt, nc['N'], nc['S'])).named('oNS')

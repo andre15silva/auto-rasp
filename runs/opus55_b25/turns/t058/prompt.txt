@@ -1,0 +1,10 @@
+OUTPUT of Python run 50 of at most 120:
+```
+6 1 19 captured 13.1 lost 9.3 len 92.4
+6 -1 69 captured 7.2 lost 19.8 len 92.8
+7 1 21 captured 9.6 lost 11.2 len 88.8
+7 -1 71 captured 6.5 lost 18.4 len 91.6
+8 1 14 captured 11.1 lost 14.1 len 91.9
+8 -1 77 captured 7.4 lost 22.5 len 93.5
+
+```

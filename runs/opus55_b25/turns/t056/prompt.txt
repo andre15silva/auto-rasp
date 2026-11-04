@@ -1,0 +1,8 @@
+OUTPUT of Python run 48 of at most 120:
+```
+pass 7 blowouts 36 nonblow wins 21 / 92 B 4 / 51 mean nb margin -5.130434782608695
+Counter({'opp_pass': 181, 'net_reply_move': 130, 'net_reply_pass': 51})
+pass 8 blowouts 37 nonblow wins 14 / 91 B 7 / 54 mean nb margin -6.434065934065934
+Counter({'opp_pass': 187, 'net_reply_move': 134, 'net_reply_pass': 53})
+
+```

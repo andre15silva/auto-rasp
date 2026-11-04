@@ -1,0 +1,7 @@
+OUTPUT of Python run 45 of at most 120:
+```
+prop compiled: {'layers': 14, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 344, 'residual_dims': 556, 'dense_params': 15901624, 'nonzero_params': 6756, 'mlp_exactness': 1000, 'compile_seconds': 6.5, 'seconds_per_1000_positions': 6.18, 'output_label': 'R0_8_1'}
+prop compiled: {'layers': 14, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 344, 'residual_dims': 556, 'dense_params': 15901624, 'nonzero_params': 6756, 'mlp_exactness': 1000, 'compile_seconds': 1.7, 'seconds_per_1000_positions': 5.28, 'output_label': 'R0_8_38'}
+nbinfo compiled: {'layers': 21, 'heads': 18, 'key_size': 84, 'mlp_hidden_size': 656, 'residual_dims': 915, 'dense_params': 141652212, 'nonzero_params': 32652, 'mlp_exactness': 1000, 'compile_seconds': 29.8, 'seconds_per_1000_positions': 92.3, 'output_label': 'map_75'}
+
+```

@@ -127,8 +127,8 @@ def tactic_score(ms):
     if sa: s -= 12.0
     elif not safe: s -= 3.0
     if aX1:
-        if safe: s += 9.0 + (1.0 if lo >= 3 else 0.0)
-        elif not sa: s += 4.0
+        if safe: s += 10.0 if lo >= 3 else 7.0
+        elif not sa: s += 3.0
     if aO2 and safe: s += 4.0
     if aX2 and lo >= 3: s += 2.5
     if aO3 and safe: s += 0.5
@@ -175,7 +175,7 @@ def program():
     seedsel = rasp.Select(idx, qB, LEQ)          # neighbours + index 81
     # near-one constant: one-hot 'c' with magnitude 1 - theta (theta = BOS attention share)
     constc = cmap(lambda i: 'c', idx)
-    nq = cmap(lambda i: NEAR_N, idx)
+    nq = smap(lambda t, l: NEAR_N, tok, ltok)     # delayed one layer (spreads heads)
     nearone = rasp.Aggregate(rasp.Select(idx, nq, LT), constc).named('nearone')
     cleanf = lambda v, c: v
     def clean(x): return smap(cleanf, x, nearone)
