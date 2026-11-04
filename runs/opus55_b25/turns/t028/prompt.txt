@@ -1,0 +1,14 @@
+Positions pass 2 of 25 done.
+```
+{"ok": true, "pass": 2, "kind": "positions", "n": 6, "network": {"layers": 20, "heads": 3, "key_size": 84, "mlp_hidden_size": 445, "residual_dims": 633, "dense_params": 24134990, "nonzero_params": 98158}, "files": "/work/pass_2/", "readme": "inputs.json: the positions as given, each with its board (9 strings: X Black, O White), to_move and its 82 input tokens (after BOS); legal.npy (n, 82) bool; logits.npy (n, 82): the network's output at positions 1..82 (move row*9+col, 81 = pass); probs.npy (n, 82): softmax over the legal moves. compiled.npz (if activations): for every SOp of your program, keyed by its label, its value at each of the 82 input positions as read from the compiled network's residual stream (numerical SOps: their coordinate; categorical SOps: the value whose dimension is largest), plus 'residual' (n, 83, D) when D <= 2048 and 'residual_labels'. rasp.npz (if rasp): rasp.evaluate's value of every SOp on the same inputs ('None' / nan where RASP gives None)."}
+```
+Top 3 moves per position:
+```
+#0 black to move: 39 (4,3) p=1.000 logit=48.391, 9 (1,0) p=0.000 logit=26.575, 10 (1,1) p=0.000 logit=21.866
+#1 white to move: 39 (4,3) p=0.860 logit=38.391, 9 (1,0) p=0.140 logit=36.575, 49 (5,4) p=0.000 logit=21.819
+#2 black to move: 64 (7,1) p=0.185 logit=21.853, 21 (2,3) p=0.109 logit=21.323, 20 (2,2) p=0.102 logit=21.260
+#3 white to move: 17 (1,8) p=1.000 logit=34.502, 49 (5,4) p=0.000 logit=22.639, 48 (5,3) p=0.000 logit=22.554
+#4 black to move: 40 (4,4) p=0.131 logit=23.943, 31 (3,4) p=0.066 logit=23.257, 39 (4,3) p=0.066 logit=23.257
+#5 black to move: 30 (3,3) p=0.866 logit=24.538, 28 (3,1) p=0.067 logit=21.981, 24 (2,6) p=0.010 logit=20.092
+```
+Passes left: 23.

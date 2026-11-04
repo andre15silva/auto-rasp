@@ -1,0 +1,14 @@
+OUTPUT of Python run 23 of at most 120:
+```
+1 9 (1, 0) logit 11.09
+    {'kind': np.str_('E'), 'W': np.str_("('X', 1)"), 'RS1': np.str_('c1'), 'RS2': np.str_('c2'), 'stA': np.str_('E'), 'stB': np.str_('E'), 'U': np.str_("('X', 6)"), 'RU': np.str_('hi'), 'labA': np.str_('(0, 0, 0, 2)'), 'escO': np.str_('no'), 'o2O': np.str_('no'), 'tab1': np.str_('(0, 0, 2)'), 'tab2': np.str_('0'), 'zone': np.str_('neu'), 'gainR': np.float32(0.56825686), 'tacP': np.float32(0.0), 'tacN': np.float32(0.0), 'linev': np.float32(1.0), 'a2': np.float32(4.546055)}
+1 0 (0, 0) logit 10.87
+    {'kind': np.str_('O'), 'W': np.str_('n'), 'RS1': np.str_('c0'), 'RS2': np.str_('c0'), 'stA': np.str_('Om'), 'stB': np.str_('O3'), 'U': np.str_("('X', 1)"), 'RU': np.str_('hi'), 'labA': np.str_('(0, 1, 0, 1)'), 'escO': np.str_('no'), 'o2O': np.str_('no'), 'tab1': np.str_('(0, 0, 2)'), 'tab2': np.str_('0'), 'zone': np.str_('neu'), 'gainR': np.float32(0.55446607), 'tacP': np.float32(0.0), 'tacN': np.float32(0.0), 'linev': np.float32(1.0), 'a2': np.float32(4.4357285)}
+1 1 (0, 1) logit 11.06
+    {'kind': np.str_('X'), 'W': np.str_('n'), 'RS1': np.str_('c0'), 'RS2': np.str_('c2'), 'stA': np.str_('Xm'), 'stB': np.str_('X2'), 'U': np.str_("('X', 6)"), 'RU': np.str_('hi'), 'labA': np.str_('(0, 0, 0, 2)'), 'escO': np.str_('no'), 'o2O': np.str_('no'), 'tab1': np.str_('(0, 0, 2)'), 'tab2': np.str_('0'), 'zone': np.str_('neu'), 'gainR': np.float32(0.56653595), 'tacP': np.float32(0.0), 'tacN': np.float32(0.0), 'linev': np.float32(1.0), 'a2': np.float32(4.5322876)}
+1 39 (4, 3) logit 25.35
+    {'kind': np.str_('E'), 'W': np.str_("('X', 6)"), 'RS1': np.str_('c1'), 'RS2': np.str_('c2'), 'stA': np.str_('E'), 'stB': np.str_('E'), 'U': np.str_('n'), 'RU': np.str_('hi'), 'labA': np.str_('(0, 1, 0, 2)'), 'escO': np.str_('yes'), 'o2O': np.str_('no'), 'tab1': np.str_('(0, 0, 2)'), 'tab2': np.str_('9'), 'zone': np.str_('neu'), 'gainR': np.float32(0.68840224), 'tacP': np.float32(3.4702797), 'tacN': np.float32(0.0), 'linev': np.float32(3.7), 'a2': np.float32(5.507194)}
+1 30 (3, 3) logit 18.11
+    {'kind': np.str_('X'), 'W': np.str_('n'), 'RS1': np.str_('c1'), 'RS2': np.str_('c2'), 'stA': np.str_('X1'), 'stB': np.str_('X2'), 'U': np.str_('n'), 'RU': np.str_('hi'), 'labA': np.str_('(0, 0, 0, 1)'), 'escO': np.str_('no'), 'o2O': np.str_('no'), 'tab1': np.str_('(0, 0, 1)'), 'tab2': np.str_('-16'), 'zone': np.str_('neu'), 'gainR': np.float32(0.66959035), 'tacP': np.float32(0.0), 'tacN': np.float32(0.0), 'linev': np.float32(3.7), 'a2': np.float32(5.356723)}
+
+```

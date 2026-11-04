@@ -1,0 +1,50 @@
+OUTPUT of Python run 36 of at most 120:
+```
+graded compiled: {'layers': 14, 'heads': 1, 'key_size': 84, 'mlp_hidden_size': 164, 'residual_dims': 276, 'dense_params': 2604088, 'nonzero_params': 1716, 'mlp_exactness': 1000, 'compile_seconds': 5.0, 'seconds_per_1000_positions': 2.33, 'output_label': 'linear_sequence_map_1'}
+fixed compiled: {'layers': 14, 'heads': 1, 'key_size': 84, 'mlp_hidden_size': 164, 'residual_dims': 276, 'dense_params': 2604088, 'nonzero_params': 1392, 'mlp_exactness': 1000, 'compile_seconds': 0.9, 'seconds_per_1000_positions': 1.18, 'output_label': 'linear_sequence_map_19'}
+graded compiled: {'layers': 14, 'heads': 1, 'key_size': 84, 'mlp_hidden_size': 164, 'residual_dims': 276, 'dense_params': 2604088, 'nonzero_params': 1716, 'mlp_exactness': 1000, 'compile_seconds': 0.9, 'seconds_per_1000_positions': 1.1, 'output_label': 'linear_sequence_map_37'}
+fixed compiled: {'layers': 14, 'heads': 1, 'key_size': 84, 'mlp_hidden_size': 164, 'residual_dims': 276, 'dense_params': 2604088, 'nonzero_params': 1392, 'mlp_exactness': 1000, 'compile_seconds': 0.8, 'seconds_per_1000_positions': 1.96, 'output_label': 'linear_sequence_map_55'}
+
+[stderr]
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+WARNING:absl:Creating a SequenceMap with both inputs being the same SOp is discouraged. You should use a Map instead.
+
+```

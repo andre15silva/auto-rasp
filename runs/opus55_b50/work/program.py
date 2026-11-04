@@ -1,27 +1,31 @@
 
 from tracr.rasp import rasp
 MLP_EXACTNESS = 1000
-NCAT = 0
-VALSZ = 82
+MODE = 'fixed'
+SEL = 10.6
 def program():
-    t = rasp.tokens
-    idx = rasp.indices
-    def nb(k, q):
-        if k >= 81 or q >= 81: return 0
-        kr, kc = divmod(k, 9); qr, qc = divmod(q, 9)
-        return 5.0 if abs(kr-qr) + abs(kc-qc) <= 1 else 0
-    sel = rasp.Select(idx, idx, nb)
-    flags = [rasp.numerical(rasp.Map(lambda v, j=j: 1 if (v == '.' and j%2==0) else 0, t)) for j in range(14)]
-    cats = [rasp.categorical(rasp.Map(lambda v, j=j: (v + j) % VALSZ, idx)) for j in range(NCAT)]
-    for step in range(8):
-        new = []
-        for j, f in enumerate(flags):
-            a = rasp.numerical(rasp.Aggregate(sel, f, default=0))
-            b = rasp.numerical(rasp.Map(lambda x: 0 if x < 1e-9 else (1 if abs(x-0.2)<1e-9 else None), a))
-            new.append(b)
-        flags = new
-        cats = [rasp.categorical(rasp.Aggregate(sel, c)) for c in cats]
-    lv = flags + [rasp.numerical(rasp.Map(lambda v: 1 if v == 3 else 0, c)) for c in cats]
-    while len(lv) > 1:
-        lv = [rasp.numerical(rasp.LinearSequenceMap(lv[i], lv[i+1], 1, 1)) for i in range(0, len(lv)-1, 2)] + ([lv[-1]] if len(lv)%2 else [])
-    return lv[0]
+    tok, idx = rasp.tokens, rasp.indices
+    COL = {'.': 'E', 'x': 'X', 'o': 'O', 'B': 'S', 'W': 'S'}
+    color = rasp.categorical(rasp.Map(lambda t: COL[t], tok))
+    def sh(k, q):
+        if q == 81: return SEL if k == 81 else 0
+        r, c = divmod(q, 9)
+        t = q - 1 if c > 0 else 81
+        return SEL if k == t else 0
+    ncW = rasp.categorical(rasp.Aggregate(rasp.Select(idx, idx, sh), color))
+    hsb = rasp.categorical(rasp.SequenceMap(lambda w, c: True if c == 'S' else (w != c), ncW, color))
+    hkey = rasp.categorical(rasp.SequenceMap(lambda b, i: i if b else 'no', hsb, idx))
+    if MODE == 'graded':
+        def ph(k, q):
+            if k == 'no': return 0
+            if q == 81 or k == 81: return 92.2 if (q == 81 and k == 81) else 0
+            if k // 9 == q // 9 and k <= q: return 92.2 - 10.2 * (q - k)
+            return 0
+    else:
+        def ph(k, q):
+            return SEL if k == q else 0
+    hrun = rasp.categorical(rasp.Aggregate(rasp.Select(hkey, idx, ph), idx))
+    out = rasp.numerical(rasp.Map(lambda v: 1 if v == 3 else 0, hrun))
+    for i in range(10):
+        out = rasp.numerical(rasp.LinearSequenceMap(out, out, 1, 0))
+    return out
