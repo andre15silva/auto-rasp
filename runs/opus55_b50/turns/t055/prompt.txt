@@ -1,0 +1,11 @@
+OUTPUT of Python run 52 of at most 120:
+```
+(40, 83, 1201) float32
+1e-38 0
+1e-30 0
+1e-20 0
+1e-10 0
+1e-06 0
+tiny in BOS row: 0 others: 0
+
+```

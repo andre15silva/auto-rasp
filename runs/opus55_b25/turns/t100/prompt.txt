@@ -1,0 +1,13 @@
+OUTPUT of Python run 84 of at most 120:
+```
+    a1 = num(rasp.LinearSequenceMap(tacP, tacN, 1.0, -1.0)).named('a1')
+    a2 = num(rasp.LinearSequenceMap(gainR, zpen, GAINW, -1.0)).named('a2')
+    a3 = num(rasp.LinearSequenceMap(linev, dang, 1.0, -DANGW)).named('a3')
+    b00 = num(rasp.LinearSequenceMap(a1, bigR2, 1.0, 1.0)).named('b00')
+    b0 = num(rasp.LinearSequenceMap(b00, contR, 1.0, 1.0)).named('b0')
+    b1 = num(rasp.LinearSequenceMap(b0, a2, 1.0, 1.0)).named('b1')
+    out = num(rasp.LinearSequenceMap(b1, a3, SCALE, SCALE)).named('logit')
+
+compiled: {'layers': 27, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 471, 'residual_dims': 829, 'dense_params': 51326847, 'nonzero_params': 174536, 'mlp_exactness': 100, 'compile_seconds': 11.4, 'seconds_per_1000_positions': 16.58, 'output_label': 'logit_1'}
+
+```

@@ -1,0 +1,17 @@
+{
+ "ok": true,
+ "stats": {
+  "layers": 17,
+  "heads": 3,
+  "key_size": 84,
+  "mlp_hidden_size": 410,
+  "residual_dims": 2226,
+  "dense_params": 69471022,
+  "nonzero_params": 148742
+ },
+ "mlp_exactness": 100,
+ "compile_seconds": 28.0,
+ "output_label": "out_1",
+ "seconds_per_1000_positions": 32.61,
+ "seconds_total": 36.1
+}

@@ -1,0 +1,13 @@
+OUTPUT of Python run 80 of at most 120:
+```
+
+[stderr]
+Traceback (most recent call last):
+  File "<string>", line 90, in <module>
+  File "<string>", line 45, in compile_program
+  File "/work/program.py", line 330, in program
+    kot = cat(rasp.SequenceMap(lambda s, a: 'kb' if (s == TAC_KO and a == 'no') else 'n', tab2, aheadO)).named('kot')
+                                                                                          ^^^^
+UnboundLocalError: cannot access local variable 'aheadO' where it is not associated with a value
+
+```

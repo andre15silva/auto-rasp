@@ -110,3 +110,17 @@
 [2026-11-04T21:33:22+0000] turn 54: resume (389 chars)
 [2026-11-04T21:35:48+0000] turn 54: python; runs 55, passes 0/0, tool-free True
 [2026-11-04T21:35:48+0000] turn 55: resume (90 chars)
+[2026-11-04T21:37:15+0000] turn 55: python; runs 56, passes 0/0, tool-free True
+[2026-11-04T21:37:15+0000] turn 56: resume (1,005 chars)
+[2026-11-04T21:37:49+0000] turn 56: python; runs 57, passes 0/0, tool-free True
+[2026-11-04T21:37:49+0000] turn 57: resume (560 chars)
+[2026-11-04T21:38:33+0000] turn 57: python; runs 58, passes 0/0, tool-free True
+[2026-11-04T21:38:33+0000] turn 58: resume (410 chars)
+[2026-11-04T21:40:33+0000] turn 58: python; runs 59, passes 0/0, tool-free True
+[2026-11-04T21:40:33+0000] turn 59: resume (435 chars)
+[2026-11-04T21:42:22+0000] turn 59: python; runs 60, passes 0/0, tool-free True
+[2026-11-04T21:42:22+0000] turn 60: resume (4,084 chars)
+[2026-11-04T21:43:02+0000] turn 60: python; runs 61, passes 0/0, tool-free True
+[2026-11-04T21:43:02+0000] turn 61: resume (451 chars)
+[2026-11-04T21:43:25+0000] turn 61: final; runs 61, passes 0/0, tool-free True
+[2026-11-04T21:44:01+0000] final compile: {"ok": true, "stats": {"layers": 17, "heads": 3, "key_size": 84, "mlp_hidden_size": 410, "residual_dims": 2226, "dense_params": 69471022, "nonzero_params": 148742}, "mlp_exactness": 100, "compile_seconds": 28.0, "output_label": "out_1", "seconds_per_1000_positions": 32.61, "seconds_total": 36.1}

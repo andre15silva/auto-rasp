@@ -1,0 +1,27 @@
+OUTPUT of Python run 56 of at most 120:
+```
+0 attn heads=2 ['histw_21', 'Lft_67']
+1 mlp  hid=64 ['tcA_13', 'tcB_15', 'tcC_17', 'tcW_19', 'atval_31', 'bigv_34', 'szvx_42', 'clsx_48', 'iso_52', 'ise_58', 'isx_81']
+2 attn heads=1 ['TW_11']
+3 mlp  hid=378 ['rsx_59', 'Lx0_78', 'Lo0_79', 'rso_80']
+5 mlp  hid=333 ['vW_7', 'ise_late_51', 'RSx_73', 'RSo_77']
+6 attn heads=2 ['Lx_run_66', 'Lo_run_70']
+7 mlp  hid=164 ['Ie_45']
+8 attn heads=3 ['E_39', 'Hx0_71', 'Ho0_75']
+10 attn heads=2 ['Lx1_57', 'Lo1_62']
+12 attn heads=2 ['Hx1_64', 'Ho1_68']
+14 attn heads=2 ['Lx2_50', 'Lo2_54']
+16 attn heads=2 ['Hx2_55', 'Ho2_60']
+18 attn heads=2 ['Lx3_44', 'Lo3_47']
+19 mlp  hid=410 ['Kx_43', 'Ko_46']
+20 attn heads=3 ['GLx_35', 'GLo_36', 'SZx_37']
+22 attn heads=3 ['AtX_27', 'AtO_28', 'BIGx_29']
+23 mlp  hid=14 ['p1_25', 'p2_26']
+25 mlp  hid=20 ['st_23']
+26 attn heads=1 ['hist_20']
+28 attn heads=3 ['TA_8', 'TB_9', 'TC_10']
+29 mlp  hid=3 ['vA_4', 'vB_5', 'vC_6']
+31 mlp  hid=8 ['S1_2', 'S2_3']
+33 mlp  hid=4 ['out_1']
+
+```

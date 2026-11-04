@@ -6,7 +6,7 @@ from gowin import *
 
 MLP_EXACTNESS = 100
 TS = 40.0
-SCALE = 2.5
+SCALE = 3.0
 OFF = 50.0
 
 def P_left(k, q):

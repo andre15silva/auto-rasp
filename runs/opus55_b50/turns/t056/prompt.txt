@@ -1,0 +1,16 @@
+OUTPUT of Python run 53 of at most 120:
+```
+23939
+r+3c mod8    true2->1:    86 true3+->1:    1 true3+->2:   314  (n2=6782, n3=10591)
+2r+3c mod8   true2->1:   142 true3+->1:    1 true3+->2:   492  (n2=6782, n3=10591)
+r+3c mod9    true2->1:   121 true3+->1:    2 true3+->2:   321  (n2=6782, n3=10591)
+(r%3,c%3)    true2->1:   195 true3+->1:    2 true3+->2:   416  (n2=6782, n3=10591)
+r+4c mod9    true2->1:   134 true3+->1:    1 true3+->2:   449  (n2=6782, n3=10591)
+2r+5c mod9   true2->1:   114 true3+->1:    2 true3+->2:   431  (n2=6782, n3=10591)
+r+3c mod10   true2->1:    56 true3+->1:    0 true3+->2:   179  (n2=6782, n3=10591)
+r+3c mod7    true2->1:   166 true3+->1:    4 true3+->2:   586  (n2=6782, n3=10591)
+r+2c mod7    true2->1:   151 true3+->1:    8 true3+->2:   518  (n2=6782, n3=10591)
+idx mod 8    true2->1:  1994 true3+->1:   24 true3+->2:  6825  (n2=6782, n3=10591)
+idx mod 11   true2->1:   121 true3+->1:    0 true3+->2:   410  (n2=6782, n3=10591)
+
+```

@@ -3,13 +3,13 @@
  "model": "claude-opus-5-5",
  "effort": "xhigh",
  "session_id": "75fe5168-548a-4409-9122-1a4e4ad26e69",
- "turn": 93,
- "runs": 78,
- "passes": 15,
- "requests": 15,
+ "turn": 101,
+ "runs": 85,
+ "passes": 16,
+ "requests": 16,
  "done": false,
- "next": "OUTPUT of Python run 78 of at most 120:\n```\n78 net 72 (8, 0) [[63, 0.35], [73, 0.2322], [72, 0.1839], [75, 0.1385], [76, 0.0954]]\n79 opponent 7 (0, 7) None\n80 net 76 (8, 4) [[75, 0.5765], [76, 0.4235], [53, 0.0], [81, 0.0], [1, 0.0]]\n81 opponent 15 (1, 6) None\n82 net 53 (5, 8) [[53, 0.9981], [81, 0.0019], [1, 0.0], [48, 0.0], [12, 0.0]]\n83 opponent 45 (5, 0) None\n84 net 81 P [[81, 1.0], [16, 0.0], [1, 0.0], [48, 0.0], [12, 0.0]]\n85 opponent 1 (0, 1) None\n86 net 81 P [[81, 1.0], [16, 0.0], [36, 0.0], [48, 0.0], [12, 0.0]]\n87 opponent 36 (4, 0) None\n88 net 81 P [[81, 1.0], [16, 0.0], [48, 0.0], [12, 0.0], [62, 0.0]]\n89 opponent 16 (1, 7) None\n90 net 81 P [[81, 1.0], [48, 0.0], [12, 0.0], [62, 0.0], [55, 0.0]]\n91 opponent 81 P None\n\n```",
+ "next": "OUTPUT of Python run 85 of at most 120:\n```\ncompiled: {'layers': 27, 'heads': 4, 'key_size': 84, 'mlp_hidden_size': 471, 'residual_dims': 829, 'dense_params': 51326847, 'nonzero_params': 174536, 'mlp_exactness': 100, 'compile_seconds': 11.2, 'seconds_per_1000_positions': 13.0, 'output_label': 'logit_1'}\n\n```",
  "started": "2026-11-04T18:11:12+0000",
  "session_started": true,
- "acted": 92
+ "acted": 100
 }

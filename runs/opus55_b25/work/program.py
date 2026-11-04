@@ -171,7 +171,7 @@ PASSV = 0.0
 GAINW = 8.0
 DANGW = 20.0
 CONTACT = 4
-SCALE = 3.0
+SCALE = 4.5
 SA_OPP_BONUS = 0.0
 GAINF = {'neu': 1.0, 'opp': 0.5, 'own': 0.35}
 
@@ -343,10 +343,10 @@ def program():
     passv = num(rasp.Map(lambda kd: PASSV if kd == 'P' else 0.0, kind)).named('passv')
 
     a1 = num(rasp.LinearSequenceMap(tacP, tacN, 1.0, -1.0)).named('a1')
+    c1 = num(rasp.LinearSequenceMap(bigR2, contR, 1.0, 1.0)).named('c1')
     a2 = num(rasp.LinearSequenceMap(gainR, zpen, GAINW, -1.0)).named('a2')
     a3 = num(rasp.LinearSequenceMap(linev, dang, 1.0, -DANGW)).named('a3')
-    b00 = num(rasp.LinearSequenceMap(a1, bigR2, 1.0, 1.0)).named('b00')
-    b0 = num(rasp.LinearSequenceMap(b00, contR, 1.0, 1.0)).named('b0')
-    b1 = num(rasp.LinearSequenceMap(b0, a2, 1.0, 1.0)).named('b1')
-    out = num(rasp.LinearSequenceMap(b1, a3, SCALE, SCALE)).named('logit')
+    d1 = num(rasp.LinearSequenceMap(a2, a3, 1.0, 1.0)).named('d1')
+    e1 = num(rasp.LinearSequenceMap(a1, c1, 1.0, 1.0)).named('e1')
+    out = num(rasp.LinearSequenceMap(e1, d1, SCALE, SCALE)).named('logit')
     return out
