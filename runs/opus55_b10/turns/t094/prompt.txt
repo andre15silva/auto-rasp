@@ -1,0 +1,5 @@
+OUTPUT of Python run 87 of at most 120:
+```
+['E', 'X1', 'X2', 'X3', 'O1', 'O2', 'O3', 'N'] (668117154, 232)
+
+```

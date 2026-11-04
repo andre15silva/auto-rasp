@@ -1,0 +1,8 @@
+OUTPUT of Python run 83 of at most 120:
+```
+1 65 cap 62.1 lost 8.3 margin 51.7
+-1 31 cap 11.8 lost 26.5 margin -7.0
+[(-28.5, 'white', 68, 'two_passes'), (-17.5, 'black', 25, 'two_passes'), (-14.5, 'black', 16, 'two_passes'), (-14.5, 'black', 25, 'two_passes'), (-13.5, 'black', 21, 'two_passes'), (-13.5, 'white', 43, 'two_passes'), (-12.5, 'black', 10, 'two_passes'), (-12.5, 'black', 44, 'two_passes'), (-10.5, 'black', 9, 'two_passes'), (-9.5, 'black', 15, 'two_passes'), (-9.5, 'white', 20, 'two_passes'), (-9.5, 'white', 54, 'two_passes'), (-8.5, 'black', 21, 'two_passes'), (-8.5, 'black', 22, 'two_passes'), (-8.5, 'white', 41, 'two_passes'), (-7.5, 'white', 33, 'two_passes'), (-6.5, 'white', 26, 'two_passes'), (-6.5, 'white', 28, 'two_passes'), (-5.5, 'black', 10, 'two_passes'), (-5.5, 'black', 16, 'two_passes'), (-5.5, 'black', 19, 'two_passes'), (-5.5, 'white', 28, 'two_passes'), (-5.5, 'white', 53, 'two_passes'), (-4.5, 'black', 9, 'two_passes'), (-4.5, 'black', 14, 'two_passes'), (-1.5, 'white', 33, 'two_passes'), (-0.5, 'white', 19, 'two_passes'), (-0.5, 'white', 29, 'two_passes'), (-0.5, 'white', 41, 'two_passes'), (9.5, 'white', 17, 'repetition'), (25.5, 'black', 14, 'repetition')]
+close (>-5): 8  big (<-15): 2
+
+```

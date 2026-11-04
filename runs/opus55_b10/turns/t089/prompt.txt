@@ -1,0 +1,22 @@
+OUTPUT of Python run 82 of at most 120:
+```
+REP game 16 strong net black result -1 margin 25.5 last by net 8 top5 [[8, 0.9963], [15, 0.003], [44, 0.0007], [81, 0.0], [55, 0.0]]
+   tail [('o', 0), ('n', 8), ('o', 2), ('n', 45), ('o', 44), ('n', 1), ('o', 7), ('n', 35), ('o', 2), ('n', 8)]
+REP game 48 strong net white result 1 margin 3.5 last by opponent 17 top5 None
+   tail [('n', 59), ('o', 76), ('n', 37), ('o', 52), ('n', 28), ('o', 73), ('n', 36), ('o', 8), ('n', 26), ('o', 17)]
+REP game 64 strong net white result -1 margin 9.5 last by net 79 top5 [[79, 1.0], [81, 0.0], [5, 0.0], [16, 0.0], [17, 0.0]]
+   tail [('o', 80), ('n', 81), ('o', 1), ('n', 79), ('o', 74), ('n', 2), ('o', 80), ('n', 81), ('o', 1), ('n', 79)]
+REP game 73 strong net white result 1 margin 27.5 last by opponent 71 top5 None
+   tail [('n', 36), ('o', 9), ('n', 46), ('o', 41), ('n', 0), ('o', 42), ('n', 9), ('o', 80), ('n', 62), ('o', 71)]
+EARLY PASS game 28 strong net black result 1 ply 46 top5 [[6, 0.6619], [66, 0.0854], [42, 0.0724], [69, 0.0448], [15, 0.0225]]
+     ..O..O...
+     XXOOOX...
+     .XOXX.X..
+     XOOOXX...
+     .XXOOO...
+     X.XOXXX..
+     .XOOOXX..
+     X.X.OO...
+     .X.......
+
+```

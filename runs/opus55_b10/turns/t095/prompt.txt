@@ -1,0 +1,29 @@
+OUTPUT of Python run 88 of at most 120:
+```
+(668117154, 232)
+
+[stderr]
+Traceback (most recent call last):
+  File "<string>", line 72, in <module>
+  File "<string>", line 46, in compile_program
+  File "/harness/tracr_policy.py", line 35, in compile_sop
+    return compiling.compile_rasp_to_model(sop, vocab=set(VOCAB), max_seq_len=MAX_SEQ_LEN, compiler_bos=BOS,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 25, in _compile_no_forward
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/compiling.py", line 107, in compile_rasp_to_model
+    expr_to_craft_graph.add_craft_components_to_rasp_graph(
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/compiler/expr_to_craft_graph.py", line 125, in add_craft_components_to_rasp_graph
+    block = numerical_mlp.map_numerical_mlp(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/chamber/numerical_mlp.py", line 185, in map_numerical_mlp
+    discretising_layer = _get_discretising_layer(
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/chamber/numerical_mlp.py", line 87, in _get_discretising_layer
+    value_thresholds = [
+                       ^
+  File "/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/craft/chamber/numerical_mlp.py", line 88, in <listcomp>
+    (sorted_values[i] + sorted_values[i + 1]) / 2 for i in range(num_vals - 1)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+TypeError: unsupported operand type(s) for /: 'str' and 'int'
+
+```
