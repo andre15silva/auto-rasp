@@ -1,0 +1,663 @@
+OUTPUT of Python run 8 of at most 120:
+```
+===== class Comparison
+class Comparison(enum.Enum):
+  """A two-place boolean comparison predicate for use in Select."""
+  EQ = "=="
+  LT = "<"
+  LEQ = "<="
+  GT = ">"
+  GEQ = ">="
+  NEQ = "!="
+  TRUE = "True"
+  FALSE = "False"
+
+  def __call__(self, key: Value, query: Value) -> bool:
+    if key is None:
+      raise ValueError("key is None!")
+    if query is None:
+      raise ValueError("query is None!")
+    return _comparison_table[self](key, query)
+
+
+_comparison_table = {
+    Comparison.EQ: lambda key, query: key == query,
+    Comparison.LT: lambda key, query: key < query,
+    Comparison.LEQ: lambda key, query: key <= query,
+    Comparison.GT: lambda key, query: key > query,
+    Comparison.GEQ: lambda key, query: key >= query,
+    Comparison.NEQ: lambda key, query: key != query,
+    Comparison.TRUE: lambda key, query: True,
+    Comparison.FALSE: lambda key, query: False,
+}
+
+
+class Selector(RASPExpr):
+  """RASP Selector. Represents something like an attention head's weights."""
+
+  def __call__(self, xs: Sequence[Value]) -> SelectorValue:
+    return evaluate(self, xs)  # pytype: disable=bad-return-type
+
+  # Allow construction of Selector combinations using Python logical operators.
+  def __and__(self, other: "Selector") -> "Selector":
+    """self & other."""
+    return selector_and(self, other)
+
+  def __rand__(self, other: "Selector") -> "Selector":
+    """other & self."""
+    return selector_and(other, self)
+
+  def __or__(self, other: "Selector") -> "Selector":
+    """self | other."""
+    return selector_or(self, other)
+
+  def __ror__(self, other: "Selector") -> "Selector":
+    """other | self."""
+    return selector_or(other, self)
+
+  def __invert__(self) -> "Selector":
+    """~self."""
+    return selector_not(self)
+
+
+class Select(Selector):
+  """Primitive that creates a Selector."""
+
+  def __init__(self, keys: SOp, queries: SOp, predicate: Predicate):
+    super().__init__()
+    self.keys = keys
+    self.queries = queries
+    self.predicate = predicate
+    assert isinstance(self.keys, SOp)
+    assert isinstance(self.queries, SOp)
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return [self.keys, self.queries]
+
+
+class ConstantSelector(Selector):
+  """A constant selector for testing purposes."""
+
+  def __init__(self, value: SelectorValue, check_length: bool = True):
+    super().__init__()
+    self.value = value
+    self.check_length = check_length
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return []
+
+
+class SelectorWidth(SOp):
+  """SelectorWidth prim
+===== class Select(
+class Select(Selector):
+  """Primitive that creates a Selector."""
+
+  def __init__(self, keys: SOp, queries: SOp, predicate: Predicate):
+    super().__init__()
+    self.keys = keys
+    self.queries = queries
+    self.predicate = predicate
+    assert isinstance(self.keys, SOp)
+    assert isinstance(self.queries, SOp)
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return [self.keys, self.queries]
+
+
+class ConstantSelector(Selector):
+  """A constant selector for testing purposes."""
+
+  def __init__(self, value: SelectorValue, check_length: bool = True):
+    super().__init__()
+    self.value = value
+    self.check_length = check_length
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return []
+
+
+class SelectorWidth(SOp):
+  """SelectorWidth primitive."""
+
+  def __init__(self, selector: Selector):
+    super().__init__()
+    self.selector = selector
+    assert isinstance(self.selector, Selector)
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return [self.selector]
+
+
+class SelectorAnd(Selector):
+  """Implements elementwise `and` between selectors."""
+
+  def __init__(self, fst: Selector, snd: Selector):
+    super().__init__()
+    self.fst = fst
+    self.snd = snd
+    assert isinstance(self.fst, Selector)
+    assert isinstance(self.snd, Selector)
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return [self.fst, self.snd]
+
+
+class SelectorOr(Selector):
+  """Implements elementwise `or` between selectors."""
+
+  def __init__(self, fst: Selector, snd: Selector):
+    super().__init__()
+    self.fst = fst
+    self.snd = snd
+    assert isinstance(self.fst, Selector)
+    assert isinstance(self.snd, Selector)
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return [self.fst, self.snd]
+
+
+class SelectorNot(Selector):
+  """Implements elementwise `not` on a selector."""
+
+  def __init__(self, inner: Selector):
+    self.inner = inner
+    super().__init__()
+    assert isinstance(self.inner, Selector)
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return [self.inner]
+
+
+def selector_not(
+    inner: Selector,
+    simplify: bool = True,
+) -> Selector:
+  """Returns a SelectorNot, or a Select if simplifying is possible."""
+  if simplify and isinstance(inner, Select):
+    predicate = lambda k, q: not inner.predicate(k, q)
+    return Select(inner.keys, inner.queries, predicate=predicate)
+
+  return SelectorNot(inner)
+
+
+def selector_and(
+    fst: Selector,
+    snd: Selector,
+    simplify: bool = True,
+) -> Selector:
+
+===== class Map(
+class Map(SOp):
+  """SOp that evaluates the function elementwise on the input SOp.
+
+  Map(lambda x: x + 1, tokens).eval([1, 2, 3]) == [2, 3, 4]
+  """
+
+  def __init__(
+      self,
+      f: Callable[[Value], Value],
+      inner: SOp,
+      simplify: bool = True,
+  ):
+    """Initialises.
+
+    Args:
+      f: the function to apply elementwise.
+      inner: the SOp to which to apply `f`.
+      simplify: if True and if `inner` is also a Map, will combine the new map
+        and `inner` into a single Map object.
+    """
+    super().__init__()
+    self.f = f
+    self.inner = inner
+
+    assert isinstance(self.inner, SOp)
+    assert callable(self.f) and not isinstance(self.f, RASPExpr)
+
+    if simplify and isinstance(self.inner, Map):
+      # Combine the functions into just one.
+      inner_f = self.inner.f
+      self.f = lambda t: f(inner_f(t))
+      self.inner = self.inner.inner
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return [self.inner]
+
+
+class SequenceMap(SOp):
+  """SOp that evaluates the function elementwise on the two given SOp's.
+
+  SequenceMap(lambda x, y: x - y, length, tokens).eval([1, 2, 3]) == [2, 1, 0]
+  """
+
+  def __init__(
+      self,
+      f: Callable[[Value, Value], Value],
+      fst: SOp,
+      snd: SOp,
+  ):
+    super().__init__()
+
+    if fst is snd:
+
+===== class SequenceMap
+class SequenceMap(SOp):
+  """SOp that evaluates the function elementwise on the two given SOp's.
+
+  SequenceMap(lambda x, y: x - y, length, tokens).eval([1, 2, 3]) == [2, 1, 0]
+  """
+
+  def __init__(
+      self,
+      f: Callable[[Value, Value], Value],
+      fst: SOp,
+      snd: SOp,
+  ):
+    super().__init__()
+
+    if fst is snd:
+      logging.warning("Creating a SequenceMap with both inputs being the same "
+                      "SOp is discouraged. You should use a Map instead.")
+
+    self.f = f
+    self.fst = fst
+    self.snd = snd
+    assert isinstance(self.fst, SOp)
+    assert isinstance(self.snd, SOp)
+    assert callable(self.f) and not isinstance(self.f, RASPExpr)
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return [self.fst, self.snd]
+
+
+class LinearSequenceMap(SequenceMap):
+  """SOp that evaluates a linear function elementwise on the two given SOp's."""
+
+  def __init__(self, fst: SOp, snd: SOp, fst_fac: float, snd_fac: float):
+    super().__init__(fst=fst, snd=snd, f=lambda x, y: fst_fac * x + snd_fac * y)
+    self.fst_fac = fst_fac
+    self.snd_fac = snd_fac
+
+
+class Full(SOp):
+  """A SOp evaluating to [fill]*len(input_values)."""
+
+  def __init__(self, fill: Value):
+    super().__init__()
+    self.fill = fill
+
+  @property
+  def children(self) -> Sequence
+===== class LinearSequenceMap
+class LinearSequenceMap(SequenceMap):
+  """SOp that evaluates a linear function elementwise on the two given SOp's."""
+
+  def __init__(self, fst: SOp, snd: SOp, fst_fac: float, snd_fac: float):
+    super().__init__(fst=fst, snd=snd, f=lambda x, y: fst_fac * x + snd_fac * y)
+    self.fst_fac = fst_fac
+    self.snd_fac = snd_fac
+
+
+class Full(SOp):
+  """A SOp evaluating to [fill]*len(input_values)."""
+
+  def __init__(self, fill: Value):
+    super().__init__()
+    self.fill = fill
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return []
+
+
+def sop_not(sop: SOp) -> SOp:
+  return Map(lambda t: not t, sop)
+
+
+class ConstantSOp(SOp, Generic[VT]):
+  """A constant S-Op for testing purposes."""
+
+  def __init__(self, value: Sequence[VT], check_length: bool = True):
+    super().__init__()
+    self.value = value
+    self.check_length = check_length
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return []
+
+
+### Selectors.
+
+
+class Predicate(Protocol):
+
+  def __call__(self, key: Value, query: Value) -> bool:
+    """Applies the predicate."""
+
+
+class Comparison(enum.Enum):
+  """A two-place boolean comparison predicate for use in Select."""
+  EQ = "=="
+  LT = "<"
+  LEQ = "<="
+  GT = ">"
+  GEQ = ">="
+  NEQ = "!="
+  TRUE = "True"
+  FALSE = "False"
+
+  def __call__(self, key: V
+===== def numerical
+def numerical(sop: SOpT) -> SOpT:
+  return annotate(sop, encoding=Encoding.NUMERICAL)
+
+
+def categorical(sop: SOpT) -> SOpT:
+  return annotate(sop, encoding=Encoding.CATEGORICAL)
+
+
+def get_encoding(sop: SOp) -> Encoding:
+  return sop.annotations["encoding"]
+
+
+def is_numerical(sop: SOp) -> bool:
+  """Check if the SOp is numerically encoded."""
+  return get_encoding(sop) == Encoding.NUMERICAL
+
+
+def is_categorical(sop: SOp) -> bool:
+  """Check if the SOp is categorically encoded."""
+  return get_encoding(sop) == Encoding.CATEGORICAL
+
+
+def default_encoding(expr: RASPExpr) -> Optional[Encoding]:
+  """Adds an 'encoding' annotation, default is Categorical."""
+  if not isinstance(expr, SOp):
+    raise TypeError(f"expr {expr} is not a SOp.")
+
+  return Encoding.CATEGORICAL
+
+
+DEFAULT_ANNOTATORS[_ENCODING_KEY] = default_encoding
+
+### naming.
+
+# Subclasses must appear here before superclasses in order for
+# the most specific entry to be used.
+
+_default_name_by_class = {
+    # Primitives
+    TokensType: "tokens",
+    IndicesType: "indices",
+    LengthType: "length",
+    # SOps
+    LinearSequenceMap: "linear_sequence_map",
+    SequenceMap: "sequence_map",
+    Map: "map",
+    Full: "full",
+    ConstantSOp: "constant_sop",
+    SelectorWidth: "selector_width",
+    Aggregate: "aggregate",
+    SOp: "
+===== def categorical
+def categorical(sop: SOpT) -> SOpT:
+  return annotate(sop, encoding=Encoding.CATEGORICAL)
+
+
+def get_encoding(sop: SOp) -> Encoding:
+  return sop.annotations["encoding"]
+
+
+def is_numerical(sop: SOp) -> bool:
+  """Check if the SOp is numerically encoded."""
+  return get_encoding(sop) == Encoding.NUMERICAL
+
+
+def is_categorical(sop: SOp) -> bool:
+  """Check if the SOp is categorically encoded."""
+  return get_encoding(sop) == Encoding.CATEGORICAL
+
+
+def default_encoding(expr: RASPExpr) -> Optional[Encoding]:
+  """Adds an 'encoding' annotation, default is Categorical."""
+  if not isinstance(expr, SOp):
+    raise TypeError(f"expr {expr} is not a SOp.")
+
+  return Encoding.CATEGORICAL
+
+
+DEFAULT_ANNOTATORS[_ENCODING_KEY] = default_encoding
+
+### naming.
+
+# Subclasses must appear here before superclasses in order for
+# the most specific entry to be used.
+
+_default_name_by_class = {
+    # Primitives
+    TokensType: "tokens",
+    IndicesType: "indices",
+    LengthType: "length",
+    # SOps
+    LinearSequenceMap: "linear_sequence_map",
+    SequenceMap: "sequence_map",
+    Map: "map",
+    Full: "full",
+    ConstantSOp: "constant_sop",
+    SelectorWidth: "selector_width",
+    Aggregate: "aggregate",
+    SOp: "sop",
+    # Selectors
+    Select: "select",
+    SelectorAnd: "selector_and",
+    Selecto
+===== class Aggregate
+class Aggregate(SOp, Generic[VT]):
+  """Aggregate primitive."""
+
+  def __init__(self,
+               selector: Selector,
+               sop: SOp,
+               default: Optional[VT] = None):
+    """Initialises. The default is used where nothing is selected."""
+    super().__init__()
+    self.selector = selector
+    self.sop = sop
+    self.default = default
+    assert isinstance(self.selector, Selector)
+    assert isinstance(self.sop, SOp)
+    assert (self.default is None or isinstance(self.default,
+                                               (str, float, bool, int)))
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return [self.selector, self.sop]
+
+
+### SOp encodings.
+
+
+class Encoding(enum.Enum):
+  """The encoding used by a SOp. Only number-valued SOps support numerical."""
+  CATEGORICAL = "categorical"
+  NUMERICAL = "numerical"
+
+
+def numerical(sop: SOpT) -> SOpT:
+  return annotate(sop, encoding=Encoding.NUMERICAL)
+
+
+def categorical(sop: SOpT) -> SOpT:
+  return annotate(sop, encoding=Encoding.CATEGORICAL)
+
+
+def get_encoding(sop: SOp) -> Encoding:
+  return sop.annotations["encoding"]
+
+
+def is_numerical(sop: SOp) -> bool:
+  """Check if the SOp is numerically encoded."""
+  return get_encoding(sop) == Encoding.NUMERICAL
+
+
+def is_categorical(sop: SOp) -> bool:
+  """Che
+===== def annotate
+def annotated(self: RASPExprT, **annotations) -> RASPExprT:
+    """Convenience method for adding annotations."""
+    return annotate(self, **annotations)
+
+
+def annotate(expr: RASPExprT, **annotations) -> RASPExprT:
+  """Creates a new expr with added annotations."""
+  new = expr.copy()
+  # Note that new annotations will overwrite existing ones with matching keys.
+  new.annotations = {**expr.annotations, **annotations}
+  return new
+
+
+### S-Ops.
+
+
+class SOp(RASPExpr):
+  """A Sequence Operation."""
+
+  def __call__(self, xs: Sequence[Value]) -> Sequence[Value]:
+    return evaluate(self, xs)  # pytype: disable=bad-return-type
+
+  # Allow construction of SOps using numeric operators with constant values.
+  # Note: if inheriting SOp by a dataclass, make sure to disable eq and order,
+  # as they will override these.
+
+  def __lt__(self, other: Value) -> "SOp":
+    """self < other."""
+    return Map(lambda x: x < other, self)
+
+  def __le__(self, other: Value) -> "SOp":
+    """self <= other."""
+    return Map(lambda x: x <= other, self)
+
+  def __eq__(self, other: Value) -> "SOp":
+    """self == other."""
+    return Map(lambda x: x == other, self)
+
+  def __ne__(self, other: Value) -> "SOp":
+    """self != other."""
+    return Map(lambda x: x != other, self)
+
+  def __gt__(self, other: Value) ->
+===== class Full
+class Full(SOp):
+  """A SOp evaluating to [fill]*len(input_values)."""
+
+  def __init__(self, fill: Value):
+    super().__init__()
+    self.fill = fill
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return []
+
+
+def sop_not(sop: SOp) -> SOp:
+  return Map(lambda t: not t, sop)
+
+
+class ConstantSOp(SOp, Generic[VT]):
+  """A constant S-Op for testing purposes."""
+
+  def __init__(self, value: Sequence[VT], check_length: bool = True):
+    super().__init__()
+    self.value = value
+    self.check_length = check_length
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return []
+
+
+### Selectors.
+
+
+class Predicate(Protocol):
+
+  def __call__(self, key: Value, query: Value) -> bool:
+    """Applies the predicate."""
+
+
+class Comparison(enum.Enum):
+  """A two-place boolean comparison predicate for use in Select."""
+  EQ = "=="
+  LT = "<"
+  LEQ = "<="
+  GT = ">"
+  GEQ = ">="
+  NEQ = "!="
+  TRUE = "True"
+  FALSE = "False"
+
+  def __call__(self, key: Value, query: Value) -> bool:
+    if key is None:
+      raise ValueError("key is None!")
+    if query is None:
+      raise ValueError("query is None!")
+    return _comparison_table[self](key, query)
+
+
+_comparison_table = {
+    Comparison.EQ: lambda key, query: key == query,
+    Comparison.LT: lambda key, query: key < query,
+    Co
+===== def evaluate
+def evaluate(self, expr: RASPExpr,
+               xs: Sequence[Value]) -> Union[Sequence[Value], SelectorValue]:
+    """Evaluates the RASP expression on input `xs`."""
+
+
+class DefaultRASPEvaluator(abc.ABC):
+  """Default evaluator for RASP."""
+
+  def evaluate(self, expr: RASPExpr,
+               xs: Sequence[Value]) -> Union[Sequence[Value], SelectorValue]:
+    """Evaluates the RASP expression on input `xs`."""
+    return self._eval_fn_by_expr_type[type(expr)](expr, xs)
+
+  def __init__(self):
+    self._eval_fn_by_expr_type = {
+        # Primitives
+        TokensType: self.eval_tokens,
+        IndicesType: self.eval_indices,
+        LengthType: self.eval_length,
+        # SOps
+        LinearSequenceMap: self.eval_sequence_map,
+        SequenceMap: self.eval_sequence_map,
+        Map: self.eval_map,
+        Full: self.eval_full,
+        ConstantSOp: self.eval_constant_sop,
+        SelectorWidth: self.eval_selector_width,
+        Aggregate: self.eval_aggregate,
+        SOp: _raise_not_implemented,
+        # Selectors
+        Select: self.eval_select,
+        SelectorAnd: self.eval_selector_and,
+        SelectorOr: self.eval_selector_or,
+        SelectorNot: self.eval_selector_not,
+        ConstantSelector: self.eval_constant_selector,
+        Selector: _raise_not_implemented,
+    }
+
+
+
+```

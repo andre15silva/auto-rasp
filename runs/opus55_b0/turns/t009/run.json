@@ -1,0 +1,100 @@
+{
+ "cmd": [
+  "claude",
+  "-p",
+  "--model",
+  "claude-opus-5-5",
+  "--effort",
+  "xhigh",
+  "--tools",
+  "",
+  "--strict-mcp-config",
+  "--safe-mode",
+  "--disable-slash-commands",
+  "--system-prompt",
+  "Answer the user's request.",
+  "--output-format",
+  "stream-json",
+  "--verbose",
+  "--resume",
+  "2293c19a-6660-440f-b81a-f40f47fbf0a7"
+ ],
+ "model": "claude-opus-5-5",
+ "effort": "xhigh",
+ "wall_s": 25.9,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 2038,
+  "cache_read_input_tokens": 65838,
+  "output_tokens": 2147,
+  "output_tokens_details": {
+   "thinking_tokens": 2081
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 2038,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2147,
+    "cache_read_input_tokens": 65838,
+    "cache_creation_input_tokens": 2038,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 2038
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "model_usage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 3604,
+   "outputTokens": 22,
+   "thinkingTokens": 0,
+   "cacheReadInputTokens": 0,
+   "cacheCreationInputTokens": 0,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 0,
+   "webSearchRequests": 0,
+   "costUSD": 0.00037140000000000003,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000
+  },
+  "claude-opus-5-5": {
+   "inputTokens": 36,
+   "outputTokens": 46588,
+   "thinkingTokens": 34945,
+   "cacheReadInputTokens": 331254,
+   "cacheCreationInputTokens": 67876,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 67876,
+   "webSearchRequests": 0,
+   "costUSD": 1.5411627999999997,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "cost_usd": 1.5415341999999999,
+ "num_turns": 1,
+ "stop_reason": "end_turn",
+ "audit": {
+  "tool_free": true,
+  "init_tools": [],
+  "init_mcp_servers": [],
+  "tool_uses": 0
+ },
+ "attempts": 1
+}

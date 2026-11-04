@@ -1,0 +1,6 @@
+OUTPUT of Python run 11 of at most 120:
+```
+compiled: {'layers': 2, 'heads': 1, 'key_size': 84, 'mlp_hidden_size': 1, 'residual_dims': 92, 'dense_params': 71346, 'nonzero_params': 472, 'mlp_exactness': 100, 'compile_seconds': 5.7, 'seconds_per_1000_positions': 0.05, 'output_label': 'aggregate_1'}
+{'layers': 2, 'heads': 1, 'key_size': 84, 'mlp_hidden_size': 1, 'residual_dims': 92, 'dense_params': 71346, 'nonzero_params': 472, 'mlp_exactness': 100, 'compile_seconds': 5.7, 'seconds_per_1000_positions': 0.05, 'output_label': 'aggregate_1', 'residual_labels': ['aggregate_1', 'indices:0', 'indices:1', 'indices:2', 'indices:3', 'indices:4', 'indices:5', 'indices:6', 'indices:7', 'indices:8', 'indices:9', 'indices:10', 'indices:11', 'indices:12', 'indices:13', 'indices:14', 'indices:15', 'indices:16', 'indices:17', 'indices:18']}
+
+```

@@ -1,0 +1,99 @@
+OUTPUT of Python run 12 of at most 120:
+```
+basis_dir in residual_space.basis]
+
+  # Build model with embedding and unembedding layers
+  def get_compiled_model():
+    transformer = model.Transformer(model_config)
+    embed_modules = _make_embedding_modules(
+        residual_space=residual_space,
+        tokens_space=tokens_space,
+        indices_space=indices_space,
+        output_space=output_space)
+    return model.CompiledTransformerModel(
+        transformer=transformer,
+        token_embed=embed_modules.token_embed,
+        position_embed=embed_modules.pos_embed,
+        unembed=embed_modules.unembed,
+        use_unembed_argmax=categorical_output)
+
+  @hk.without_apply_rng
+  @hk.transform
+  def forward(emb):
+    compiled_model = get_compiled_model()
+    return compiled_model(emb, use_dropout=False)
+
+  params = forward.init(jax.random.PRNGKey(0), jnp.array([[1, 2, 3]]))
+  params = {k: dict(v) for k, v in params.items()}
+
+  for key in params:
+    if "transformer" in key:
+      for par in params[key]:
+        params[key][par] = np.zeros_like(params[key][par])
+
+  # Assemble attention and MLP weights.
+  project = lambda space: vectorspace_fns.project(residual_space, space).matrix
+
+  for module_name, module in zip(module_names, craft_model.blocks):
+    if isinstance(module, transformers.MLP):
+      hidden_size = module.fst.output_space.num_dims
+      residual_to_fst_input = project(module.fst.input_space)
+      snd_output_to_residual = project(module.snd.output_space).T
+      params[f"{module_name}/linear_1"]["w"][:, :hidden_size] = (
+          residual_to_fst_input @ module.fst.matrix)
+      params[f"{module_name}/linear_2"]["w"][:hidden_size, :] = (
+          module.snd.matrix @ snd_output_to_residual)
+    else:  # Attention module
+      query, key, value, linear = [], [], [], []
+      for head in module.as_multi().heads():
+        key_size = head.w_qk.matrix.shape[1]
+        query_mat = np.zeros((residual_space.num_dims, model_config.key_size))
+        residual_to_query = project(head.w_qk.left_space)
+        query_mat[:, :key_size] = residual_to_query @ head.w_qk.matrix
+        query.append(query_mat)
+
+        key_mat = np.zeros((residual_space.num_dims, model_config.key_size))
+        key_mat[:, :key_size] = project(head.w_qk.right_space)
+        key.append(key_mat)
+
+        value_size = head.w_ov.matrix.shape[1]
+        value_mat = np.zeros((residual_space.num_dims, model_config.key_size))
+        residual_to_ov_input = project(head.w_ov.input_space)
+        value_mat[:, :value_size] = residual_to_ov_input @ head.w_ov.matrix
+        value.append(value_mat)
+
+        linear_mat = np.zeros((model_config.key_size, residual_space.num_dims))
+        linear_mat[:value_size, :] = project(head.w_ov.output_space).T
+        linear.append(linear_mat)
+
+      # Fill up heads that are not used with zero weights
+      for _ in range(model_config.num_heads - module.as_multi().num_heads):
+        query.append(np.zeros_like(query[0]))
+        key.append(np.zeros_like(key[0]))
+        value.append(np.zeros_like(value[0]))
+        linear.append(np.zeros_like(linear[0]))
+
+      query = einops.rearrange(query,
+                               "heads input output -> input (heads output)")
+      key = einops.rearrange(key, "heads input output -> input (heads output)")
+      value = einops.rearrange(value,
+                               "heads input output -> input (heads output)")
+      linear = einops.rearrange(linear,
+                                "heads input output -> (heads input) output")
+
+      params[f"{module_name}/query"]["w"][:, :] = query
+      params[f"{module_name}/key"]["w"][:, :] = key
+      params[f"{module_name}/value"]["w"][:, :] = value
+      params[f"{module_name}/linear"]["w"][:, :] = linear
+
+  params = jax.tree_util.tree_map(jnp.array, params)
+  return AssembledTransformerModel(
+      forward=forward.apply,
+      get_compiled_model=get_compiled_model,
+      params=params,
+      model_config=model_config,
+      residual_labels=residual_labels,
+  )
+
+
+```

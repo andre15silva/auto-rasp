@@ -1,0 +1,6 @@
+OUTPUT of Python run 13 of at most 120:
+```
+compiled: {'layers': 11, 'heads': 3, 'key_size': 84, 'mlp_hidden_size': 331, 'residual_dims': 143, 'dense_params': 2654883, 'nonzero_params': 16341, 'mlp_exactness': 100, 'compile_seconds': 5.9, 'seconds_per_1000_positions': 0.2, 'output_label': 'linear_sequence_map_1'}
+6.368951082229614
+
+```

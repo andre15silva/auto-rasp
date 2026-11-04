@@ -1,0 +1,140 @@
+OUTPUT of Python run 11 of at most 120:
+```
+def _get_model_config_and_module_names(
+    craft_model: transformers.SeriesWithResiduals
+) -> Tuple[model.TransformerConfig, List[str]]:
+  """Returns model config and locations (in params) for halflayers."""
+
+  multi_attn_heads: List[List[transformers.AttentionHead]] = []
+  mlps: List[transformers.MLP] = []
+  module_names: List[str] = []
+
+  candidate_module_names = []
+  for layer in range(len(craft_model.blocks)):
+    candidate_module_names.append(f"transformer/layer_{layer}/attn")
+    candidate_module_names.append(f"transformer/layer_{layer}/mlp")
+  candidate_module_names = iter(candidate_module_names)
+
+  for module in craft_model.blocks:
+    if isinstance(module, transformers.MLP):
+      mlps.append(module)
+      layer_type = "mlp"
+    else:
+      multi_attn_heads.append(list(module.as_multi().heads()))
+      layer_type = "attn"
+    # Find next layer with the necessary type. Modules in-between, that are not
+    # added to module_names will be disabled later by setting all weights to 0.
+    module_name = next(candidate_module_names)
+    while layer_type not in module_name:
+      module_name = next(candidate_module_names)
+    module_names.append(module_name)
+
+  num_layers = int(module_names[-1].split("_")[1].split("/")[0]) + 1
+  heads = sum(multi_attn_heads, [])
+
+  if multi_attn_heads:
+    num_heads = max(len(heads) for heads in multi_attn_heads)
+    key_size = max(max(head.w_qk.matrix.shape) for head in heads)
+  else:
+    num_heads, key_size = 1, 1
+
+  if mlps:
+    mlp_hidden_size = max(mlp.fst.output_space.num_dims for mlp in mlps)
+  else:
+    mlp_hidden_size = 1
+
+  model_config = model.TransformerConfig(
+      num_heads=num_heads,
+      num_layers=num_layers,
+      key_size=key_size,
+      mlp_hidden_size=mlp_hidden_size,
+      dropout_rate=0.,
+      activation_function=jax.nn.relu,
+      layer_norm=False,
+      causal=False,
+  )
+
+  return model_config, module_names
+
+
+def _make_embedding_modules(
+    residual_space: bases.VectorSpaceWithBasis,
+    tokens_space: bases.VectorSpaceWithBasis,
+    indices_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis) -> EmbeddingModules:
+  """Creates embedding and unembedding modules from vector spaces.
+
+  Args:
+    residual_space: Full residual space of the model.
+    tokens_space: Subspace to embed tokens to.
+    indices_space: Subspace to embed indices/position embeddings to.
+    output_space: Subspace to unembed outputs from.
+
+  Returns:
+    EmbeddingModules containing modules for token embeddings, position
+      embeddings and unembeddings.
+  """
+  tokens_to_res = vectorspace_fns.project(tokens_space, residual_space)
+
+  # If we use the 'one' direction, make sure all inputs have a 1 here
+  one_dir = bases.BasisDirection("one")
+  if one_dir in residual_space:
+    one_to_res = vectorspace_fns.Linear.from_action(
+        tokens_space, residual_space,
+        lambda x: residual_space.vector_from_basis_direction(one_dir))
+    tokens_to_res = vectorspace_fns.Linear.combine_in_parallel(
+        [tokens_to_res, one_to_res])
+
+  # Token embeddings.
+  res_to_out = vectorspace_fns.project(residual_space, output_space)
+  token_embed = hk.Embed(  # pytype: disable=wrong-arg-types  # jax-ndarray
+      embedding_matrix=tokens_to_res.matrix, name="token_embed")
+
+  # Positional embeddings.
+  index_to_res = vectorspace_fns.project(indices_space, residual_space)
+  # The zeroth position should not have any positional embeddings,
+  # so we add one line of padding at the zeroth position.
+  pos_matrix = np.concatenate(
+      [np.zeros((1, residual_space.num_dims)), index_to_res.matrix], axis=0)
+  pos_embed = hk.Embed(embedding_matrix=pos_matrix, name="pos_embed")
+
+  def unembed(x, use_unembed_argmax):
+    out = x @ res_to_out.matrix
+    if use_unembed_argmax:
+      return jnp.argmax(out, axis=-1)
+    elif out.shape[-1] == 1:
+      return out.squeeze(-1)
+    return out
+
+  unembed_mod = hk.to_module(unembed)()
+  return EmbeddingModules(
+      token_embed=token_embed, pos_embed=pos_embed, unembed=unembed_mod)
+
+
+def assemble_craft_model(
+    craft_model: transformers.SeriesWithResiduals,
+    tokens_space: bases.VectorSpaceWithBasis,
+    indices_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis,
+    categorical_output: bool,
+    causal: bool = False,
+) -> AssembledTransformerModel:
+  """Assembles the given components into a Haiku model with parameters.
+
+  Args:
+    craft_model: Model to assemble weights for.
+    tokens_space: Vectorspace to embed the input tokens to.
+    indices_space: Vectorspace to embed the indices to (position encodings).
+    output_space: Vectorspace that the model will write outputs to that should
+      be unembedded.
+    categorical_output: Whether the output is categorical. If True, we take an
+      argmax when unembedding.
+    causal: Whether to output a causally-masked model.
+
+  Returns:
+    An AssembledTransformerModel that contains the model and parameters of the
+      assembled transformer.
+  """
+  # TODO(b
+
+```

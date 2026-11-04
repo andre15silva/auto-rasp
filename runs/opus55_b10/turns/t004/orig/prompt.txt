@@ -1,0 +1,115 @@
+OUTPUT of Python run 4 of at most 120:
+```
+--- craft/chamber/categorical_mlp.py:27
+def map_categorical_mlp(
+    input_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis,
+    operation: Callable[[bases.BasisDirection], bases.BasisDirection],
+) -> transformers.MLP:
+  """Returns an MLP that encodes any categorical function of a single variable f(x).
+
+  The hidden layer is the identity and output combines this with a lookup table
+    output_k = sum(f(i)*input_i for all i in input space)
+
+  Args:
+    input_space: space containing the input x.
+    output_space: space containing possible outputs.
+    operation: A function operating on basis directions.
+  """
+
+  def operation_fn(direction):
+    if direction in input_space:
+      output_direction = operation(direction)
+      if output_direction in output_space:
+        return output_space.vector_from_basis_direction(output_direction)
+    return output_space.null_vector()
+
+  first_layer = vectorspace_fns.Linear.from_action(input_space, output_space,
+                                                   operation_fn)
+
+  second_layer = vectorspace_fns.project(output_space, output_space)
+
+  return transformers.MLP(first_layer, second_layer)
+
+--- craft/chamber/categorical_mlp.py:58
+def map_categorical_to_numerical_mlp(
+    input_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis,
+    operation: Callable[[bases.Value], float],
+) -> transformers.MLP:
+  """Returns an MLP to compute f(x) from a categorical to a numerical variable.
+
+  The hidden layer is the identity and output combines this with a lookup table
+    output = sum(f(i)*input_i for all i in input space)
+
+  Args:
+    input_space: Vector space containing the input x.
+    output_space: Vector space to write the numerical output to.
+    operation: A function operating on basis directions.
+  """
+  bases.ensure_dims(output_space, num_dims=1, name="output_space")
+  out_vec = output_space.vector_from_basis_direction(output_space.basis[0])
+
+  def operation_fn(direction):
+    if direction in input_space:
+      return operation(direction.value) * out_vec
+    return output_space.null_vector()
+
+  first_layer = vectorspace_fns.Linear.from_action(input_space, output_space,
+                                                   operation_fn)
+
+  second_layer = vectorspace_fns.project(output_space, output_space)
+
+  return transformers.MLP(first_layer, second_layer)
+
+--- craft/chamber/categorical_mlp.py:89
+def sequence_map_categorical_mlp(
+    input1_space: bases.VectorSpaceWithBasis,
+    input2_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis,
+    operation: Callable[[bases.BasisDirection, bases.BasisDirection],
+                        bases.BasisDirection],
+    one_space: bases.VectorSpaceWithBasis = _ONE_SPACE,
+    hidden_name: bases.Name = "__hidden__",
+) -> transformers.MLP:
+  """Returns an MLP that encodes a categorical function of two variables f(x, y).
+
+  The hidden layer of the MLP computes the logical and of all input directions
+    hidden_i_j = ReLU(x_i+x_j-1)
+
+  And the output combines this with a lookup table
+    output_k = sum(f(i, j)*hidden_i_j for all i,j in input space)
+
+  Args:
+    input1_space: Vector space containing the input x.
+    input2_space: Vector space containing the input y.
+    output_space: Vector space to write outputs to.
+    operation: A function operating on basis directions.
+    one_space: a reserved 1-d space that always contains a 1.
+    hidden_name: Name for hidden dimensions.
+  """
+  bases.ensure_dims(one_space, num_dims=1, name="one_space")
+
+  if not set(input1_space.basis).isdisjoint(input2_space.basis):
+    raise ValueError("Input spaces to a SequenceMap must be disjoint. "
+                     "If input spaces are the same, use Map instead!")
+--- craft/chamber/selector_width.py:24
+def selector_width(
+    query_space: bases.VectorSpaceWithBasis,
+    key_space: bases.VectorSpaceWithBasis,
+    output_space: bases.VectorSpaceWithBasis,
+    bos_space: bases.VectorSpaceWithBasis,
+    one_space: bases.VectorSpaceWithBasis,
+    attn_fn: categorical_attn.QueryKeyToAttnLogit,
+    out_value_set: Iterable[float],
+    categorical_output: bool,
+    causal: bool = False,
+    softmax_coldness: float = 100.,
+    mlp_large_number: float = 100.,
+    label: str = "",
+) -> transformers.SeriesWithResiduals:
+  """Returns a craft block implementing RASP's SelectorWidth primitive.
+compiled: {'layers': 1, 'heads': 1, 'key_size': 1, 'mlp_hidden_size': 1, 'residual_dims': 90, 'dense_params': 8824, 'nonzero_params': 91, 'mlp_exactness': 100, 'compile_seconds': 3.4, 'seconds_per_1000_positions': 0.05, 'output_label': 'map_1'}
+{'layers': 1, 'heads': 1, 'key_size': 1, 'mlp_hidden_size': 1, 'residual_dims': 90, 'dense_params': 8824, 'nonzero_params': 91, 'mlp_exactness': 100, 'compile_seconds': 3.4, 'seconds_per_1000_positions': 0.05, 'output_label': 'map_1', 'residual_labels': ['indices:0', 'indices:1', 'indices:2', 'indices:3', 'indices:4', 'indices:5', 'indices:6', 'indices:7', 'indices:8', 'indices:9', 'indices:10', 'indices:11', 'indices:12', 'indices:13', 'indices:14', 'indices:15', 'indices:16', 'indices:17', 'indices:18', 'indices:19', 'indices:20', 'indices:21', 'indices:22', 'indices:23', 'indices:24', 'indices:25', 'indices:26', 'indices:27', 'indices:28', 'indices:29', 'indices:30', 'indices:31', 'indices:32', 'indices:33', 'indices:34', 'indices:35', 'indices:36', 'indices:37', 'indices:38', 'indices:39', 'indices:40', 'indices:41', 'indices:42', 'indices:43', 'indices:44', 'indices:45', 'indices:46', 'indices:47', 'indices:48', 'indices:49', 'indices:50', 'indices:51', 'indices:52', 'indices:53', 'indices:54', 'indices:55', 'indices:56', 'indices:57', 'indices:58', 'indices:59', 'indices:60', 'indices:61', 'indices:62', 'indices:63', 'indices:64', 'indices:65', 'indices:66', 'indices:67', 'indices:68', 'indices:69', 'indices:70', 'indices:71', 'indices:72', 'indices:73', 'indices:74', 'indices:75', 'indices:76', 'indices:77', 'indices:78', 'indices:79', 'indices:80', 'indices:81', 'map_1', 'tokens:.', 'tokens:B', 'tokens:BOS', 'tokens:W', 'tokens:compiler_pad', 'tokens:o', 'tokens:x']}
+
+```

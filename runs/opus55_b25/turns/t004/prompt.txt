@@ -1,0 +1,9 @@
+OUTPUT of Python run 3 of at most 120:
+```
+
+[stderr]
+Traceback (most recent call last):
+  File "<string>", line 63, in <module>
+NameError: name 'show' is not defined
+
+```

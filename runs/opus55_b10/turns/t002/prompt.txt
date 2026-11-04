@@ -1,0 +1,197 @@
+OUTPUT of Python run 1 of at most 120:
+```
+3.11.18 (main, Oct 26 2026, 15:28:55) [GCC 13.3.0]
+/opt/venvs/sandbox/lib/python3.11/site-packages/tracr
+total 4
+drwxr-xr-x 2 0 0 4096 Nov  4 18:11 .
+drwxr-xr-x 9 0 0  240 Nov  4 18:18 ..
+4
+               total        used        free      shared  buff/cache   available
+Mem:              15           2          12           0           1          13
+Swap:              0           0           0
+
+--- compiler/basis_inference.py:70
+        if res is not None:
+          out.add(res)
+      return out
+    elif isinstance(sop, rasp.Aggregate):
+      if rasp.is_categorical(sop):
+        # Simply pass on the value set of the underlying S-Op.
+        return graph.nodes[sop.sop.label][nodes.VALUE_SET]
+      elif rasp.is_numerical(sop):
+        # TODO(b/255936408): This doesn't work if we average arbitrary values.
+        # But most examples only average binary variables.
+        sop_value_set = graph.nodes[sop.sop.label][nodes.VALUE_SET]
+        if not {int(x) for x in sop_value_set}.issubset({0, 1}):
+          raise NotImplementedError(
+              "Attention patterns can currently only "
+              "average binary variables. Not:", sop_value_set)
+
+        value_set = set()
+        for value in sop_value_set:
+          for length in range(1, max_seq_len + 1):
+            value_set.add(value / length)
+        return value_set
+    raise ValueError(f"Unsupported S-Op: {sop}")
+
+  for node_id in nx.dfs_postorder_nodes(graph.reverse(), sink[nodes.ID]):
+    expr = graph.nodes[node_id][nodes.EXPR]
+
+    if not isinstance(expr, rasp.SOp):
+      # Only S-Ops have output vector spaces.
+      continue
+
+    value_set = compute_value_set(expr)
+    graph.nodes[node_id][nodes.VALUE_SET] = value_set
+
+--- compiler/basis_inference.py:102
+
+    if rasp.is_categorical(expr):
+      out_space = bases.VectorSpaceWithBasis.from_values(expr.label, value_set)
+    elif rasp.is_numerical(expr):
+      out_space = bases.VectorSpaceWithBasis.from_names([expr.label])
+    else:
+      raise ValueError(f"Unsupported S-Op type: {expr.type}")
+    graph.nodes[node_id][nodes.OUTPUT_BASIS] = out_space.basis
+
+--- rasp/rasp.py:443
+class Comparison(enum.Enum):
+  """A two-place boolean comparison predicate for use in Select."""
+  EQ = "=="
+  LT = "<"
+  LEQ = "<="
+  GT = ">"
+  GEQ = ">="
+  NEQ = "!="
+  TRUE = "True"
+  FALSE = "False"
+
+  def __call__(self, key: Value, query: Value) -> bool:
+    if key is None:
+      raise ValueError("key is None!")
+    if query is None:
+      raise ValueError("query is None!")
+    return _comparison_table[self](key, query)
+
+
+_comparison_table = {
+    Comparison.EQ: lambda key, query: key == query,
+    Comparison.LT: lambda key, query: key < query,
+    Comparison.LEQ: lambda key, query: key <= query,
+    Comparison.GT: lambda key, query: key > query,
+    Comparison.GEQ: lambda key, query: key >= query,
+    Comparison.NEQ: lambda key, query: key != query,
+    Comparison.TRUE: lambda key, query: True,
+    Comparison.FALSE: lambda key, query: False,
+}
+
+
+class Selector(RASPExpr):
+  """RASP Selector. Represents something like an attention head's weights."""
+
+  def __call__(self, xs: Sequence[Value]) -> SelectorValue:
+    return evaluate(self, xs)  # pytype: disable=bad-return-type
+
+  # Allow construction of Selector combinations using Python logical operators.
+  def __and__(self, other: "Selector") -> "Selector":
+    """self & other."""
+    return selector_and(self, other)
+
+  def __rand__(self, other: "Selector") -> "Selector":
+    """other & self."""
+    return selector_and(other, self)
+--- rasp/rasp.py:502
+class Select(Selector):
+  """Primitive that creates a Selector."""
+
+  def __init__(self, keys: SOp, queries: SOp, predicate: Predicate):
+    super().__init__()
+    self.keys = keys
+    self.queries = queries
+    self.predicate = predicate
+    assert isinstance(self.keys, SOp)
+    assert isinstance(self.queries, SOp)
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return [self.keys, self.queries]
+
+
+class ConstantSelector(Selector):
+  """A constant selector for testing purposes."""
+
+  def __init__(self, value: SelectorValue, check_length: bool = True):
+    super().__init__()
+    self.value = value
+    self.check_length = check_length
+
+  @property
+  def children(self) -> Sequence[RASPExpr]:
+    return []
+
+
+class SelectorWidth(SOp):
+--- craft/chamber/numerical_mlp.py:40
+def _get_discretising_layer(
+    input_value_set: Iterable[float],
+    f: Callable[[float], float],
+    hidden_name: bases.Name,
+    one_direction: bases.BasisDirection,
+    large_number: float,
+) -> DiscretisingLayerMaterials:
+  """Creates a hidden layer that discretises the input of f(x) into a value set.
+
+  The input is split up into a distinct region around each value in
+  `input_value_set`:
+
+  elements of value set:  v0   |  v1  |  v2  |  v3  |  v4  | ...
+  thresholds:                  t0     t1     t2     t3     t4
+
+  The hidden layer has two activations per threshold:
+    hidden_k_1 = ReLU(L * (x - threshold[k]) + 1)
+    hidden_k_2 = ReLU(L * (x - threshold[k]))
+
+  Note that hidden_k_1 - hidden_k_2 is:
+    1                 if x >= threshold[k] + 1/L
+    0                 if x <= threshold[k]
+    between 0 and 1   if threshold[k] < x < threshold[k] + 1/L
+
+  So as long as we choose L a big enough number, we have
+    hidden_k_1 - hidden_k_2 = 1 if x >= threshold[k].
+  i.e. we know in which region the input value is.
+
+  Args:
+    input_value_set: Set of discrete input values.
+    f: Function to approximate.
+    hidden_name: Name for hidden dimensions.
+    one_direction: Auxiliary dimension that must contain 1 in the input.
+    large_number: Large number L that determines accuracy of the computation.
+
+  Returns:
+    DiscretisingLayerMaterials containing all components for the layer.
+  """
+  output_values, sorted_values = [], []
+  for x in sorted(input_value_set):
+    res = errors.ignoring_arithmetic_errors(f)(x)
+    if res is not None:
+      output_values.append(res)
+      sorted_values.append(x)
+
+  num_vals = len(sorted_values)
+  value_thresholds = [
+      (sorted_values[i] + sorted_values[i + 1]) / 2 for i in range(num_vals - 1)
+  ]
+
+  hidden_directions = [bases.BasisDirection(f"{hidden_name}start")]
+  for k in range(1, num_vals):
+    dir0 = bases.BasisDirection(hidden_name, (k, 0))
+    dir1 = bases.BasisDirection(hidden_name, (k, 1))
+    hidden_directions.extend([dir0, dir1])
+  hidden_space = bases.VectorSpaceWithBasis(hidden_directions)
+
+  def action(direction: bases.BasisDirection) -> bases.VectorInBasis:
+    # hidden_k_0 = ReLU(L * (x - threshold[k]) + 1)
+    # hidden_k_1 = ReLU(L * (x - threshold[k]))
+could not get source code
+
+```
