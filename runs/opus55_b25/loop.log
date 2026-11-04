@@ -242,3 +242,19 @@
 [2026-11-04T22:23:36+0000] turn 120: resume (1,162 chars)
 [2026-11-04T22:24:42+0000] turn 120: python; runs 98, passes 21/25, tool-free True
 [2026-11-04T22:24:42+0000] turn 121: resume (308 chars)
+[2026-11-04T22:27:18+0000] turn 121: games; runs 98, passes 22/25, tool-free True
+[2026-11-04T22:27:18+0000] turn 122: resume (1,909 chars)
+[2026-11-04T22:27:47+0000] turn 122: python; runs 99, passes 22/25, tool-free True
+[2026-11-04T22:27:47+0000] turn 123: resume (313 chars)
+[2026-11-04T22:29:39+0000] turn 123: games; runs 99, passes 23/25, tool-free True
+[2026-11-04T22:29:39+0000] turn 124: resume (1,156 chars)
+[2026-11-04T22:30:04+0000] turn 124: python; runs 100, passes 23/25, tool-free True
+[2026-11-04T22:30:04+0000] turn 125: resume (320 chars)
+[2026-11-04T22:32:41+0000] turn 125: games; runs 100, passes 24/25, tool-free True
+[2026-11-04T22:32:41+0000] turn 126: resume (1,156 chars)
+[2026-11-04T22:33:08+0000] turn 126: python; runs 101, passes 24/25, tool-free True
+[2026-11-04T22:33:08+0000] turn 127: resume (453 chars)
+[2026-11-04T22:37:10+0000] turn 127: games; runs 101, passes 25/25, tool-free True
+[2026-11-04T22:37:10+0000] turn 128: resume (1,161 chars)
+[2026-11-04T22:37:31+0000] turn 128: final; runs 101, passes 25/25, tool-free True
+[2026-11-04T22:37:57+0000] final compile: {"ok": true, "stats": {"layers": 27, "heads": 4, "key_size": 84, "mlp_hidden_size": 471, "residual_dims": 829, "dense_params": 51326847, "nonzero_params": 174536}, "mlp_exactness": 100, "compile_seconds": 14.9, "output_label": "logit_1", "seconds_per_1000_positions": 17.92, "timings_per_1000_positions": [17.92, 20.53, 18.06], "seconds_total": 25.4}

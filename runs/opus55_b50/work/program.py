@@ -1,8 +1,8 @@
 
 import sys
 sys.path.insert(0, '/work')
-import importlib, gonet
-importlib.reload(gonet)
+import importlib, gonet4
+importlib.reload(gonet4)
 MLP_EXACTNESS = 500000
 def program():
-    return gonet.build()
+    return gonet4.build()
