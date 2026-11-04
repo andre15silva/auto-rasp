@@ -2,9 +2,9 @@
 from tracr.rasp import rasp
 
 K_SIZE = 84
-SEL = 8.0            # units; logit = 100*u/sqrt(K) ~ 10.9*u  -> 87
+SEL = 10.6           # units; logit = 100*u/sqrt(K) ~ 10.9*u -> 115.7 (gap to BOS 110 => exact 0 in float32)
 UNSEL = 0.0
-G_LO, G_HI = 5.5, 11.0   # graded run-start search: farthest .. nearest candidate
+G_LO, G_HI = 10.6, 10.6 + 10.2 * 8   # graded: consecutive candidates 111 logits apart
 N_PROP = 8
 THR_EVERY = 2
 

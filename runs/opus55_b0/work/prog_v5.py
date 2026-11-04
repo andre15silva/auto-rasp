@@ -66,18 +66,14 @@ def program():
     Hro = rasp.Aggregate(rasp.Select(RSo, Lo0, P_run), RSo)
     Vrx = rasp.Aggregate(rasp.Select(VSx, Lx0, P_vrun), VSx)
     Vro = rasp.Aggregate(rasp.Select(VSo, Lo0, P_vrun), VSo)
-    KHx = rasp.SequenceMap(fk, Hrx, clsx)
-    KHo = rasp.SequenceMap(fk, Hro, clso)
-    KVx = rasp.SequenceMap(fk, Vrx, clsx)
-    KVo = rasp.SequenceMap(fk, Vro, clso)
     Lx, Lo = Hrx, Hro
     for k in range(N_ALT):
         if k % 2 == 0:
-            Hx = rasp.Aggregate(rasp.Select(KVx, Vrx, P_group2), Lx)
-            Ho = rasp.Aggregate(rasp.Select(KVo, Vro, P_group2), Lo)
+            Hx = rasp.Aggregate(rasp.Select(Vrx, Vrx, P_group), Lx)
+            Ho = rasp.Aggregate(rasp.Select(Vro, Vro, P_group), Lo)
         else:
-            Hx = rasp.Aggregate(rasp.Select(KHx, Hrx, P_group2), Lx)
-            Ho = rasp.Aggregate(rasp.Select(KHo, Hro, P_group2), Lo)
+            Hx = rasp.Aggregate(rasp.Select(Hrx, Hrx, P_group), Lx)
+            Ho = rasp.Aggregate(rasp.Select(Hro, Hro, P_group), Lo)
         Lx = rasp.Aggregate(rasp.Select(idx, Hx, P_argmin), Lx)
         Lo = rasp.Aggregate(rasp.Select(idx, Ho, P_argmin), Lo)
 

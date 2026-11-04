@@ -3,7 +3,7 @@ from tracr.rasp import rasp
 GT, LT, GEQ, LEQ, EQ = (rasp.Comparison.GT, rasp.Comparison.LT, rasp.Comparison.GEQ,
                         rasp.Comparison.LEQ, rasp.Comparison.EQ)
 R_ROUNDS = 6
-EPS = 4e-7
+EPS_DEC = 6e-4      # decode threshold is EPS_DEC/2
 UNIT = 1.0 / 16
 
 def nbrs(i):
@@ -27,16 +27,23 @@ def r_up(k, i):
 def r_down(k, i):
     if i >= 81: return k == 81
     return k == (i+9 if i < 72 else 81)
-def r_nb(k, i): return k in NB[i]
+def r_nb(k, i):            # on-board neighbours; index 81 selects itself
+    if i >= 81: return k == 81
+    return k in NB[i]
+def r_nb81(k, i):          # neighbours plus the side token (always >= 1 key)
+    if i >= 81: return k == 81
+    return k in NB[i] or k == 81
 def r_cmle(k, i):
     if k < 0: return False
     if k == 81 or i == 81: return k <= i
     return (k % 9, k // 9) <= (i % 9, i // 9)
 def r_r2(k, i):
-    if i >= 81 or k < 0 or k >= 81: return False
+    if i >= 81: return k == 81
+    if k < 0 or k >= 81: return False
     return 1 <= man(k, i) <= 2
 RELS = {'A': (r_left, r_up, r_nb, r_cmle),
-        'B': (r_right, r_down, r_r2, r_r2)}
+        'B': (r_right, r_down, r_r2, r_nb81),
+        'C': (r_nb, r_r2, r_nb, r_nb)}
 class Q:
     __slots__ = ('i', 'k')
     def __init__(s, i, k): s.i = i; s.k = k
@@ -56,8 +63,8 @@ class Q:
         if isinstance(o, Q): return (s.k, s.i) >= (o.k, o.i)
         return RELS[s.k][3](o, s.i)
 
-def cmap(f, x): return rasp.Map(f, x)
-def nmap(f, x): return rasp.numerical(rasp.Map(f, x))
+def cmap(f, x): return rasp.Map(f, x, simplify=False)
+def nmap(f, x): return rasp.numerical(rasp.Map(f, x, simplify=False))
 def smap(f, a, b): return rasp.SequenceMap(f, a, b)
 def add(a, b, fa=1.0, fb=1.0): return rasp.numerical(rasp.LinearSequenceMap(a, b, fa, fb))
 def sum_tree(xs):
@@ -67,25 +74,34 @@ def sum_tree(xs):
         xs = nx
     return xs[0]
 def decode_distinct(state, nvals):
-    """state: soft categorical over 0..nvals-1 plus dummy 'D'. -> categorical count 0..3"""
+    """state: soft categorical over 0..nvals-1, 'D' (real filler) and 'Z' (never produced).
+    -> categorical count (0..3) of values with mass above EPS_DEC/2"""
     bits = []
     for c in range(nvals):
-        m = nmap(lambda v, c=c: 1.0 if v == c else (EPS if v == 'D' else 0.0), state)
-        bits.append(nmap(lambda x: UNIT if x > EPS / 2 else 0.0, m))
+        m = nmap(lambda v, c=c: 1.0 if v == c else (EPS_DEC if v == 'Z' else 0.0), state)
+        bits.append(nmap(lambda x: UNIT if x > EPS_DEC / 2 else 0.0, m))
     tot = sum_tree(bits)
     return cmap(lambda x: min(3, int(round(x / UNIT))), tot)
+def clean_bool(x):
+    """categorical bool with soft magnitude -> exact one-hot bool"""
+    return cmap(lambda v: v > 0.5, nmap(lambda b: 1.0 if b else 0.0, x))
 def line_of(i):
     r, c = divmod(i, 9)
     return min(r, c, 8 - r, 8 - c)
-
-# neighbour categories: E empty, X1/X2/X3 own stone by liberty class, O1/O2/O3, N off-board
+def msum(a, b): return tuple(sorted(a + b))
 CATS = ['E', 'X1', 'X2', 'X3', 'O1', 'O2', 'O3', 'N']
-def msum(a, b):  # multiset of categories as sorted tuple
-    return tuple(sorted(a + b))
+def clean_cat(c):
+    x = nmap(lambda v: 0.1 * CATS.index(v), c)
+    return cmap(lambda y: CATS[min(7, max(0, int(round(y / 0.1))))], x)
+T_OFF = 20.0
+P_OFF = 6.0
+def split_num(catsop):
+    """categorical SOp with numeric values -> numeric SOp (via positive & negative parts)"""
+    p = nmap(lambda v: max(v, 0.0), catsop)
+    n = nmap(lambda v: max(-v, 0.0), catsop)
+    return add(p, n, 1.0, -1.0)
 
 PASS_LOGIT = -2.0
-T_OFF = 40.0
-P_OFF = 10.0
 LINE_VAL = {0: -1.5, 1: -0.5, 2: 0.8, 3: 0.6, 4: 1.0}
 
 def tactic_score(ms):
@@ -135,11 +151,11 @@ def program():
     tok = rasp.tokens; idx = rasp.indices
     qA = cmap(lambda i: Q(i, 'A'), idx)
     qB = cmap(lambda i: Q(i, 'B'), idx)
-    # ---- runs
+    # ---- runs (exact start flags -> exact SelectorWidth counts)
     ltok = rasp.Aggregate(rasp.Select(idx, qA, GT), tok)
     utok = rasp.Aggregate(rasp.Select(idx, qA, LT), tok)
-    srow = smap(lambda t, l: (t not in ('x', 'o')) or (t != l), tok, ltok)
-    scol = smap(lambda t, u: (t not in ('x', 'o')) or (t != u), tok, utok)
+    srow = clean_bool(smap(lambda t, l: (t not in ('x', 'o')) or (t != l), tok, ltok))
+    scol = clean_bool(smap(lambda t, u: (t not in ('x', 'o')) or (t != u), tok, utok))
     ksr = smap(lambda i, s: i if s else 999, idx, srow)
     ksc = smap(lambda i, s: i if s else -1, idx, scol)
     ridr = rasp.SelectorWidth(rasp.Select(ksr, idx, LEQ)).named('ridr')
@@ -147,17 +163,22 @@ def program():
     selr = rasp.Select(ridr, ridr, EQ)
     selc = rasp.Select(ridc, ridc, EQ)
     # ---- liberty row/col sets, diffused within groups
-    rowE = smap(lambda i, t: 'D' if i >= 81 else (i // 9 if t == '.' else None), idx, tok)
-    colE = smap(lambda i, t: 'D' if i >= 81 else (i % 9 if t == '.' else None), idx, tok)
-    qS = smap(lambda i, l: Q(i, 'A'), idx, ltok)        # same values as qA, computed one layer later
-    seedsel = rasp.Select(idx, qS, GEQ)
-    sr = rasp.Aggregate(seedsel, rowE)
-    sc = rasp.Aggregate(seedsel, colE)
+    def rowEf(i, t):
+        if i >= 81: return 'Z' if t == '.' else 'D'
+        return i // 9 if t == '.' else None
+    def colEf(i, t):
+        if i >= 81: return 'Z' if t == '.' else 'D'
+        return i % 9 if t == '.' else None
+    rowE = smap(rowEf, idx, tok)
+    colE = smap(colEf, idx, tok)
+    seedsel = rasp.Select(idx, qB, LEQ)          # neighbours + index 81
+    stonly = lambda v, t: v if t in ('x', 'o') else 'D'
+    sr = smap(stonly, rasp.Aggregate(seedsel, rowE), tok).named('seed_r')
+    sc = smap(stonly, rasp.Aggregate(seedsel, colE), tok).named('seed_c')
     for k in range(R_ROUNDS):
         sel = selr if k % 2 == 0 else selc
-        sr = rasp.Aggregate(sel, sr)
-        sc = rasp.Aggregate(sel, sc)
-    sr = sr.named('sr_final'); sc = sc.named('sc_final')
+        sr = rasp.Aggregate(sel, sr).named('sr%d' % k)
+        sc = rasp.Aggregate(sel, sc).named('sc%d' % k)
     nr = decode_distinct(sr, 9).named('nr')
     nc = decode_distinct(sc, 9).named('nc')
     def lclass(a, b):
@@ -171,20 +192,21 @@ def program():
         if t in ('x', 'o'): return ('X' if t == 'x' else 'O') + str(max(l, 1))
         return 'N'
     cst = smap(catf, lcls, tok).named('cst')
-    cN = rasp.Aggregate(rasp.Select(idx, qA, LT), cst)
-    cS = rasp.Aggregate(rasp.Select(idx, qB, LT), cst)
-    cW = rasp.Aggregate(rasp.Select(idx, qA, GT), cst)
-    cE = rasp.Aggregate(rasp.Select(idx, qB, GT), cst)
-    cN = cN.named('cN'); cS = cS.named('cS'); cW = cW.named('cW'); cE = cE.named('cE')
+    cN = rasp.Aggregate(rasp.Select(idx, qA, LT), cst).named('cN')
+    cS = rasp.Aggregate(rasp.Select(idx, qB, LT), cst).named('cS')
+    cW = rasp.Aggregate(rasp.Select(idx, qA, GT), cst).named('cW')
+    cE = rasp.Aggregate(rasp.Select(idx, qB, GT), cst).named('cE')
+    cN, cS, cW, cE = clean_cat(cN), clean_cat(cS), clean_cat(cW), clean_cat(cE)
     pNS = smap(lambda a, b: msum((a,), (b,)), cN, cS)
     tW = smap(lambda p, w: msum(p, (w,)), pNS, cW)
-    tcat = smap(lambda t, e: tactic_score(msum(t, (e,))) + T_OFF, tW, cE).named('tcat')
-    tact = nmap(lambda v: v, tcat)
+    tcat = smap(lambda t, e: tactic_score(msum(t, (e,))), tW, cE).named('tcat')
+    tact = nmap(lambda v: v + T_OFF, tcat).named('tact')
     # ---- positional (cheap, token based)
-    tadj = rasp.Aggregate(rasp.Select(idx, qA, GEQ), tok)     # soft token mix of on-board neighbours
-    t2 = rasp.Aggregate(rasp.Select(idx, qB, GEQ), tok)       # soft token mix within distance 2
+    qC = smap(lambda i, s: Q(i, 'C'), idx, srow)               # delayed query (spreads heads over layers)
+    tadj = rasp.Aggregate(rasp.Select(idx, qC, GT), tok)      # soft token mix of on-board neighbours
+    t2 = rasp.Aggregate(rasp.Select(idx, qC, LT), tok)        # soft token mix within distance 2
     def pres(col):
-        return lambda v: 1.0 if v == col else (0.05 if v == 'B' else 0.0)
+        return lambda v: 1.0 if v == col else (0.05 if v == 'W' else 0.0)
     thr = lambda x: int(x > 0.025)
     hasx = cmap(thr, nmap(pres('x'), tadj)); haso = cmap(thr, nmap(pres('o'), tadj))
     ex2 = cmap(thr, nmap(pres('x'), t2)); eo2 = cmap(thr, nmap(pres('o'), t2))
@@ -195,6 +217,6 @@ def program():
     def pfin(e, a):
         if a == 'P': return PASS_LOGIT
         return pos_score(e[0], e[1], a[0], a[1], a[2])
-    pcat = smap(lambda e, a: pfin(e, a) + P_OFF, e2, adjl).named('pcat')
-    pos = nmap(lambda v: v, pcat)
+    pcat = smap(pfin, e2, adjl).named('pcat')
+    pos = nmap(lambda v: v + P_OFF, pcat).named('pos')
     return add(tact, pos).named('logit')

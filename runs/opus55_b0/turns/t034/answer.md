@@ -1,0 +1,15 @@
+```python
+s = open('/work/prog_v5.py').read()
+s = s.replace('''    KHx = rasp.SequenceMap(fk, Hrx, clsx)
+    KHo = rasp.SequenceMap(fk, Hro, clso)
+    KVx = rasp.SequenceMap(fk, Vrx, clsx)
+    KVo = rasp.SequenceMap(fk, Vro, clso)
+''', '')
+s = s.replace("rasp.Select(KVx, Vrx, P_group2)", "rasp.Select(Vrx, Vrx, P_group)")
+s = s.replace("rasp.Select(KVo, Vro, P_group2)", "rasp.Select(Vro, Vro, P_group)")
+s = s.replace("rasp.Select(KHx, Hrx, P_group2)", "rasp.Select(Hrx, Hrx, P_group)")
+s = s.replace("rasp.Select(KHo, Hro, P_group2)", "rasp.Select(Hro, Hro, P_group)")
+open('/work/prog_v5.py','w').write(s)
+res = compile_program('/work/prog_v5.py')
+print({k: v for k, v in res.items() if k != 'residual_labels'})
+```
