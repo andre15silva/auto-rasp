@@ -1,7 +1,7 @@
 
 from tracr.rasp import rasp
 MLP_EXACTNESS = 1000
-SELV = 5.0
+SELV = 100.0
 def program():
     t = rasp.tokens
     idx = rasp.indices
