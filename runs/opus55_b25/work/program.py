@@ -115,7 +115,7 @@ def LV(i):
     e = min(r, c, 8 - r, 8 - c)
     return 3.0 + [-2.0, -0.5, 0.5, 0.7, 1.0][e]
 
-TAC_CAP1, TAC_CAP2, TAC_EYE, TAC_SA, TAC_ESC, TAC_ATK = 14, 18, -16, -12, 9, 4
+TAC_CAP1, TAC_CAP2, TAC_EYE, TAC_SA, TAC_ESC, TAC_ATK = 20, 26, -25, -20, 14, 5
 PASSV = 0.0
 GAINW = 8.0
 SCALE = 2.0

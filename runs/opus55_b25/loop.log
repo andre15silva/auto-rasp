@@ -56,3 +56,7 @@
 [2026-11-04T20:08:27+0000] turn 27: resume (313 chars)
 [2026-11-04T20:08:56+0000] turn 27: positions; runs 26, passes 2/25, tool-free True
 [2026-11-04T20:08:56+0000] turn 28: resume (1,731 chars)
+[2026-11-04T20:09:17+0000] turn 28: python; runs 27, passes 2/25, tool-free True
+[2026-11-04T20:09:17+0000] turn 29: resume (127 chars)
+[2026-11-04T20:09:47+0000] turn 29: python; runs 28, passes 2/25, tool-free True
+[2026-11-04T20:09:47+0000] turn 30: resume (307 chars)

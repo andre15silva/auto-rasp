@@ -1,0 +1,7 @@
+OUTPUT of Python run 27 of at most 120:
+```
+stone 3 (0, 0) libs 1 Xm X3
+errors 1
+dict_keys(['board', 'to_move', 'tokens'])
+
+```
