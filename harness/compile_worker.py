@@ -55,7 +55,12 @@ def main(timing=True):
         rows = json.load(open(rin))
         from tracr.compiler import rasp_to_graph, nodes
 
+        class Failed:
+            def __init__(self, err):
+                self.err = err
+
         class Memo(rasp.DefaultRASPEvaluator):
+            """Memoized RASP evaluator; a failing expression is cached as Failed so its dependents fail fast."""
             def __init__(self):
                 super().__init__()
                 self.cache = {}
@@ -63,17 +68,29 @@ def main(timing=True):
             def evaluate(self, expr, xs):
                 k = id(expr)
                 if k not in self.cache:
-                    self.cache[k] = rasp.DefaultRASPEvaluator.evaluate(self, expr, xs)
-                return self.cache[k]
+                    try:
+                        self.cache[k] = rasp.DefaultRASPEvaluator.evaluate(self, expr, xs)
+                    except Exception as e:  # noqa: BLE001
+                        self.cache[k] = Failed(f"{type(e).__name__}: {str(e)[:300]}")
+                v = self.cache[k]
+                if isinstance(v, Failed):
+                    raise RuntimeError(v.err)
+                return v
 
+        sys.setrecursionlimit(100000)
         graph = rasp_to_graph.extract_rasp_graph(sop).graph
         sops = [d[nodes.EXPR] for _, d in graph.nodes(data=True) if isinstance(d[nodes.EXPR], rasp.SOp)]
         vals = {s.label: [] for s in sops}
+        errors = {}
         t1 = time.time()
         for row in rows:
             ev = Memo()
             for s in sops:
-                vals[s.label].append(ev.evaluate(s, list(row)))
+                try:
+                    vals[s.label].append(ev.evaluate(s, list(row)))
+                except Exception as e:  # noqa: BLE001
+                    vals[s.label].append([None] * len(row))
+                    errors.setdefault(s.label, str(e)[:300])
         arrays = {}
         for s in sops:
             v = vals[s.label]
@@ -81,6 +98,11 @@ def main(timing=True):
                 arrays[s.label] = np.array([[np.nan if x is None else float(x) for x in r] for r in v], np.float64)
             else:
                 arrays[s.label] = np.array([[str(x) for x in r] for r in v])
+        res["rasp_sops"] = len(sops)
+        res["rasp_sops_failed"] = len(errors)
+        res["rasp_output_failed"] = sop.label in errors
+        first = [e for e in errors.values() if not e.startswith("RuntimeError")] or list(errors.values())
+        res["rasp_first_error"] = first[0] if first else None
         np.savez_compressed("/out/rasp.npz", **arrays)
         res["rasp_seconds"] = round(time.time() - t1, 1)
     json.dump(res, open("/out/compile.json", "w"), indent=1)

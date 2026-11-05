@@ -79,6 +79,7 @@ def faithfulness(run_dir, positions, n=256, seed=0):
     res = sandbox.compile_in_sandbox(os.path.join(run_dir, "work"), out, rasp_inputs=toks.tolist(), timing=False)
     if not res.get("ok") or not os.path.exists(os.path.join(out, "rasp.npz")):
         return {"ok": False, "error": res.get("error", "no rasp.npz")[-2000:]}
+    rasp_info = {k: res.get(k) for k in ("rasp_sops", "rasp_sops_failed", "rasp_output_failed", "rasp_first_error")}
     tm = TracrModel(os.path.join(out, "model.npz"))
     comp = tm.logits_from_tokens(toks).astype(np.float64)
     ref = np.load(os.path.join(out, "rasp.npz"))[res["output_label"]].astype(np.float64)
@@ -92,7 +93,7 @@ def faithfulness(run_dir, positions, n=256, seed=0):
         pr = masked_probs(ref[i:i + 1], legal[i:i + 1])[0]
         agree.append(np.argmax(np.where(legal[i], comp[i], -np.inf)) == np.argmax(np.where(legal[i], ref[i], -np.inf)))
         tv.append(0.5 * np.abs(pc[i] - pr).sum())
-    return {"ok": True, "positions": int(len(toks)), "rasp_seconds": res.get("rasp_seconds"),
+    return {"ok": True, "positions": int(len(toks)), "rasp_seconds": res.get("rasp_seconds"), **rasp_info,
             "legal_entries_rasp_defined": float(m.sum() / legal.sum()),
             "positions_rasp_defined_on_all_legal_moves": int(full.sum()),
             "mean_abs_logit_diff": float(diff.mean()) if len(diff) else None,
@@ -110,6 +111,9 @@ def main():
     ap.add_argument("--ref-games", type=int, default=None, help="games vs the Astra reference networks "
                     "(default: --games)")
     ap.add_argument("--workers", type=int, default=2)
+    ap.add_argument("--faithfulness-only", action="store_true",
+                    help="(re)run only the faithfulness check of --run on positions from 64 games vs ppo_s0, "
+                         "merging it into the existing eval.json")
     ap.add_argument("--opponents", default="ppo_s0,ppo_s2,random,astra_b0,astra_b10,astra_b25,astra_b50")
     args = ap.parse_args()
     out = {"games": args.games, "ref_games": args.ref_games or args.games}
@@ -123,6 +127,16 @@ def main():
     else:
         name = args.name or os.path.basename(args.mlp.rstrip("/"))
         spec, out["subject"] = ("mlp", os.path.abspath(args.mlp)), "mlp"
+    if args.faithfulness_only:
+        d = os.path.join(REPO, "results", name)
+        prev = json.load(open(os.path.join(d, "eval.json")))
+        _, _, pos = job(spec, "ppo_s0", 64, 777, True)
+        prev["fast_runtime_check"] = check_fast(spec[1], pos)
+        prev["faithfulness"] = faithfulness(run_dir, pos)
+        prev["faithfulness"]["positions_from"] = "64 games vs ppo_s0 (seed 777), sampled"
+        json.dump(prev, open(os.path.join(d, "eval.json"), "w"), indent=1)
+        print("faithfulness:", json.dumps(prev["faithfulness"]), flush=True)
+        return
     opps = [o for o in args.opponents.split(",") if o != name]
     t0 = time.time()
     per, positions = {}, None
