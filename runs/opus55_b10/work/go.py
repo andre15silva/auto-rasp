@@ -150,7 +150,6 @@ def tactic_score(ms):
         elif not sa: s += 3.0
     if aO2 and safe: s += 4.0
     if aX2 and lo >= 3: s += 2.5
-    if aO3 and safe: s += 0.5
     eye = (len(xs) + nN == 4)
     if eye and not cap and not (aX1 and safe): s -= 15.0
     return s
@@ -191,6 +190,20 @@ def TERR_VAL(region, phase):
     if phase == 2 and ho and not hx: return -6.0
     return 0.0
 TRIPLE_CLASS, TRIPLE_REP = build_triple_classes()
+def build_pair_classes():
+    import itertools
+    pairs = sorted({tuple(sorted(t)) for t in itertools.product(CATS, repeat=2)})
+    comps = sorted({tuple(sorted(t)) for t in itertools.product(CATS, repeat=2)})
+    sig = {}
+    for p in pairs:
+        key = tuple(tactic_score(msum(p, q)) for q in comps)
+        sig.setdefault(key, []).append(p)
+    cls, rep = {}, {}
+    for k, (key, ps) in enumerate(sorted(sig.items())):
+        rep[k] = ps[0]
+        for p in ps: cls[p] = k
+    return cls, rep
+PAIR_CLASS, PAIR_REP = build_pair_classes()
 def build_pos_classes():
     cls, rows = {}, {}
     sig = {}
@@ -278,8 +291,8 @@ def program():
     cst_d2 = cmap(lambda c: c, cst_d1)
     cW = rasp.Aggregate(rasp.Select(idx, qA, GT), cst_d1).named('cW')
     cE = rasp.Aggregate(rasp.Select(idx, qB, GT), cst_d2).named('cE')
-    pNS = smap(lambda a, b: msum((a,), (b,)), cN, cS)
-    tW = smap(lambda p, w: TRIPLE_CLASS[msum(p, (w,))], pNS, cW)
+    pNS = smap(lambda a, b: PAIR_CLASS[msum((a,), (b,))], cN, cS)
+    tW = smap(lambda p, w: TRIPLE_CLASS[msum(PAIR_REP[p], (w,))], pNS, cW)
     tcat = smap(lambda t, e: max(-20.0, tactic_score(msum(TRIPLE_REP[t], (e,)))), tW, cE).named('tcat')
     tact = nmap(lambda v: v + T_OFF, tcat).named('tact')
     # opponent stones in atari that touch one of our stones in atari -> capturing them saves us

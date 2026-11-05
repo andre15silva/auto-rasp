@@ -180,3 +180,31 @@
 [2026-11-04T23:45:20+0000] turn 89: resume (487 chars)
 [2026-11-04T23:47:11+0000] turn 89: python; runs 84, passes 4/50, tool-free True
 [2026-11-04T23:47:11+0000] turn 90: resume (62 chars)
+[2026-11-04T23:48:06+0000] turn 90: python; runs 85, passes 4/50, tool-free True
+[2026-11-04T23:48:06+0000] turn 91: resume (324 chars)
+[2026-11-04T23:49:48+0000] turn 91: positions; runs 85, passes 5/50, tool-free True
+[2026-11-04T23:49:48+0000] turn 92: resume (5,399 chars)
+[2026-11-04T23:50:10+0000] turn 92: python; runs 86, passes 5/50, tool-free True
+[2026-11-04T23:50:10+0000] turn 93: resume (281 chars)
+[2026-11-04T23:50:24+0000] turn 93: python; runs 87, passes 5/50, tool-free True
+[2026-11-04T23:50:24+0000] turn 94: resume (550 chars)
+[2026-11-04T23:51:39+0000] turn 94: python; runs 88, passes 5/50, tool-free True
+[2026-11-04T23:51:39+0000] turn 95: resume (335 chars)
+[2026-11-04T23:57:56+0000] turn 95: games; runs 88, passes 6/50, tool-free True
+[2026-11-04T23:57:56+0000] turn 96: resume (1,875 chars)
+[2026-11-04T23:58:09+0000] turn 96: python; runs 89, passes 6/50, tool-free True
+[2026-11-04T23:58:09+0000] turn 97: resume (1,464 chars)
+[2026-11-04T23:58:31+0000] turn 97: python; runs 90, passes 6/50, tool-free True
+[2026-11-04T23:58:31+0000] turn 98: resume (988 chars)
+[2026-11-04T23:58:47+0000] turn 98: python; runs 91, passes 6/50, tool-free True
+[2026-11-04T23:58:47+0000] turn 99: resume (417 chars)
+[2026-11-04T23:59:19+0000] turn 99: python; runs 92, passes 6/50, tool-free True
+[2026-11-04T23:59:19+0000] turn 100: resume (331 chars)
+[2026-11-04T23:59:33+0000] turn 100: python; runs 93, passes 6/50, tool-free True
+[2026-11-04T23:59:33+0000] turn 101: resume (2,392 chars)
+[2026-11-04T23:59:51+0000] turn 101: positions; runs 93, passes 7/50, tool-free True
+[2026-11-04T23:59:51+0000] turn 102: resume (1,712 chars)
+[2026-11-05T00:00:03+0000] turn 102: python; runs 94, passes 7/50, tool-free True
+[2026-11-05T00:00:03+0000] turn 103: resume (2,549 chars)
+[2026-11-05T00:00:28+0000] turn 103: python; runs 95, passes 7/50, tool-free True
+[2026-11-05T00:00:28+0000] turn 104: resume (1,327 chars)

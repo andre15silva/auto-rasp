@@ -141,7 +141,7 @@ def build(stop=None):
     srt = lambda a, b: tuple(sorted((a, b)))
     pNS = cat(SM(srt, nbs['N'], nbs['S']), 'pNS')
     pWE = cat(SM(srt, nbs['W'], nbs['E']), 'pWE')
-    t1c = cat(SM(lambda a, b: tactical(list(a) + list(b)), pNS, pWE), 't1c')
+    t1c = cat(SM(lambda a, b: round(OFF1 + tactical(list(a) + list(b)), 2), pNS, pWE), 't1c')
     t1 = num(M(lambda v: v, t1c), 't1')
     if stop == 't1': return t1
     # ---- eyes
@@ -191,14 +191,14 @@ def build(stop=None):
     aux = cat(SM(lambda e, r: (e, r), eye, region), 'aux')
     def s4(a, ln):
         e, rg = a
-        if e == 'side': return 0.0
+        if e == 'side': return OFF4
         v = REG[rg] + (PRIOR[ln] if ln < 9 else 0.0)
         if e == 'eye': v += EYE
         elif e == 'feye': v += FEYE
-        return round(v, 2)
+        return round(OFF4 + v, 2)
     t4c = cat(SM(s4, aux, linec), 't4c')
     t4 = num(M(lambda v: v, t4c), 't4')
-    t5c = cat(SM(lambda inf, c: (INFL.get(inf, 0.0) if c == 'E' else 0.0), infl, color), 't5c')
+    t5c = cat(SM(lambda inf, c: round(OFF5 + (INFL.get(inf, 0.0) if c == 'E' else 0.0), 2), infl, color), 't5c')
     t5 = num(M(lambda v: v, t5c), 't5')
     if stop == 't5': return lsm(t4, t5, 'dbg5')
 
@@ -234,9 +234,9 @@ def build(stop=None):
     neucls = cat(M(ncls, mneu), 'neucls')
     pstate = cat(SM(lambda a, b: (a, b), ttcls, neucls), 'pstate')
     def passf(ps, sd):
-        if sd not in ('B', 'W'): return 0.0
+        if sd not in ('B', 'W'): return OFF6
         tc, nc = ps
-        return PASSTAB(tc, nc, sd)
+        return round(OFF6 + PASSTAB(tc, nc, sd), 2)
     t6c = cat(SM(passf, pstate, side), 't6c')
     t6 = num(M(lambda v: v, t6c), 't6')
     if stop == 't6': return t6
@@ -276,6 +276,7 @@ def tactical(l):
     return round(v, 2)
 
 # ---------------- tables
+OFF1, OFF4, OFF5, OFF6 = 25.0, 20.0, 2.0, 10.0
 TACT = {'cap_s': 8.0, 'cap_m': 11.0, 'cap_extra': 1.5, 'capsave': 2.0,
         'esc3': {'s': 6.5, 'm': 9.0}, 'esc2': {'s': 1.5, 'm': 3.5}, 'escf': -5.0,
         'sui': -10.0, 'sa_s': -6.0, 'sa_m': -9.0, 'fill2': -1.0, 'noE': -2.0,

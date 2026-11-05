@@ -1,0 +1,9 @@
+OUTPUT of Python run 102 of at most 120:
+```
+11 377 [('sequence_map_196', 164), ('sequence_map_207', 164), ('sequence_map_232', 20), ('map_48', 7), ('map_60', 7), ('map_50', 5)]
+13 340 [('ridc_177*', 166), ('ridr_197*', 166), ('sequence_map_37', 4), ('seed_g_229', 4)]
+33 257 [('phase_52', 165), ('sequence_map_36', 16), ('sequence_map_82', 15), ('sequence_map_83', 15), ('sequence_map_84', 15), ('sequence_map_85', 15)]
+47 457 [('sequence_map_12', 288), ('map_19', 165), ('pos_5', 4)]
+49 336 [('tcat_7', 320), ('sequence_map_11', 16)]
+
+```

@@ -1,0 +1,22 @@
+OUTPUT of Python run 95 of at most 120:
+```
+plies 0 - 9 mean top1 prob 0.067
+plies 10 - 19 mean top1 prob 0.202
+plies 20 - 29 mean top1 prob 0.269
+plies 30 - 39 mean top1 prob 0.319
+plies 40 - 49 mean top1 prob 0.41
+plies 50 - 59 mean top1 prob 0.495
+strong first moves (as black): [(48, 32)]
+our first moves: [(58, 4), (38, 4), (50, 4), (40, 4), (49, 4), (24, 4), (56, 3), (41, 3)]
+5           11          17          23          29          35          41          47       
+.........   .........   .........   .........   .........   .....X...   .....X...   .....X...
+.........   .......X.   .......X.   .....o.X.   .X...O.X.   .X...OXX.   .X..X.XX.   .XXOX.XX.
+.........   ..o......   ..O.XX...   ..OXXXO..   ..OXXXO..   .OOXXX.X.   .OOXXX.X.   .OOXXX.X.
+...O.oX..   ...OOOX..   ...OOOX..   ..OOOOX..   ..OOOOXO.   ..OOOOXO.   .oOOOOXO.   .OOOOOXO.
+....O....   ..X.OO...   ..X.OO...   X.XXOO...   XoXXOO...   XOXXOOO..   XOXXOOO..   XOXXOOO..
+.........   ......X..   .....oX..   .....OX..   .....OXO.   .....O.O.   .X.X.O.O.   .X.X.O.O.
+..X.X....   ..X.X....   ..X.XOO..   ..X.XOO..   ..X.XOO..   ..X.XOO..   ..XOXOO..   .oXOXOOXX
+.........   .........   .X.......   .X.......   .X..X.X..   .X.oX.X..   .X.OX.X..   .X.OX.XO.
+.........   .........   .........   .........   .........   .........   .........   .........
+
+```

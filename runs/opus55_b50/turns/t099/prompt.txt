@@ -1,0 +1,10 @@
+OUTPUT of Python run 91 of at most 120:
+```
+2 black own 41 opp 40 neu 0 d 1 margin(komi) -6.5 final -6.5
+3 black own 40 opp 38 neu 3 d 2 margin(komi) -5.5 final -5.5
+5 black own 40 opp 39 neu 2 d 1 margin(komi) -6.5 final -6.5
+12 black own 43 opp 38 neu 0 d 5 margin(komi) -2.5 final -2.5
+14 black own 40 opp 39 neu 2 d 1 margin(komi) -6.5 final -6.5
+16 black own 40 opp 40 neu 1 d 0 margin(komi) -7.5 final -7.5
+
+```

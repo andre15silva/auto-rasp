@@ -1,0 +1,10 @@
+OUTPUT of Python run 100 of at most 120:
+```
+current 55
+no red 40
+def tactic_score(ms):
+    """ms: sorted tuple of the 4 neighbour categories."""
+    if all(c == 'N' for c in ms): return 0.0          # pass position (index 81)
+    nO1 = ms.count('O1'); nE = ms.count
+
+```
