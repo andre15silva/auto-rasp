@@ -263,7 +263,7 @@ def build(stop=None):
     def lsf(ps, sd):
         tc, nc = ps
         win = (tc >= 5) if sd == 'B' else (tc >= 2)
-        return (not win) and nc <= 2
+        return (not win) and nc <= 1
     losing = cat(SM(lsf, pstate, sideall), 'losing')
     t7c = cat(SM(lambda rg, l: round(OFF7 + (INV if (rg == 'opp' and l) else 0.0), 2), region, losing), 't7c')
     t7 = num(M(lambda v: v, t7c), 't7')
@@ -334,6 +334,6 @@ NEU_DUM = {k: n / 81.0 for k, (n, c) in enumerate(_NEUD) if n > 0}
 def PASSTAB(tc, nc, sd):
     win = (tc >= 5) if sd == 'B' else (tc >= 2)
     big = (tc >= 6) if sd == 'B' else (tc >= 4)
-    if win and nc == 0: return -4.0
-    if win and nc == 1: return -5.0 if big else -6.0
+    if win and nc == 0: return -1.0
+    if win and nc == 1: return -2.5 if big else -4.0
     return -8.0
