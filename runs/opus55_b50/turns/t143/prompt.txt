@@ -1,0 +1,6 @@
+OUTPUT of Python run 118 of at most 120:
+```
+INV 6.0 N_PROP 7 TINY 8e-06 PASSTAB win -1.0 -2.5 lose -8.0
+compiled: {'layers': 25, 'heads': 8, 'key_size': 84, 'mlp_hidden_size': 2034, 'residual_dims': 1225, 'dense_params': 207175250, 'nonzero_params': 48453, 'mlp_exactness': 500000, 'compile_seconds': 39.4, 'seconds_per_1000_positions': 20.87, 'output_label': 'logits_1'}
+
+```

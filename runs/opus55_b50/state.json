@@ -3,13 +3,13 @@
  "model": "claude-opus-5-5",
  "effort": "xhigh",
  "session_id": "6d187206-9a21-4995-952b-1790764d75d5",
- "turn": 142,
- "runs": 117,
- "passes": 23,
- "requests": 25,
+ "turn": 150,
+ "runs": 118,
+ "passes": 30,
+ "requests": 32,
  "done": false,
- "next": "Games pass 23 of 50 done.\n```\n{\"ok\": true, \"pass\": 23, \"kind\": \"games\", \"per_opponent\": {\"strong\": {\"games\": 128, \"score\": 0.40625, \"wins\": 52, \"losses\": 76, \"score_as_black\": 0.28125, \"score_as_white\": 0.53125, \"mean_margin\": 14.7890625, \"mean_length\": 105.5859375, \"stones_captured_per_game\": 32.7265625, \"stones_lost_per_game\": 16.734375, \"passes_per_game\": 2.7734375, \"games_with_a_pass_before_move_60\": 0, \"end_two_passes\": 119, \"end_repetition\": 7, \"end_move_limit\": 2}}, \"network\": {\"layers\": 25, \"heads\": 8, \"key_size\": 84, \"mlp_hidden_size\": 2034, \"residual_dims\": 1225, \"dense_params\": 207175250, \"nonzero_params\": 48453}, \"seconds_per_1000_positions\": 12.77, \"seconds\": 137.3, \"files\": \"/work/pass_23/\", \"readme\": \"games.json: one entry per game (opponent, net_color, result +1/-1, margin = net's area score minus the opponent's incl. komi, end, stones captured / lost, moves: ply, by, move (row*9+col, 81 = pass), and for the network's moves its top-5 [move, probability]). boards.npy: (games, 162, 81) int8, the board AFTER each ply (1 Black, -1 White, 0 empty; index row*9+col); valid.npy: (games, 162) which plies were played.\"}\n```\nPasses left: 27.",
+ "next": "Games pass 30 of 50 done.\n```\n{\"ok\": true, \"pass\": 30, \"kind\": \"games\", \"per_opponent\": {\"strong\": {\"games\": 128, \"score\": 0.515625, \"wins\": 66, \"losses\": 62, \"score_as_black\": 0.421875, \"score_as_white\": 0.609375, \"mean_margin\": 20.6875, \"mean_length\": 107.171875, \"stones_captured_per_game\": 40.90625, \"stones_lost_per_game\": 16.234375, \"passes_per_game\": 3.0078125, \"games_with_a_pass_before_move_60\": 0, \"end_two_passes\": 125, \"end_repetition\": 2, \"end_move_limit\": 1}}, \"network\": {\"layers\": 25, \"heads\": 8, \"key_size\": 84, \"mlp_hidden_size\": 2034, \"residual_dims\": 1225, \"dense_params\": 207175250, \"nonzero_params\": 48453}, \"seconds_per_1000_positions\": 11.13, \"seconds\": 156.8, \"files\": \"/work/pass_30/\", \"readme\": \"games.json: one entry per game (opponent, net_color, result +1/-1, margin = net's area score minus the opponent's incl. komi, end, stones captured / lost, moves: ply, by, move (row*9+col, 81 = pass), and for the network's moves its top-5 [move, probability]). boards.npy: (games, 162, 81) int8, the board AFTER each ply (1 Black, -1 White, 0 empty; index row*9+col); valid.npy: (games, 162) which plies were played.\"}\n```\nPasses left: 20.",
  "started": "2026-11-04T18:11:14+0000",
  "session_started": true,
- "acted": 141
+ "acted": 149
 }
