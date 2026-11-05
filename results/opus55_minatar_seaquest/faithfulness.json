@@ -1,0 +1,17 @@
+{
+ "positions": 256,
+ "rasp_sops": 42,
+ "rasp_sops_failed": 14,
+ "rasp_output_failed": true,
+ "rasp_first_error": "RuntimeError: RuntimeError: RuntimeError: RuntimeError: RuntimeError: RuntimeError: RuntimeError: TypeError: unsupported operand type(s) for //: 'NoneType' and 'int'",
+ "rasp_seconds": 5.4,
+ "positions_rasp_defined": 254,
+ "logit_entries_rasp_defined": 0.9921875,
+ "entrywise_max_abs_logit_diff": 0.3129081726074219,
+ "entrywise_mean_abs_logit_diff": 0.2298692884094759,
+ "max_abs_logit_diff": 0.3129081726074219,
+ "mean_abs_logit_diff": 0.2298692884094759,
+ "mean_total_variation": 0.0016161954403085554,
+ "argmax_agreement": 0.9606299212598425,
+ "positions_policy_differs_by_tv_over_0.1": 0
+}

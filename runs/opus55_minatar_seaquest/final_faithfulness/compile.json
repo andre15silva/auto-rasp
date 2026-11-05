@@ -1,0 +1,21 @@
+{
+ "ok": true,
+ "stats": {
+  "layers": 10,
+  "heads": 5,
+  "key_size": 57,
+  "mlp_hidden_size": 4200,
+  "residual_dims": 599,
+  "dense_params": 57314351,
+  "nonzero_params": 22758
+ },
+ "mlp_exactness": 1000,
+ "compile_seconds": 192.0,
+ "output_label": "out_1",
+ "rasp_sops": 42,
+ "rasp_sops_failed": 14,
+ "rasp_output_failed": true,
+ "rasp_first_error": "RuntimeError: RuntimeError: RuntimeError: RuntimeError: RuntimeError: RuntimeError: RuntimeError: TypeError: unsupported operand type(s) for //: 'NoneType' and 'int'",
+ "rasp_seconds": 5.4,
+ "seconds_total": 199.6
+}

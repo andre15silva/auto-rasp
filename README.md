@@ -16,9 +16,11 @@ Go, one reply with no tools for MinAtar, the same harness style and the same kin
 - **Go (Experiment 6).** Compiled RASP programs beat the paper's same-size PPO networks at every budget. They beat
   Astra's weights at 0, 10 and 25 passes; at 50 passes Astra's network is better.
 - **MinAtar (Experiment 5).** All three one-shot programs compiled on the first try. Breakout matches Astra's
-  network (501 vs 499, about 20× PPO). SEAQUEST_SUMMARY Asterix is weak (19 vs 54).
-- **The programs target Tracr, not textbook RASP.** The Go programs use real-valued selector scores, which RASP's
-  reference evaluator rejects. The one-shot Breakout program is valid RASP and compiles exactly.
+  network (501 vs 499, about 20× PPO). Seaquest (14 vs 56) and Asterix (19 vs 54) are far below Astra's networks.
+  The compiled networks are faithful to their programs wherever that can be checked.
+- **Multi-turn writers program the compiler.** The Go programs, written over many turns of reading Tracr's source,
+  use real-valued selector scores, which RASP's reference evaluator rejects. The one-shot MinAtar programs keep to
+  RASP's semantics, and the Breakout program compiles exactly.
 
 # Experiment 6: 9×9 Go
 
@@ -154,7 +156,7 @@ The differences are −1.7, +1.5 and +0.8 standard errors, all within noise.
 | game | Opus 5.5 → RASP → Tracr, one reply | Astra → MLP weights, one reply (our scoring) | PPO 100M (paper, best seed) | PPO 500M (paper, best seed) |
 |---|---|---|---|---|
 | Breakout | **501.4 ± 6.0** | 498.6 ± 7.8 | 15.8 | 25.3 |
-| Seaquest | SEAQUEST_SCORE | 55.9 ± 1.4 | 5.6 | **88.9** |
+| Seaquest | 14.1 ± 0.5 | 55.9 ± 1.4 | 5.6 | **88.9** |
 | Asterix | 19.4 ± 0.7 | 54.4 ± 1.1 | 25.8 | **55.2** |
 
 The PPO networks are not released, so their numbers are the paper's. They were scored with the same protocol, so
@@ -167,7 +169,9 @@ they are comparable with the paper's own Astra numbers.
 - **Asterix.** A one-step lookahead scores each move by danger and nearby gold. It dies early: a mean episode of
   401 steps, against 871 for Astra's network.
 - **Seaquest.** A reactive heuristic: never step into danger, shoot enemies in the facing direction, collect
-  divers, and surface only when oxygen is low and a diver is on board. SEAQUEST_NOTE
+  divers, and surface only when oxygen is low and a diver is on board. It dies early (median episode 252 steps,
+  against 1,470 for Astra's network). Its 14.1 is above the best 100M-step PPO seed (5.6) and two of the three
+  500M-step seeds (7.5 and 4.4), but far below Astra's network and the best PPO seed.
 
 **Faithfulness** ([`eval/faithfulness_minatar.py`](eval/faithfulness_minatar.py), 256 observations from each
 network's own games, compiled logits against `rasp.evaluate`):
@@ -175,15 +179,26 @@ network's own games, compiled logits against `rasp.evaluate`):
 | game | SOps rasp.evaluate fails on | logit entries RASP defines | max abs logit diff (where defined) | same argmax |
 |---|---|---|---|---|
 | Breakout | 0 of 23 | 100 % | 1.6e-4 | 100 % |
-| Seaquest | SEAQUEST_FAITH |
+| Seaquest | 14 of 42, on 2 of 256 states (a `None` reaching integer division) | 99.2 % | 0.31 | 96 % (the rest are near-ties; mean total variation 0.002) |
 | Asterix | 0 of 70 | 0.8 % | 0.008 | – |
 
-Unlike the Go programs, all three one-shot programs are valid RASP: the reference evaluator runs every SOp without
-error. The Breakout program compiles exactly. The compiled network and `rasp.evaluate` choose the same action in
+Unlike the Go programs, the one-shot programs are written in RASP's own semantics. RASP's reference evaluator runs
+Breakout's and Asterix's programs without error, and Seaquest's on all but 2 of 256 states. The Breakout program
+compiles exactly. The compiled network and `rasp.evaluate` choose the same action in
 every sampled state, and their policies are identical. The Asterix program instead relies on how Tracr represents
 an attention that selects nothing (a zero vector, which acts as "nothing here"). RASP turns that case into `None`,
 which then propagates to the output, so RASP leaves 99 % of its logits undefined. Where it does define them, they
-match the compiled ones to within 0.008, so there is no sign that compilation caused the weak score.
+match the compiled ones to within 0.008, so there is no sign that compilation caused the weak score. The Seaquest
+program compiles closely: on the 254 states where RASP is defined, the compiled logits are within 0.31 of RASP's
+(it sets `MLP_EXACTNESS` = 1,000), and the two policies differ by a mean total variation of 0.002. Its weak score is
+the design's, not the compiler's.
+
+**Reading the MinAtar results.** Writing a compilable Tracr program in one reply, without running anything, was not
+the obstacle: all three compiled, and none needed Tracr tricks the reference evaluator rejects. What separated the
+games is the strategy. Breakout's ball physics is deterministic and can be computed exactly; the program does
+that and matches Astra. Seaquest and Asterix need judgement about moving threats and timing, and Opus's
+hand-written heuristics there are far weaker than Astra's hand-written weights. One reply per game makes this a
+sample of one.
 
 **Runs.**
 
