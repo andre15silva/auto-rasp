@@ -17,7 +17,8 @@ Go, one reply with no tools for MinAtar, the same harness style and the same kin
   Astra's weights at 0, 10 and 25 passes; at 50 passes Astra's network is better.
 - **MinAtar (Experiment 5).** All three one-shot programs compiled on the first try. Breakout matches Astra's
   network (501 vs 499, about 20× PPO). Seaquest (14 vs 56) and Asterix (19 vs 54) are far below Astra's networks.
-  The compiled networks are faithful to their programs wherever that can be checked.
+  That is not a compilation problem: those programs random-walk among safe moves, and MinAtar's sticky actions
+  (the previous action replayed 10 % of the time) kill them. With sticky actions off they beat Astra's networks.
 - **Multi-turn writers program the compiler.** The Go programs, written over many turns of reading Tracr's source,
   use real-valued selector scores, which RASP's reference evaluator rejects. The one-shot MinAtar programs keep to
   RASP's semantics, and the Breakout program compiles exactly.
@@ -193,11 +194,44 @@ program compiles closely: on the 254 states where RASP is defined, the compiled 
 (it sets `MLP_EXACTNESS` = 1,000), and the two policies differ by a mean total variation of 0.002. Its weak score is
 the design's, not the compiler's.
 
-**Reading the MinAtar results.** Writing a compilable Tracr program in one reply, without running anything, was not
-the obstacle: all three compiled, and none needed Tracr tricks the reference evaluator rejects. What separated the
-games is the strategy. Breakout's ball physics is deterministic and can be computed exactly; the program does
-that and matches Astra. Seaquest and Asterix need judgement about moving threats and timing, and Opus's
-hand-written heuristics there are far weaker than Astra's hand-written weights. One reply per game makes this a
+**Why Seaquest and Asterix scored low: sticky actions.** Neither failure is a compilation problem (see the
+faithfulness table) or a misreading of the game. The Seaquest program reads the oxygen and diver gauges correctly,
+never runs out of oxygen, and surfaces with divers about twice per episode. Per step, both programs score about as
+well as Astra's networks: 0.049 vs 0.061 points per step in Asterix, and 0.043 vs 0.038 in Seaquest. The whole gap
+is survival. Deaths come from MinAtar's sticky actions, which replay the *previous* action 10 % of the time.
+
+| 100 episodes, sticky actions on ([`eval/diagnose_minatar.py`](eval/diagnose_minatar.py)) | Asterix: Opus | Asterix: Astra | Seaquest: Opus | Seaquest: Astra |
+|---|---|---|---|---|
+| mean episode length | 406 | 900 | 377 | 1,392 |
+| deaths where another action would have survived the step | 98 | 100 | 100 | 97 |
+| … because a sticky repeat played the fatal action | **94** | 41 | **87** | 73 |
+| … because the policy itself chose the fatal action | 4 | 59 | 13 | 24 |
+| steps where replaying the previous action would be fatal | 2.3 % | 0.39 % | 2.6 % | 0.49 % |
+| steps on which the policy moves / changes action | 72 % / 73 % | 30 % / 35 % | 63 % / 60 % | 21 % / 23 % |
+
+The programs' one-step lookahead works: their top-scored action was never fatal at Asterix deaths, and only twice
+at Seaquest deaths. But both give every safe move the same base score, and their bonuses rarely apply, so the
+policy random-walks among safe moves. Its action distribution is nearly uniform: 14–18 % per action in Asterix.
+Constant moving makes its previous action fatal to replay 5–6× as often as for Astra's networks. Those networks
+mostly repeat one safe default action (no-op 70 % of the time in Asterix, fire 79 % in Seaquest) and move only up
+or down. Replaying the same policies with sticky actions switched off confirms it. This is a diagnostic, not the
+official score ([`eval/analysis/minatar_no_sticky.py`](eval/analysis/minatar_no_sticky.py), 200 episodes,
+`results/minatar_sticky_analysis.json`):
+
+| sticky actions | Asterix: Opus | Asterix: Astra | Seaquest: Opus | Seaquest: Astra |
+|---|---|---|---|---|
+| 0.1 (official) | 20.2 ± 1.5 | 54.0 ± 2.2 | 17.3 ± 1.2 | 49.1 ± 2.9 |
+| off | **99.4 ± 4.5** | 65.6 ± 2.4 | **147.0 ± 5.8** | 98.3 ± 3.2 |
+
+Without sticky actions both programs beat Astra's networks. Their tactics are sound, but they are brittle to the
+random action repeats the prompt describes. The replies show how much each design took sticky actions into account:
+- **Breakout** was built around them: a 2-cell target region "so a sticky-action overshoot after arrival
+  usually still lands inside the region".
+- **Seaquest** considers them in only two narrow cases: bullets two cells away, and not drifting up into the
+  surface row.
+- **Asterix** never mentions them.
+
+With one reply and no feedback, nothing exposed the problem before scoring. One reply per game makes each result a
 sample of one.
 
 **Runs.**
@@ -318,7 +352,7 @@ and `--ref-games 1000`.
 | `harness/run_writer.py` | the turn loop around `claude -p` / `claude -p --resume`, with per-turn audit |
 | `harness/sandbox.py`, `prelude.py`, `compile_worker.py` | the bubblewrap sandbox, the writer's predefined names, and the compile done for passes and the evaluation |
 | `harness/passes.py` | the games and positions passes |
-| `eval/` | engine validation (`validate_engine.py`), hidden evaluation (`evaluate.py`), run statistics (`run_stats.py`), summary (`summarize.py`); Experiment 5: `evaluate_minatar.py`, `faithfulness_minatar.py` |
+| `eval/` | engine validation (`validate_engine.py`), hidden evaluation (`evaluate.py`), run statistics (`run_stats.py`), summary (`summarize.py`); Experiment 5: `evaluate_minatar.py`, `faithfulness_minatar.py`, `diagnose_minatar.py`, and the sticky-action analyses in `eval/analysis/` |
 | `scripts/` | environment setup, fetching the paper's networks, the run watcher and the safe driver restart used during the runs |
 | `tests/` | the Tracr runtime test, an end-to-end harness test with scripted replies, and the harness-test RASP program (never shown to the writers) |
 | `runs/<id>/` | one writer run: `message.txt` (task prompt), `turns/tNNN/` (`prompt.txt` sent, `answer.md` received, `events.jsonl` the raw Claude Code stream, `run.json` with usage and the tool-free audit), `tool_calls.jsonl` (every sandbox run's code and output and every pass), `work/` (the writer's files, pass summaries), `final/` (the final program's sources and compile record), `loop.log`, `state.json` |

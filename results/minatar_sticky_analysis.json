@@ -1,0 +1,127 @@
+{
+ "no_sticky_replay": {
+  "asterix": {
+   "opus": {
+    "sticky_0.1": {
+     "mean": 20.21,
+     "se": 1.45,
+     "mean_length": 413.8,
+     "cut_at_10000": 0
+    },
+    "sticky_0.0": {
+     "mean": 99.44,
+     "se": 4.52,
+     "mean_length": 1154.9,
+     "cut_at_10000": 0
+    }
+   },
+   "astra": {
+    "sticky_0.1": {
+     "mean": 54.01,
+     "se": 2.22,
+     "mean_length": 866.7,
+     "cut_at_10000": 0
+    },
+    "sticky_0.0": {
+     "mean": 65.61,
+     "se": 2.38,
+     "mean_length": 980.2,
+     "cut_at_10000": 0
+    }
+   }
+  },
+  "seaquest": {
+   "opus": {
+    "sticky_0.1": {
+     "mean": 17.3,
+     "se": 1.17,
+     "mean_length": 398.2,
+     "cut_at_10000": 0
+    },
+    "sticky_0.0": {
+     "mean": 147.01,
+     "se": 5.84,
+     "mean_length": 2251.9,
+     "cut_at_10000": 0
+    }
+   },
+   "astra": {
+    "sticky_0.1": {
+     "mean": 49.13,
+     "se": 2.92,
+     "mean_length": 1326.1,
+     "cut_at_10000": 0
+    },
+    "sticky_0.0": {
+     "mean": 98.31,
+     "se": 3.23,
+     "mean_length": 2276.2,
+     "cut_at_10000": 0
+    }
+   }
+  }
+ },
+ "sticky_hazard": {
+  "asterix": {
+   "opus": {
+    "steps": 27288,
+    "frac_steps_where_replaying_previous_action_is_fatal": 0.0233,
+    "frac_steps_moving": 0.724,
+    "frac_steps_changing_action": 0.734,
+    "action_distribution": [
+     0.137,
+     0.182,
+     0.181,
+     0.181,
+     0.179,
+     0.14
+    ]
+   },
+   "astra": {
+    "steps": 49239,
+    "frac_steps_where_replaying_previous_action_is_fatal": 0.0039,
+    "frac_steps_moving": 0.303,
+    "frac_steps_changing_action": 0.347,
+    "action_distribution": [
+     0.697,
+     0.0,
+     0.152,
+     0.0,
+     0.151,
+     0.0
+    ]
+   }
+  },
+  "seaquest": {
+   "opus": {
+    "steps": 21709,
+    "frac_steps_where_replaying_previous_action_is_fatal": 0.0261,
+    "frac_steps_moving": 0.63,
+    "frac_steps_changing_action": 0.597,
+    "action_distribution": [
+     0.222,
+     0.073,
+     0.237,
+     0.072,
+     0.248,
+     0.148
+    ]
+   },
+   "astra": {
+    "steps": 90716,
+    "frac_steps_where_replaying_previous_action_is_fatal": 0.0049,
+    "frac_steps_moving": 0.212,
+    "frac_steps_changing_action": 0.234,
+    "action_distribution": [
+     0.0,
+     0.0,
+     0.105,
+     0.0,
+     0.107,
+     0.788
+    ]
+   }
+  }
+ },
+ "note": "Diagnostics, not official scores. no_sticky_replay: eval/analysis/minatar_no_sticky.py (200 episodes, seed 2024, batch 100). sticky_hazard: eval/analysis/minatar_sticky_hazard.py (60 episodes, seed 99). Death causes: results/<name>/diagnosis.json from eval/diagnose_minatar.py (100 episodes, seed 4242). Action order: no-op, left, up, right, down, fire."
+}
