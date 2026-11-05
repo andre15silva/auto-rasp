@@ -99,7 +99,8 @@ class ZeroPolicy:
         return np.zeros((len(o), N_ACTIONS), np.float32)
 
 
-def run_episodes(game, policy, n_episodes, seed, max_steps=MAX_STEPS, batch=None, progress=None, starts=None):
+def run_episodes(game, policy, n_episodes, seed, max_steps=MAX_STEPS, batch=None, progress=None, starts=None,
+                 sticky=0.1):
     """Plays n_episodes in lockstep batches of `batch` episodes; returns per-episode (score, length).
     Episode i is seeded with seed and i; each batch samples actions from its own stream default_rng([seed, start]),
     so results do not depend on how batches are spread over processes (`starts` = the batches to play here)."""
@@ -111,7 +112,7 @@ def run_episodes(game, policy, n_episodes, seed, max_steps=MAX_STEPS, batch=None
         ids = list(range(start, min(n_episodes, start + batch)))
         envs = []
         for i in ids:
-            e = Environment(game, sticky_action_prob=0.1, difficulty_ramping=True)
+            e = Environment(game, sticky_action_prob=sticky, difficulty_ramping=True)
             e.seed((seed * 1_000_003 + i) % (2 ** 32))
             e.reset()
             envs.append(e)
