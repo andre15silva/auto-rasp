@@ -1,0 +1,8 @@
+{
+ "game": "asterix",
+ "model": "claude-opus-5-5",
+ "effort": "xhigh",
+ "protocol": "one-shot",
+ "vocab": "range(70)",
+ "max_seq_len": 106
+}
