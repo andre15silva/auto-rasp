@@ -1,0 +1,6 @@
+OUTPUT of Python run 112 of at most 120:
+```
+7 8e-06 {(1, 0): -0.2, (2, 0): -0.8, (3, 0): -1.5, (0, 1): 0.3, (0, 2): 0.4, (1, 1): 1.2, (2, 1): 0.8, (1, 2): 1.0} -1.0 [-3.0, -1.5, 0.8, 1.6, 2.0] 2.0 2.5
+compiled: {'layers': 25, 'heads': 8, 'key_size': 84, 'mlp_hidden_size': 2026, 'residual_dims': 1216, 'dense_params': 205167290, 'nonzero_params': 47902, 'mlp_exactness': 500000, 'compile_seconds': 35.2, 'seconds_per_1000_positions': 23.35, 'output_label': 'logits_1'}
+
+```

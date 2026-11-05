@@ -4,9 +4,9 @@ from tracr.rasp import rasp
 SEL = 10.6
 UNSEL = 0.0
 G_LO, G_HI = 10.6, 10.6 + 10.2 * 8
-N_PROP = 6
+N_PROP = 7
 NBUCK = 8
-TINY = 1e-5
+TINY = 8e-6
 def bucket(i): return (i // 9 + 3 * (i % 9)) % NBUCK
 def rc(i): return divmod(i, 9)
 ORTH = {'N': (-1, 0), 'S': (1, 0), 'W': (0, -1), 'E': (0, 1)}
@@ -297,7 +297,7 @@ TACT = {'cap_s': 8.0, 'cap_m': 11.0, 'cap_extra': 1.5, 'capsave': 2.0,
         'esc3': {'s': 6.5, 'm': 9.0}, 'esc2': {'s': 0.5, 'm': 2.5}, 'escf': -5.0,
         'sui': -10.0, 'sa_s': -6.0, 'sa_m': -9.0, 'fill2': -1.0, 'noE': -2.0,
         'atari': 2.0, 'def2': 2.5}
-SHAPE = {(1, 0): -0.2, (2, 0): -0.8, (3, 0): -1.5, (0, 1): 0.2, (0, 2): 0.3, (1, 1): 0.5, (2, 1): 0.3, (1, 2): 0.6}
+SHAPE = {(1, 0): -0.2, (2, 0): -0.8, (3, 0): -1.5, (0, 1): 0.3, (0, 2): 0.4, (1, 1): 1.2, (2, 1): 0.8, (1, 2): 1.0}
 REG = {'own': -1.5, 'opp': -1.0, 'both': 0.0, 'none': 0.0}
 REGP = {0: REG, 1: REG, 2: REG}
 PRIOR = {0: [-3.0, -1.5, 0.8, 1.6, 2.0], 1: [-1.5, -0.4, 0.5, 0.6, 0.6], 2: [-0.3, 0.0, 0.0, 0.0, 0.0]}
@@ -322,6 +322,6 @@ NEU_DUM = {k: n / 81.0 for k, (n, c) in enumerate(_NEUD) if n > 0}
 def PASSTAB(tc, nc, sd):
     win = (tc >= 5) if sd == 'B' else (tc >= 2)
     big = (tc >= 6) if sd == 'B' else (tc >= 4)
-    if win and nc == 0: return -7.0
-    if win and nc == 1: return -7.5
-    return -9.0
+    if win and nc == 0: return -1.0
+    if win and nc == 1: return -2.5 if big else -4.0
+    return -8.0

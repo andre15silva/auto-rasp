@@ -1,0 +1,9 @@
+OUTPUT of Python run 110 of at most 120:
+```
+8 win% 42.2 blowouts>60 27 close losses (-10,0) 53 close wins (0,10) 24
+9 win% 43.0 blowouts>60 24 close losses (-10,0) 45 close wins (0,10) 27
+10 win% 39.1 blowouts>60 21 close losses (-10,0) 53 close wins (0,10) 23
+11 win% 40.6 blowouts>60 29 close losses (-10,0) 54 close wins (0,10) 20
+12 win% 38.3 blowouts>60 29 close losses (-10,0) 50 close wins (0,10) 14
+
+```

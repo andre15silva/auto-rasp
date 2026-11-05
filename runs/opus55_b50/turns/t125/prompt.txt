@@ -1,0 +1,5 @@
+OUTPUT of Python run 111 of at most 120:
+```
+compiled: {'layers': 26, 'heads': 8, 'key_size': 84, 'mlp_hidden_size': 2026, 'residual_dims': 1228, 'dense_params': 215474188, 'nonzero_params': 48092, 'mlp_exactness': 2000000, 'compile_seconds': 41.1, 'seconds_per_1000_positions': 15.86, 'output_label': 'logits_1'}
+
+```
