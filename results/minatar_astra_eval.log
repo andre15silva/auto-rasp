@@ -82,3 +82,25 @@ astra_minatar_breakout (breakout): mean 498.64 ± 7.79 over 1000 episodes, mean 
   [astra_minatar_seaquest] episodes 250+: step 1000, 74 still playing, 8s
   [astra_minatar_seaquest] episodes 0+: step 1000, 71 still playing, 8s
   [astra_minatar_seaquest] episodes 375+: step 1000, 81 still playing, 9s
+  [astra_minatar_seaquest] episodes 125+: step 1000, 83 still playing, 10s
+  [astra_minatar_seaquest] episodes 250+: step 2000, 43 still playing, 12s
+  [astra_minatar_seaquest] episodes 0+: step 2000, 44 still playing, 13s
+  [astra_minatar_seaquest] episodes 375+: step 2000, 47 still playing, 14s
+  [astra_minatar_seaquest] episodes 125+: step 2000, 46 still playing, 16s
+  [astra_minatar_seaquest] episodes 0+: step 3000, 2 still playing, 16s
+  [astra_minatar_seaquest] episodes 375+: step 3000, 1 still playing, 16s
+  [astra_minatar_seaquest] episodes 750+: step 1000, 78 still playing, 22s
+  [astra_minatar_seaquest] episodes 500+: step 1000, 69 still playing, 23s
+  [astra_minatar_seaquest] episodes 875+: step 1000, 75 still playing, 23s
+  [astra_minatar_seaquest] episodes 625+: step 1000, 83 still playing, 26s
+  [astra_minatar_seaquest] episodes 750+: step 2000, 40 still playing, 27s
+  [astra_minatar_seaquest] episodes 500+: step 2000, 39 still playing, 27s
+  [astra_minatar_seaquest] episodes 875+: step 2000, 46 still playing, 28s
+  [astra_minatar_seaquest] episodes 750+: step 3000, 4 still playing, 29s
+  [astra_minatar_seaquest] episodes 625+: step 2000, 49 still playing, 31s
+  [astra_minatar_seaquest] episodes 625+: step 3000, 1 still playing, 33s
+astra_minatar_seaquest (seaquest): mean 55.94 ± 1.36 over 1000 episodes, mean length 1476, 36s
+  [astra_minatar_asterix] episodes 375+: step 1000, 42 still playing, 5s
+  [astra_minatar_asterix] episodes 0+: step 1000, 37 still playing, 6s
+  [astra_minatar_asterix] episodes 250+: step 1000, 46 still playing, 6s
+  [astra_minatar_asterix] episodes 125+: step 1000, 56 still playing, 6s
