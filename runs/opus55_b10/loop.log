@@ -226,3 +226,13 @@
 [2026-11-04T23:59:47+0000] turn 112: resume (599 chars)
 [2026-11-05T00:08:45+0000] container restarted; driver restarted
 [2026-11-05T00:09:01+0000] turn 112: resumed after a restart; acting on the saved answer
+[2026-11-05T00:21:21+0000] turn 112: games; runs 103, passes 10/10, tool-free True
+[2026-11-05T00:21:21+0000] turn 113: resume (1,541 chars)
+[2026-11-05T00:22:20+0000] turn 113: python; runs 104, passes 10/10, tool-free True
+[2026-11-05T00:22:20+0000] turn 114: resume (244 chars)
+[2026-11-05T00:25:59+0000] turn 114: python; runs 105, passes 10/10, tool-free True
+[2026-11-05T00:25:59+0000] turn 115: resume (573 chars)
+[2026-11-05T00:26:19+0000] turn 115: python; runs 106, passes 10/10, tool-free True
+[2026-11-05T00:26:19+0000] turn 116: resume (6,308 chars)
+[2026-11-05T00:26:44+0000] turn 116: final; runs 106, passes 10/10, tool-free True
+[2026-11-05T00:30:32+0000] final compile: {"ok": true, "stats": {"layers": 28, "heads": 2, "key_size": 85, "mlp_hidden_size": 365, "residual_dims": 1398, "dense_params": 55421648, "nonzero_params": 24330}, "mlp_exactness": 1000000, "compile_seconds": 210.0, "output_label": "logit_1", "seconds_per_1000_positions": 36.03, "timings_per_1000_positions": [39.48, 36.03, 42.84], "seconds_total": 228.5}

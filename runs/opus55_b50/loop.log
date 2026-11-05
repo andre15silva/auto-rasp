@@ -214,3 +214,29 @@
 [2026-11-05T00:03:05+0000] turn 106: resume (324 chars)
 [2026-11-05T00:08:47+0000] container restarted; driver restarted
 [2026-11-05T00:09:01+0000] turn 106: resumed after a restart; acting on the saved answer
+[2026-11-05T00:13:07+0000] turn 106: games; runs 97, passes 8/50, tool-free True
+[2026-11-05T00:13:07+0000] turn 107: resume (1,161 chars)
+[2026-11-05T00:13:33+0000] turn 107: python; runs 98, passes 8/50, tool-free True
+[2026-11-05T00:13:33+0000] turn 108: resume (1,148 chars)
+[2026-11-05T00:14:02+0000] turn 108: python; runs 99, passes 8/50, tool-free True
+[2026-11-05T00:14:02+0000] turn 109: resume (315 chars)
+[2026-11-05T00:14:13+0000] turn 109: python; runs 100, passes 8/50, tool-free True
+[2026-11-05T00:14:13+0000] turn 110: resume (379 chars)
+[2026-11-05T00:14:37+0000] turn 110: python; runs 101, passes 8/50, tool-free True
+[2026-11-05T00:14:37+0000] turn 111: resume (1,595 chars)
+[2026-11-05T00:15:12+0000] turn 111: python; runs 102, passes 8/50, tool-free True
+[2026-11-05T00:15:12+0000] turn 112: resume (123 chars)
+[2026-11-05T00:16:08+0000] turn 112: python; runs 103, passes 8/50, tool-free True
+[2026-11-05T00:16:08+0000] turn 113: resume (317 chars)
+[2026-11-05T00:21:07+0000] turn 113: games; runs 103, passes 9/50, tool-free True
+[2026-11-05T00:21:07+0000] turn 114: resume (1,161 chars)
+[2026-11-05T00:21:18+0000] turn 114: python; runs 104, passes 9/50, tool-free True
+[2026-11-05T00:21:18+0000] turn 115: resume (1,196 chars)
+[2026-11-05T00:21:39+0000] turn 115: python; runs 105, passes 9/50, tool-free True
+[2026-11-05T00:21:39+0000] turn 116: resume (267 chars)
+[2026-11-05T00:22:39+0000] turn 116: python; runs 106, passes 9/50, tool-free True
+[2026-11-05T00:22:39+0000] turn 117: resume (320 chars)
+[2026-11-05T00:26:35+0000] turn 117: games; runs 106, passes 10/50, tool-free True
+[2026-11-05T00:26:35+0000] turn 118: resume (1,156 chars)
+[2026-11-05T00:27:48+0000] turn 118: python; runs 107, passes 10/50, tool-free True
+[2026-11-05T00:27:48+0000] turn 119: resume (317 chars)

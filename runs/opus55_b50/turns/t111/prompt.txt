@@ -1,0 +1,23 @@
+OUTPUT of Python run 101 of at most 120:
+```
+game 5 net black margin -5.5
+49          59          69          79          89          91       
+.....OOO.   ..X..OOO.   ..XXOOOO.   X.XXOOOO.   X.XXOOOO.   X.XXOOOO.
+.XO..O..O   .X.X.O..O   .X.X.O.OO   .X.XOO.OO   .X.XOOOOO   .X.XOOOOO
+X.XO.O.OX   X.X.XO.OX   X.X.XO.O.   X.XXXO.O.   X.XXXO.Oo   X.XXXO.OO
+.XXXOOOX.   .XXXOOOX.   .XXXOOO.o   .XXXOOOOO   .XXXOOOOO   .XXXOOOOO
+.X.XXOOOX   .X.XXOOOX   .X.XXOOO.   .X.XXOOO.   XX.XXOOOO   XX.XXOOOO
+.XXOOO.oX   .XXOOO.OX   .XXOOO.O.   .XXOOO.O.   .XXOOO.O.   .XXOOO.O.
+..XX.O...   ..XXOO.O.   ..XXOO.OO   X.XXOO.OO   X.XXOOOOO   X.XXOOOOO
+....X.O..   ....XOOOX   ..X.XOOO.   ..X.XOOO.   .XX.XOOO.   .XX.XOOO.
+.X.....XX   .X...XoXX   .X.X.XO.X   XX.XXXOoX   XX.XXXOOX   XX.XXXOOX
+[(50, 'n', 2, 0.3194), (51, 'o', 61, ''), (52, 'n', 12, 0.9991), (53, 'o', 70, ''), (54, 'n', 22, 0.9964), (55, 'o', 68, ''), (56, 'n', 77, 0.3929), (57, 'o', 58, ''), (58, 'n', 71, 0.6127), (59, 'o', 78, ''), (60, 'n', 3, 0.6298), (61, 'o', 74, ''), (62, 'n', 65, 0.2999), (63, 'o', 16, ''), (64, 'n', 75, 0.9968), (65, 'o', 4, ''), (66, 'n', 81, 0.5213), (67, 'o', 62, ''), (68, 'n', 80, 0.5102), (69, 'o', 35, ''), (70, 'n', 76, 0.5981), (71, 'o', 13, ''), (72, 'n', 21, 0.8097), (73, 'o', 34, ''), (74, 'n', 72, 0.27), (75, 'o', 81, ''), (76, 'n', 0, 0.1413), (77, 'o', 81, ''), (78, 'n', 54, 0.1931), (79, 'o', 79, '')]
+game 8 net black margin -6.5
+
+[stderr]
+Traceback (most recent call last):
+  File "<string>", line 72, in <module>
+  File "<string>", line 72, in <listcomp>
+IndexError: list index out of range
+
+```

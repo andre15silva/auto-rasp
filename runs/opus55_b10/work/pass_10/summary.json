@@ -1,0 +1,54 @@
+{
+ "ok": true,
+ "pass": 10,
+ "kind": "games",
+ "per_opponent": {
+  "strong": {
+   "games": 96,
+   "score": 0.65625,
+   "wins": 63,
+   "losses": 33,
+   "score_as_black": 0.5208333333333334,
+   "score_as_white": 0.7916666666666666,
+   "mean_margin": 37.458333333333336,
+   "mean_length": 106.34375,
+   "stones_captured_per_game": 49.40625,
+   "stones_lost_per_game": 10.40625,
+   "passes_per_game": 3.5,
+   "games_with_a_pass_before_move_60": 2,
+   "end_two_passes": 94,
+   "end_repetition": 2,
+   "end_move_limit": 0
+  },
+  "weak": {
+   "games": 32,
+   "score": 0.78125,
+   "wins": 25,
+   "losses": 7,
+   "score_as_black": 0.75,
+   "score_as_white": 0.8125,
+   "mean_margin": 56.6875,
+   "mean_length": 109.5625,
+   "stones_captured_per_game": 59.40625,
+   "stones_lost_per_game": 7.375,
+   "passes_per_game": 2.375,
+   "games_with_a_pass_before_move_60": 0,
+   "end_two_passes": 32,
+   "end_repetition": 0,
+   "end_move_limit": 0
+  }
+ },
+ "network": {
+  "layers": 28,
+  "heads": 3,
+  "key_size": 85,
+  "mlp_hidden_size": 377,
+  "residual_dims": 1592,
+  "dense_params": 79342232,
+  "nonzero_params": 28514
+ },
+ "seconds_per_1000_positions": 53.97,
+ "seconds": 738.5,
+ "files": "/work/pass_10/",
+ "readme": "games.json: one entry per game (opponent, net_color, result +1/-1, margin = net's area score minus the opponent's incl. komi, end, stones captured / lost, moves: ply, by, move (row*9+col, 81 = pass), and for the network's moves its top-5 [move, probability]). boards.npy: (games, 162, 81) int8, the board AFTER each ply (1 Black, -1 White, 0 empty; index row*9+col); valid.npy: (games, 162) which plies were played."
+}

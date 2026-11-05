@@ -1,0 +1,10 @@
+OUTPUT of Python run 99 of at most 120:
+```
+
+[stderr]
+Traceback (most recent call last):
+  File "<string>", line 83, in <module>
+  File "<string>", line 74, in est
+TypeError: numpy boolean subtract, the `-` operator, is not supported, use the bitwise_xor, the `^` operator, or the logical_xor function instead.
+
+```

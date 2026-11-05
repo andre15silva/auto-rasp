@@ -247,7 +247,7 @@ def build(stop=None):
         e, rg = a
         ln, ph = lph
         if e == 'side': return OFF4
-        v = REG[rg] + (PRIOR[ph][ln] if ln < 9 else 0.0)
+        v = REGP[ph][rg] + (PRIOR[ph][ln] if ln < 9 else 0.0)
         if e == 'eye': v += EYE
         elif e == 'feye': v += FEYE
         return round(OFF4 + v, 2)
@@ -299,6 +299,7 @@ TACT = {'cap_s': 8.0, 'cap_m': 11.0, 'cap_extra': 1.5, 'capsave': 2.0,
         'atari': 2.0, 'def2': 2.5}
 SHAPE = {(1, 0): -0.2, (2, 0): -0.8, (3, 0): -1.5, (0, 1): 0.2, (0, 2): 0.3, (1, 1): 0.5, (2, 1): 0.3, (1, 2): 0.6}
 REG = {'own': -1.5, 'opp': -1.0, 'both': 0.0, 'none': 0.0}
+REGP = {0: REG, 1: REG, 2: REG}
 PRIOR = {0: [-3.0, -1.5, 0.8, 1.6, 2.0], 1: [-1.5, -0.4, 0.5, 0.6, 0.6], 2: [-0.3, 0.0, 0.0, 0.0, 0.0]}
 _PHD = [(9, 0), (10, 1), (39, 1), (40, 2)]
 PH_KEEP = [(n / 81.0, c) for n, c in _PHD]
@@ -321,6 +322,6 @@ NEU_DUM = {k: n / 81.0 for k, (n, c) in enumerate(_NEUD) if n > 0}
 def PASSTAB(tc, nc, sd):
     win = (tc >= 5) if sd == 'B' else (tc >= 2)
     big = (tc >= 6) if sd == 'B' else (tc >= 4)
-    if win and nc == 0: return 6.0
-    if win and nc == 1: return 1.0 if big else -1.0
-    return -8.0
+    if win and nc == 0: return -7.0
+    if win and nc == 1: return -7.5
+    return -9.0

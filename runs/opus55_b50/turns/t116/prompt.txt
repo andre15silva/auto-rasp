@@ -1,0 +1,10 @@
+OUTPUT of Python run 105 of at most 120:
+```
+('both', 'big') 942 died/removed 145
+('both', 'small') 1826 died/removed 310
+('opp', 'big') 22 died/removed 10
+('opp', 'small') 532 died/removed 229
+('own', 'big') 74 died/removed 0
+('own', 'small') 296 died/removed 3
+
+```

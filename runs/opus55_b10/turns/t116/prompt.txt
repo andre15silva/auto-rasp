@@ -1,0 +1,115 @@
+OUTPUT of Python run 106 of at most 120:
+```
+def program():
+    tok = rasp.tokens; idx = rasp.indices
+    qA = cmap(lambda i: Q(i, 'A'), idx)
+    qB = cmap(lambda i: Q(i, 'B'), idx)
+    # ---- runs (exact start flags -> exact SelectorWidth counts)
+    ltok = rasp.Aggregate(rasp.Select(idx, qA, GT), tok)
+    utok = rasp.Aggregate(rasp.Select(idx, qA, LT), tok)
+    srow = clean_bool(smap(lambda t, l: (t != l) or (t in ('B', 'W')), tok, ltok))
+    scol = clean_bool(smap(lambda t, u: (t != u) or (t in ('B', 'W')), tok, utok))
+    ksr = smap(lambda i, s: i if s else 999, idx, srow)
+    ksc = smap(lambda i, s: i if s else -1, idx, scol)
+    ridr = rasp.SelectorWidth(rasp.Select(ksr, idx, LEQ)).named('ridr')
+    ridc = rasp.SelectorWidth(rasp.Select(ksc, qA, LEQ)).named('ridc')
+    selr = rasp.Select(ridr, ridr, EQ)
+    selc = rasp.Select(ridc, ridc, EQ)
+    # ---- liberty row/col sets, diffused within groups
+    rowv = cmap(lambda i: 'P' if i >= 81 else i // 9, idx)
+    colv = cmap(lambda i: 'P' if i >= 81 else i % 9, idx)
+    def rcEf(v, t):
+        if v == 'P': return 'Z' if t == '.' else 'D'
+        return v if t == '.' else None
+    rowE = smap(rcEf, rowv, tok)
+    colE = smap(rcEf, colv, tok)
+    seedsel = rasp.Select(idx, qB, LEQ)          # neighbours + index 81
+    # near-one constant: one-hot 'c' with magnitude 1 - theta (theta = BOS attention share)
+    constc = cmap(lambda i: 'c', idx)
+    nq = cmap(lambda q: NEAR_N, qA)               # delayed one layer (spreads heads)
+    nearone = rasp.Aggregate(rasp.Select(idx, nq, LT), constc).named('nearone')
+    cleanf = lambda v, c: v
+    def clean(x): return smap(cleanf, x, nearone)
+    stonly = lambda v, t: v if t in ('x', 'o') else 'D'
+    rowE_d = cmap(lambda v: v, rowE); colE_d = cmap(lambda v: v, colE)
+    sr = clean(smap(stonly, rasp.Aggregate(seedsel, rowE_d), tok)).named('seed_r')
+    sc = clean(smap(stonly, rasp.Aggregate(seedsel, colE_d), tok)).named('seed_c')
+    for k in range(R_ROUNDS):
+        sel = selr if k % 2 == 0 else selc
+        sr = clean(rasp.Aggregate(sel, sr)).named('sr%d' % k)
+        sc = clean(rasp.Aggregate(sel, sc)).named('sc%d' % k)
+    # exact zero / constant available only after the diffusion: used to schedule the positional tail late
+    zr = nmap(lambda v: 0.0, sr).named('zr')
+    dly = cmap(lambda x: 0, zr)
+    colnum = nmap(lambda t: COLCODE[t] * UNIT, tok)
+    nrc = cmap(lambda x: (int(round(x / UNIT)) // 16, min(3, int(round(x / UNIT)) % 16)),
+               sum_tree(decode_bits(sr, 9) + [colnum])).named('nrc')
+    nc = decode_distinct(sc, 9).named('nc')
+    def lclass(a, b):
+        if a == 0 or b == 0: return 0
+        if a == 1 and b == 1: return 1
+        if a >= 3 or b >= 3: return 3
+        return 2
+    def catf(cr, b):
+        col, a = cr
+        if col == 0: return 'E'
+        if col in (1, 2): return ('X' if col == 1 else 'O') + str(max(lclass(a, b), 1))
+        return 'N'
+    cst = smap(catf, nrc, nc).named('cst')
+    cN = rasp.Aggregate(rasp.Select(idx, qA, LT), cst).named('cN')
+    cS = rasp.Aggregate(rasp.Select(idx, qB, LT), cst).named('cS')
+    cst_d1 = cmap(lambda c: c, cst)
+    cst_d2 = cmap(lambda c: c, cst_d1)
+    cW = rasp.Aggregate(rasp.Select(idx, qA, GT), cst_d1).named('cW')
+    cE = rasp.Aggregate(rasp.Select(idx, qB, GT), cst_d2).named('cE')
+    pNS = smap(lambda a, b: PAIR_CLASS[msum((a,), (b,))], cN, cS)
+    tW = smap(lambda p, w: TRIPLE_CLASS[msum(PAIR_REP[p], (w,))], pNS, cW)
+    tcat = smap(lambda t, e: max(-20.0, tactic_score(msum(TRIPLE_REP[t], (e,)))), tW, cE).named('tcat')
+    tact = nmap(lambda v: v + T_OFF, tcat).named('tact')
+    # opponent stones in atari that touch one of our stones in atari -> capturing them saves us
+    isx1 = nmap(lambda c: 1.0 if c == 'X1' else 0.0, cst)
+    x1n = rasp.numerical(rasp.Aggregate(rasp.Select(idx, qA, GEQ), isx1, default=0))
+    hx1 = cmap(lambda x: int(x > 0.05), x1n)
+    flag = smap(lambda c, h: 'F' if (c == 'O1' and h) else ('Z' if (c == 'N' and h) else 'N'), cst, hx1)
+    fsoft = rasp.Aggregate(rasp.Select(idx, qA, GEQ), flag)
+    savecap = nmap(lambda v: SAVECAP_SCALE if v == 'F' else 0.0, fsoft).named('savecap')
+    # ---- positional (cheap, token based)
+    # ---- positional (token based)
+    tok_d2 = cmap(lambda t: t, cmap(lambda t: t, tok))                  # delay chain (depth 2)
+    tadj = rasp.Aggregate(rasp.Select(idx, qA, GEQ), tok_d2)           # depth 3: soft token mix of neighbours
+    tok_d4 = cmap(lambda t: t, cmap(lambda t: t, tok_d2))
+    t2 = rasp.Aggregate(rasp.Select(idx, qB, GEQ), tok_d4)             # depth 5: soft token mix within distance 2
+    def pres(col):
+        return lambda v: 1.0 if v == col else (0.05 if v == 'W' else 0.0)
+    thr = lambda x: int(x > 0.025)
+    adj = smap(lambda a, b: (a, b), cmap(thr, nmap(pres('x'), tadj)), cmap(thr, nmap(pres('o'), tadj)))
+    def dens(col):
+        return lambda v: 1.0 if v == col else ({'B': 0.1, 'W': 0.4}.get(v, 0.0))
+    def lev(x):
+        return 0 if x < 0.05 else (1 if x < 0.25 else (2 if x < 0.7 else 3))
+    nx2 = cmap(lev, nmap(dens('x'), t2)); no2 = cmap(lev, nmap(dens('o'), t2))
+    no2 = smap(lambda a, z: a, no2, dly)
+    e2 = smap(lambda a, b: (a, b), nx2, no2)
+    sit = smap(lambda e, a: POS_CLASS[(e[0], e[1], a[0], a[1])], e2, adj)
+    lin = cmap(lambda i: 'P' if i >= 81 else line_of(i), idx)
+    pcat = smap(lambda c, l: PASS_LOGIT if l == 'P' else POS_ROW[c][l], sit, lin).named('pcat')
+    # game phase from the number of stones on the board
+    isst = nmap(lambda t: 1.0 if t in ('x', 'o') else 0.0, tok)
+    isst_d = add(isst, zr, 1.0, 0.0)
+    q81 = cmap(lambda q: 81, qA)
+    frac = rasp.numerical(rasp.Aggregate(rasp.Select(idx, q81, LT), isst_d, default=0))
+    phase = cmap(lambda x: 0 if x < 0.16 else (1 if x < 0.4 else 2), frac).named('phase')
+    contested = smap(lambda e, a: int(e[0] > 0 and e[1] > 0), e2, adj)
+    lph = smap(lambda l, p: 'P' if l == 'P' else (l, p), lin, phase)
+    adjcat = smap(lambda lp, cont: 0.0 if lp == 'P' else LINE_PHASE_ADJ(lp[0], lp[1], cont), lph, contested)
+    extra = nmap(lambda v: v + 6.0, adjcat)
+    pos = add(nmap(lambda v: v + P_OFF, pcat), extra).named('pos')
+    return add(add(tact, pos), savecap).named('logit')
+
+import sys
+sys.path.insert(0, '/work')
+from go import program
+MLP_EXACTNESS = 1000000
+
+
+```

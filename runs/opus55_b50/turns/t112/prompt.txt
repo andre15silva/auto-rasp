@@ -1,0 +1,5 @@
+OUTPUT of Python run 102 of at most 120:
+```
+our passes 444 non-final 320 by result of game Counter({-1: 169, 1: 151})
+
+```
