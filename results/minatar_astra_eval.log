@@ -13,3 +13,5 @@ astra_minatar_breakout (breakout): mean 498.64 ± 7.79 over 1000 episodes, mean 
   [astra_minatar_seaquest] episodes 0+: step 2000, 353 still playing, 77s
   [astra_minatar_seaquest] episodes 0+: step 3000, 9 still playing, 89s
 astra_minatar_seaquest (seaquest): mean 54.30 ± 1.35 over 1000 episodes, mean length 1443, 89s
+  [astra_minatar_asterix] episodes 0+: step 1000, 363 still playing, 37s
+astra_minatar_asterix (asterix): mean 54.23 ± 1.03 over 1000 episodes, mean length 868, 40s
