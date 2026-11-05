@@ -104,3 +104,8 @@ astra_minatar_seaquest (seaquest): mean 55.94 ± 1.36 over 1000 episodes, mean l
   [astra_minatar_asterix] episodes 0+: step 1000, 37 still playing, 6s
   [astra_minatar_asterix] episodes 250+: step 1000, 46 still playing, 6s
   [astra_minatar_asterix] episodes 125+: step 1000, 56 still playing, 6s
+  [astra_minatar_asterix] episodes 875+: step 1000, 37 still playing, 10s
+  [astra_minatar_asterix] episodes 750+: step 1000, 50 still playing, 11s
+  [astra_minatar_asterix] episodes 500+: step 1000, 50 still playing, 12s
+  [astra_minatar_asterix] episodes 625+: step 1000, 48 still playing, 12s
+astra_minatar_asterix (asterix): mean 54.36 ± 1.05 over 1000 episodes, mean length 871, 15s
