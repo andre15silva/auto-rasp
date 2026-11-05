@@ -1,0 +1,22 @@
+{
+ "ok": true,
+ "stats": {
+  "layers": 11,
+  "heads": 7,
+  "key_size": 29,
+  "mlp_hidden_size": 507,
+  "residual_dims": 449,
+  "dense_params": 9121139,
+  "nonzero_params": 6080
+ },
+ "mlp_exactness": 100,
+ "compile_seconds": 12.7,
+ "output_label": "logits_1",
+ "seconds_per_1000_positions": 6.4,
+ "timings_per_1000_positions": [
+  14.02,
+  7.31,
+  6.4
+ ],
+ "seconds_total": 18.4
+}
