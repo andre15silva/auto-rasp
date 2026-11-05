@@ -1,0 +1,1102 @@
+<title>RASP Plays MinAtar</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column on cool grid paper; figures step out to a wider measure. */
+:root {
+  --bg: #f3f5f8; --surface: #fbfcfd; --surface-2: #e8ecf1; --ink: #0f141b; --ink-2: #455062; --muted: #6f7888;
+  --rule: #d8dde5; --rule-2: #c3cad5;
+  --opus: #2a78d6; --opus-soft: #b7d3f6; --astra: #eb6834; --ppo: #aab1bb;
+  --s-sticky: #6250d6; --s-policy: #1baf7a; --s-none: #aab1bb;
+  --ch-player: #008300; --ch-danger: #e34948; --ch-reward: #eda100; --ch-projectile: #6250d6; --ch-gauge: #9aa2ad;
+  --code-bg: #edf0f4; --tk-key: #5b45c9; --tk-str: #17734b; --tk-num: #a84a0c; --tk-com: #6f7888; --tk-fn: #1c5cab; --tk-bi: #9b2f70;
+  --tip-bg: #0f141b; --tip-fg: #f3f5f8;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Literata", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1116; --surface: #151a21; --surface-2: #1e252e; --ink: #e8edf3; --ink-2: #b1bac6; --muted: #858e9b;
+    --rule: #252c35; --rule-2: #343c47;
+    --opus: #3987e5; --opus-soft: #1c3f6e; --astra: #d95926; --ppo: #58606b;
+    --s-sticky: #9085e9; --s-policy: #199e70; --s-none: #58606b;
+    --ch-player: #008300; --ch-danger: #e34948; --ch-reward: #c98500; --ch-projectile: #9085e9; --ch-gauge: #5f6772;
+    --code-bg: #11161c; --tk-key: #ab9ff2; --tk-str: #5cc49a; --tk-num: #f0a064; --tk-com: #7f8896; --tk-fn: #6da7ec; --tk-bi: #e58ab0;
+    --tip-bg: #e8edf3; --tip-fg: #0e1116;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1116; --surface: #151a21; --surface-2: #1e252e; --ink: #e8edf3; --ink-2: #b1bac6; --muted: #858e9b;
+  --rule: #252c35; --rule-2: #343c47;
+  --opus: #3987e5; --opus-soft: #1c3f6e; --astra: #d95926; --ppo: #58606b;
+  --s-sticky: #9085e9; --s-policy: #199e70; --s-none: #58606b;
+  --ch-player: #008300; --ch-danger: #e34948; --ch-reward: #c98500; --ch-projectile: #9085e9; --ch-gauge: #5f6772;
+  --code-bg: #11161c; --tk-key: #ab9ff2; --tk-str: #5cc49a; --tk-num: #f0a064; --tk-com: #7f8896; --tk-fn: #6da7ec; --tk-bi: #e58ab0;
+  --tip-bg: #e8edf3; --tip-fg: #0e1116;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.62;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 64px;
+  background-image: linear-gradient(var(--rule) 1px, transparent 1px), linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 28px 28px; background-attachment: local;
+}
+.paper { max-width: 1080px; margin: 0 auto; background: var(--surface); border-inline: 1px solid var(--rule);
+  padding-block: 56px 40px; padding-inline: clamp(16px, 5vw, 64px); }
+.col { max-width: 700px; margin: 0 auto; }
+.wide { max-width: 940px; margin: 0 auto; }
+h1, h2, h3, h4 { font-family: var(--font-display); text-wrap: balance; color: var(--ink); line-height: 1.12; }
+h1 { font-size: clamp(2.4rem, 6vw, 3.9rem); font-weight: 700; letter-spacing: -0.02em; margin: 10px 0 18px; }
+h2 { font-size: 1.85rem; font-weight: 700; margin: 64px 0 14px; letter-spacing: -0.01em; }
+h3 { font-size: 1.45rem; font-weight: 700; margin: 0; }
+h4 { font-size: 1rem; font-weight: 700; margin: 0 0 10px; }
+p { margin: 0 0 1em; }
+a { color: var(--opus); text-underline-offset: 2px; }
+a:focus-visible, [tabindex]:focus-visible, summary:focus-visible { outline: 2px solid var(--opus); outline-offset: 2px; border-radius: 3px; }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+:not(pre) > code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+.kicker { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.stand { font-size: 1.22rem; line-height: 1.5; color: var(--ink-2); max-width: 640px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); margin-top: 22px;
+  padding-top: 14px; border-top: 1px solid var(--rule); }
+.lede-list { padding-left: 1.1em; margin: 0 0 1em; }
+.lede-list li { margin-bottom: 0.4em; }
+figure { margin: 36px 0 44px; }
+figcaption, .caption { font-family: var(--font-display); font-size: 0.86rem; line-height: 1.45; color: var(--ink-2); margin-top: 12px; }
+.fig-title { font-family: var(--font-display); font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+.fig-sub { font-family: var(--font-display); font-size: 0.86rem; color: var(--muted); margin-bottom: 16px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--font-display); font-size: 0.84rem; color: var(--ink-2); margin-bottom: 14px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.legend i.ring { background: transparent !important; border: 2px solid var(--ink-2); }
+
+/* results: small multiples */
+.sms { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 28px 36px; }
+.sm { min-width: 0; }
+.sm h4 { font-size: 0.95rem; margin-bottom: 8px; }
+.hb { position: relative; display: grid; gap: 9px; }
+.hb-row { position: relative; z-index: 1; }
+.hb-label { font-family: var(--font-display); font-size: 0.8rem; color: var(--ink-2); margin-bottom: 3px; }
+.hb-track { position: relative; height: 14px; margin-right: 52px; }
+.hb-bar { height: 14px; border-radius: 0 4px 4px 0; background: var(--ppo); }
+.hb-bar.opus { background: var(--opus); }
+.hb-bar.astra { background: var(--astra); }
+.hb-val { position: absolute; top: -2px; transform: translateX(6px); font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink); white-space: nowrap; }
+.hb-grid { position: absolute; inset: 0 52px 0 0; pointer-events: none; }
+.hb-grid i { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--rule); }
+.hb-axis { display: grid; margin-top: 6px; }
+.hb-ticks { position: relative; height: 16px; margin-right: 52px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); }
+.hb-ticks span { position: absolute; transform: translateX(-50%); }
+.hb-ticks span:first-child { transform: none; }
+
+/* tables */
+.tbl { overflow-x: auto; margin: 20px 0; }
+table { border-collapse: collapse; width: 100%; font-family: var(--font-display); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+thead th { font-size: 0.74rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--rule-2); }
+td small { color: var(--muted); font-size: 0.8em; }
+td.hl { font-weight: 700; }
+.proto td:first-child, .proto th:first-child { width: 22%; color: var(--muted); }
+
+/* frames */
+.frames { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.frame-wrap { background: var(--surface-2); padding: 6px; border-radius: 6px; }
+.grid10 { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; aspect-ratio: 1; max-width: 100%; }
+.cell { background: var(--surface); border-radius: 2px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: clamp(0.5rem, 1.6vw, 0.74rem); color: var(--ink); min-width: 0; }
+.cell.f-player { background: var(--ch-player); }
+.cell.f-danger { background: var(--ch-danger); }
+.cell.f-reward { background: var(--ch-reward); }
+.cell.f-projectile { background: var(--ch-projectile); }
+.cell.f-gauge { background: var(--ch-gauge); }
+.cell.trail { box-shadow: inset 0 0 0 2px var(--ink-2); }
+.cell.tok { font-weight: 600; }
+.cell.tok.zero { color: var(--rule-2); font-weight: 400; }
+.slots { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; margin-top: 10px; }
+.slot { background: var(--surface-2); border-radius: 4px; padding: 6px 4px; text-align: center; font-family: var(--font-mono); font-size: 0.7rem; min-width: 0; }
+.slot-tok { font-weight: 600; font-size: 0.8rem; }
+.slot-name { color: var(--muted); font-size: 0.66rem; overflow-wrap: anywhere; }
+.slot-logit { margin-top: 4px; font-size: 0.85rem; font-weight: 600; color: var(--opus); }
+.slot-p { color: var(--ink-2); }
+.panel-label { font-family: var(--font-display); font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; }
+.minis { display: grid; grid-template-columns: repeat(2, minmax(0, 200px)); gap: 20px; margin-top: 22px; }
+.mini { margin: 0; }
+.mini figcaption { margin-top: 6px; }
+
+/* game sections */
+.game { border-top: 1px solid var(--rule-2); padding-top: 28px; margin-top: 40px; }
+.game-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; margin-bottom: 18px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { font-family: var(--font-mono); font-size: 0.76rem; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--rule-2); color: var(--ink); display: inline-flex; align-items: center; gap: 6px; }
+.chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; }
+.chip.opus::before { background: var(--opus); }
+.chip.astra::before { background: var(--astra); }
+.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 0 0 18px; }
+.plan { margin: 0; background: var(--surface-2); border-radius: 6px; padding: 12px 16px; min-width: 0; }
+.plan figcaption { margin: 0 0 4px; font-size: 0.74rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.plan blockquote { margin: 0; font-style: italic; color: var(--ink); }
+details.code { margin: 18px 0; border: 1px solid var(--rule); border-radius: 6px; background: var(--code-bg); }
+details.code summary { cursor: pointer; padding: 10px 14px; font-family: var(--font-display); font-size: 0.9rem; color: var(--ink-2); }
+details.code pre { margin: 0; max-height: 520px; overflow: auto; padding: 4px 16px 16px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55; color: var(--ink); }
+details.code code { font-family: inherit; font-size: inherit; }
+.hljs-keyword, .hljs-meta { color: var(--tk-key); }
+.hljs-string { color: var(--tk-str); }
+.hljs-number, .hljs-literal { color: var(--tk-num); }
+.hljs-comment { color: var(--tk-com); font-style: italic; }
+.hljs-title, .hljs-title.function_ { color: var(--tk-fn); }
+.hljs-built_in, .hljs-params { color: var(--tk-bi); }
+.sub { margin-top: 24px; }
+.arch { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.lm { display: grid; gap: 4px; min-width: 0; }
+.lm-head, .lm-row { display: grid; grid-template-columns: 40px 96px minmax(0, 1fr); gap: 10px; align-items: center; }
+.lm-head span { font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.lm-l { font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted); }
+.lm-heads { display: flex; gap: 3px; flex-wrap: wrap; min-height: 12px; }
+.lm-heads i { width: 10px; height: 10px; border-radius: 2px; background: var(--opus); }
+.lm-heads .none { font-family: var(--font-mono); font-size: 0.66rem; color: var(--rule-2); }
+.lm-mlp { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.lm-bar { height: 10px; border-radius: 0 3px 3px 0; background: var(--opus-soft); min-width: 2px; }
+.lm-mlp span { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-2); }
+.arch-facts dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 5px 14px; margin: 0; font-family: var(--font-display); font-size: 0.85rem; }
+.arch-facts dt { color: var(--muted); }
+.arch-facts dd { margin: 0; font-variant-numeric: tabular-nums; }
+.arch-facts .vs { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--rule); font-family: var(--font-display); font-size: 0.85rem; color: var(--ink-2); }
+
+/* death causes */
+.sb-row { display: grid; grid-template-columns: 190px minmax(0, 1fr) 84px; gap: 12px; align-items: center; margin-bottom: 8px; }
+.sb-label { font-family: var(--font-display); font-size: 0.85rem; color: var(--ink-2); }
+.sb-label b { color: var(--ink); font-weight: 700; margin-right: 4px; }
+.sb { display: flex; gap: 2px; height: 28px; }
+.seg { border-radius: 4px; color: #ffffff; font-family: var(--font-mono); font-size: 0.74rem; display: flex; align-items: center; padding-left: 8px; min-width: 0; }
+.seg.s-sticky { background: var(--s-sticky); }
+.seg.s-policy { background: var(--s-policy); }
+.seg.s-none { background: var(--s-none); }
+.sb-len { font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted); text-align: right; }
+
+/* dumbbell */
+.db { position: relative; display: grid; gap: 18px; padding-top: 18px; }
+.db-row { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 12px; align-items: center; position: relative; z-index: 1; }
+.db-label { font-family: var(--font-display); font-size: 0.85rem; color: var(--ink-2); }
+.db-label b { color: var(--ink); margin-right: 4px; }
+.db-track { position: relative; height: 14px; margin-right: 24px; }
+.db-line { position: absolute; top: 6px; height: 2px; background: var(--ppo); }
+.db-line.opus { background: var(--opus); }
+.db-line.astra { background: var(--astra); }
+.db-dot { position: absolute; top: 1px; width: 12px; height: 12px; border-radius: 50%; transform: translateX(-6px); box-shadow: 0 0 0 2px var(--surface); }
+.db-dot.off.opus { background: var(--opus); }
+.db-dot.off.astra { background: var(--astra); }
+.db-dot.on { background: var(--surface); }
+.db-dot.on.opus { border: 2px solid var(--opus); }
+.db-dot.on.astra { border: 2px solid var(--astra); }
+.db-v { position: absolute; top: -17px; transform: translateX(-50%); font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink); }
+.db-v.on { color: var(--muted); }
+.db-grid { position: absolute; top: 0; bottom: 0; left: 202px; right: 24px; pointer-events: none; }
+.db-grid i { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--rule); }
+.db-axis { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 12px; margin-top: 8px; }
+.db-ticks { position: relative; height: 16px; margin-right: 24px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); }
+.db-ticks span { position: absolute; transform: translateX(-50%); }
+.db-ticks span:first-child { transform: none; }
+
+.note { font-family: var(--font-display); font-size: 0.88rem; color: var(--ink-2); background: var(--surface-2); border-radius: 6px; padding: 12px 16px; }
+.sources { font-family: var(--font-display); font-size: 0.88rem; color: var(--ink-2); }
+.sources li { margin-bottom: 6px; }
+footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--rule); font-family: var(--font-display); font-size: 0.82rem; color: var(--muted); }
+
+#tip { position: fixed; z-index: 20; pointer-events: none; background: var(--tip-bg); color: var(--tip-fg); font-family: var(--font-display);
+  font-size: 0.8rem; line-height: 1.4; padding: 7px 10px; border-radius: 6px; max-width: 280px; opacity: 0; transition: opacity 0.08s; }
+#tip span { opacity: 0.75; }
+#tip.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { #tip { transition: none; } }
+
+@media (max-width: 720px) {
+  body { font-size: 16px; }
+  .paper { padding-block: 32px 28px; border-inline: 0; }
+  .frames { grid-template-columns: minmax(0, 1fr); }
+  .arch { grid-template-columns: minmax(0, 1fr); }
+  .sb-row { grid-template-columns: minmax(0, 1fr) 74px; }
+  .sb-row .sb-label { grid-column: 1 / -1; }
+  .db-row, .db-axis { grid-template-columns: minmax(0, 1fr); }
+  .db-axis > div:first-child { display: none; }
+  .db-grid { left: 0; }
+  .db-label { margin-bottom: 14px; }
+  .minis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+</style>
+
+<div class="paper">
+<header class="col">
+  <div class="kicker">Experiment 5, rebuilt as a RASP program</div>
+  <h1>RASP Plays MinAtar</h1>
+  <p class="stand">In <a href="https://rikiyat.github.io/blog/weight-space-programming/">Sparks of Weight-Space Programming</a>, GPT-6 Astra writes the weights of small MinAtar policies in a single reply, with no tools. We gave Claude Opus 5.5 the same three games and the same one-reply rule, but asked for a RASP program instead. Tracr compiled each program into a transformer once, and that transformer played.</p>
+  <div class="meta"><span>November 2026</span><span>Claude Opus 5.5 via Claude Code</span><span>Tracr compiler</span><span>MinAtar 1.0.15</span><span>1,000 episodes per score</span></div>
+</header>
+
+<section class="col" style="margin-top:36px">
+  <ul class="lede-list">
+    <li>All three one-shot programs compiled on the first and only try, into transformers of 7 to 11 layers.</li>
+    <li>Breakout's compiled transformer scores <b>501.4</b>, level with Astra's directly written weights (498.6 under our scoring) and about 20 times the best PPO network in the paper.</li>
+    <li>Seaquest (14.1) and Asterix (19.4) fall far short of Astra (55.9 and 54.4). The compiled networks do what their programs say. The programs wander between equally scored safe moves, and MinAtar's sticky actions punish that. With sticky actions switched off, both programs outscore Astra's networks.</li>
+  </ul>
+</section>
+
+<figure class="wide">
+  <div class="fig-title">Mean score per episode</div>
+  <div class="fig-sub">1,000 episodes each, sticky actions 0.1, episodes cut at 10,000 steps. Each game has its own scale.</div>
+  <div class="legend"><span><i style="background:var(--opus)"></i>Opus 5.5, RASP program compiled by Tracr</span><span><i style="background:var(--astra)"></i>Astra, MLP weights</span><span><i style="background:var(--ppo)"></i>PPO baselines from the paper</span></div>
+  <div class="sms"><div class="sm"><h4>Breakout</h4><div class="hb"><div class="hb-row"><div class="hb-label">Opus 5.5 · RASP → Tracr</div>
+<div class="hb-track"><div class="hb-bar opus" style="width:83.56%" tabindex="0" data-tip="Opus 5.5 · RASP → Tracr&lt;br&gt;&lt;b&gt;501.4 ± 6.0&lt;/b&gt;&lt;br&gt;&lt;span&gt;our evaluation, 1,000 episodes&lt;/span&gt;"></div><span class="hb-val" style="left:83.56%">501.4</span></div></div><div class="hb-row"><div class="hb-label">Astra · MLP weights</div>
+<div class="hb-track"><div class="hb-bar astra" style="width:83.11%" tabindex="0" data-tip="Astra · MLP weights&lt;br&gt;&lt;b&gt;498.6 ± 7.8&lt;/b&gt;&lt;br&gt;&lt;span&gt;our re-scoring of the paper&amp;#x27;s released network, 1,000 episodes&lt;/span&gt;"></div><span class="hb-val" style="left:83.11%">498.6</span></div></div><div class="hb-row"><div class="hb-label">PPO · 500M steps</div>
+<div class="hb-track"><div class="hb-bar ppo" style="width:4.22%" tabindex="0" data-tip="PPO · 500M steps&lt;br&gt;&lt;b&gt;25.3 ± 0.1&lt;/b&gt;&lt;br&gt;&lt;span&gt;paper, best of 3 seeds (ppo500_s0)&lt;/span&gt;"></div><span class="hb-val" style="left:4.22%">25.3</span></div></div><div class="hb-row"><div class="hb-label">PPO · 100M steps</div>
+<div class="hb-track"><div class="hb-bar ppo" style="width:2.63%" tabindex="0" data-tip="PPO · 100M steps&lt;br&gt;&lt;b&gt;15.8 ± 0.1&lt;/b&gt;&lt;br&gt;&lt;span&gt;paper, best seed (ppo100_s2)&lt;/span&gt;"></div><span class="hb-val" style="left:2.63%">15.8</span></div></div><div class="hb-grid"><i style="left:0.00%"></i><i style="left:33.33%"></i><i style="left:66.67%"></i><i style="left:100.00%"></i></div></div>
+<div class="hb-axis"><div></div><div class="hb-ticks"><span style="left:0.00%">0</span><span style="left:33.33%">200</span><span style="left:66.67%">400</span><span style="left:100.00%">600</span></div></div></div><div class="sm"><h4>Seaquest</h4><div class="hb"><div class="hb-row"><div class="hb-label">Opus 5.5 · RASP → Tracr</div>
+<div class="hb-track"><div class="hb-bar opus" style="width:14.14%" tabindex="0" data-tip="Opus 5.5 · RASP → Tracr&lt;br&gt;&lt;b&gt;14.1 ± 0.5&lt;/b&gt;&lt;br&gt;&lt;span&gt;our evaluation, 1,000 episodes&lt;/span&gt;"></div><span class="hb-val" style="left:14.14%">14.1</span></div></div><div class="hb-row"><div class="hb-label">Astra · MLP weights</div>
+<div class="hb-track"><div class="hb-bar astra" style="width:55.94%" tabindex="0" data-tip="Astra · MLP weights&lt;br&gt;&lt;b&gt;55.9 ± 1.4&lt;/b&gt;&lt;br&gt;&lt;span&gt;our re-scoring of the paper&amp;#x27;s released network, 1,000 episodes&lt;/span&gt;"></div><span class="hb-val" style="left:55.94%">55.9</span></div></div><div class="hb-row"><div class="hb-label">PPO · 500M steps</div>
+<div class="hb-track"><div class="hb-bar ppo" style="width:88.88%" tabindex="0" data-tip="PPO · 500M steps&lt;br&gt;&lt;b&gt;88.9 ± 1.6&lt;/b&gt;&lt;br&gt;&lt;span&gt;paper, best of 3 seeds (ppo500_s2)&lt;/span&gt;"></div><span class="hb-val" style="left:88.88%">88.9</span></div></div><div class="hb-row"><div class="hb-label">PPO · 100M steps</div>
+<div class="hb-track"><div class="hb-bar ppo" style="width:5.62%" tabindex="0" data-tip="PPO · 100M steps&lt;br&gt;&lt;b&gt;5.6 ± 0.0&lt;/b&gt;&lt;br&gt;&lt;span&gt;paper, best seed (ppo100_s2)&lt;/span&gt;"></div><span class="hb-val" style="left:5.62%">5.6</span></div></div><div class="hb-grid"><i style="left:0.00%"></i><i style="left:25.00%"></i><i style="left:50.00%"></i><i style="left:75.00%"></i><i style="left:100.00%"></i></div></div>
+<div class="hb-axis"><div></div><div class="hb-ticks"><span style="left:0.00%">0</span><span style="left:25.00%">25</span><span style="left:50.00%">50</span><span style="left:75.00%">75</span><span style="left:100.00%">100</span></div></div></div><div class="sm"><h4>Asterix</h4><div class="hb"><div class="hb-row"><div class="hb-label">Opus 5.5 · RASP → Tracr</div>
+<div class="hb-track"><div class="hb-bar opus" style="width:32.28%" tabindex="0" data-tip="Opus 5.5 · RASP → Tracr&lt;br&gt;&lt;b&gt;19.4 ± 0.7&lt;/b&gt;&lt;br&gt;&lt;span&gt;our evaluation, 1,000 episodes&lt;/span&gt;"></div><span class="hb-val" style="left:32.28%">19.4</span></div></div><div class="hb-row"><div class="hb-label">Astra · MLP weights</div>
+<div class="hb-track"><div class="hb-bar astra" style="width:90.61%" tabindex="0" data-tip="Astra · MLP weights&lt;br&gt;&lt;b&gt;54.4 ± 1.0&lt;/b&gt;&lt;br&gt;&lt;span&gt;our re-scoring of the paper&amp;#x27;s released network, 1,000 episodes&lt;/span&gt;"></div><span class="hb-val" style="left:90.61%">54.4</span></div></div><div class="hb-row"><div class="hb-label">PPO · 500M steps</div>
+<div class="hb-track"><div class="hb-bar ppo" style="width:92.01%" tabindex="0" data-tip="PPO · 500M steps&lt;br&gt;&lt;b&gt;55.2 ± 0.6&lt;/b&gt;&lt;br&gt;&lt;span&gt;paper, best of 3 seeds (ppo500_s1)&lt;/span&gt;"></div><span class="hb-val" style="left:92.01%">55.2</span></div></div><div class="hb-row"><div class="hb-label">PPO · 100M steps</div>
+<div class="hb-track"><div class="hb-bar ppo" style="width:43.03%" tabindex="0" data-tip="PPO · 100M steps&lt;br&gt;&lt;b&gt;25.8 ± 0.4&lt;/b&gt;&lt;br&gt;&lt;span&gt;paper, best seed (ppo100_s6)&lt;/span&gt;"></div><span class="hb-val" style="left:43.03%">25.8</span></div></div><div class="hb-grid"><i style="left:0.00%"></i><i style="left:33.33%"></i><i style="left:66.67%"></i><i style="left:100.00%"></i></div></div>
+<div class="hb-axis"><div></div><div class="hb-ticks"><span style="left:0.00%">0</span><span style="left:33.33%">20</span><span style="left:66.67%">40</span><span style="left:100.00%">60</span></div></div></div></div>
+  <figcaption>Astra's bars are our re-scoring of the networks released with the paper. PPO numbers are the paper's (best seed at each training length); their checkpoints are not released. Hover a bar for its standard error.</figcaption>
+</figure>
+
+<section class="col">
+  <h2>The task</h2>
+  <p>In the paper's Experiment 5, Astra sees one MinAtar game per conversation: its rules, the game's own source file, the layout of the network's input and output, and how the network will be scored. It replies once, with an <code>edits</code> block that sets the weights of a 600 → 32 → 32 → 6 tanh network that starts at zero. It cannot run code, the network never plays before it is scored, and it gets no feedback.</p>
+  <p>We kept the game text, the game source, the channel layout and the scoring exactly as the paper wrote them. Only the answer changes. Opus 5.5 replies with one Python block that defines <code>program()</code>, a RASP program whose numerical output gives the six action logits. We compile it once with <code>compile_rasp_to_model(program(), vocab=set(range(70)), max_seq_len=106, compiler_bos="BOS")</code> and play the result. Opus cannot open the compiler either, so the prompt includes Tracr's 26 non-test source files, much as the paper's prompt includes the game's source.</p>
+</section>
+
+<div class="wide tbl"><table class="proto">
+  <thead><tr><th></th><th>Paper's Experiment 5</th><th>This variant</th></tr></thead>
+  <tbody>
+    <tr><td>Writer</td><td>GPT-6 Astra via the Codex CLI, every tool off</td><td>Claude Opus 5.5 via <code>claude -p</code>, effort xhigh, every tool off</td></tr>
+    <tr><td>Answer</td><td>An <code>edits</code> block setting 20,486 MLP weights</td><td>A Python block defining a RASP program</td></tr>
+    <tr><td>Network</td><td>600 → 32 → 32 → 6 tanh, fixed</td><td>Whatever transformer Tracr compiles the program into</td></tr>
+    <tr><td>Input</td><td>600 bits: a 10 × 10 grid × 6 channels</td><td>The same bits as 100 cell tokens (0–63) plus 6 action tokens</td></tr>
+    <tr><td>Prompt extras</td><td>The game's MinAtar source</td><td>The game's MinAtar source and Tracr's source</td></tr>
+    <tr><td>Feedback</td><td>None, one reply</td><td>None, one reply</td></tr>
+    <tr><td>Scoring</td><td colspan="2">Mean score over 1,000 episodes of MinAtar 1.0.15, sticky actions 0.1, actions sampled from the softmax of the logits, episodes cut at 10,000 steps</td></tr>
+  </tbody>
+</table></div>
+
+<figure class="wide">
+  <div class="fig-title">What the transformer reads</div>
+  <div class="fig-sub">One Breakout frame from a game played by the compiled network, step 37.</div>
+  <div class="legend"><span><i style="background:var(--ch-player)"></i>player (bit 1)</span><span><i style="background:var(--ch-danger)"></i>danger (2)</span><span><i style="background:var(--ch-reward)"></i>reward (4)</span><span><i style="background:var(--ch-projectile)"></i>projectile (8)</span><span><i class="ring"></i>trail (16)</span><span><i style="background:var(--ch-gauge)"></i>gauge (32)</span></div>
+  <div class="frames">
+    <div><div class="panel-label">The board, in the paper's six channels</div><div class="frame-wrap"><div class="grid10"><div class="cell" data-tip="row 0, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell f-reward" data-tip="row 1, column 0&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 1, column 1&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 1, column 2&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 1, column 3&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 1, column 4&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 1, column 5&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 1, column 6&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 1, column 7&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 1, column 8&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 1, column 9&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 2, column 0&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 2, column 1&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell" data-tip="row 2, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell f-reward" data-tip="row 2, column 3&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 2, column 4&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 2, column 5&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 2, column 6&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 2, column 7&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 2, column 8&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 2, column 9&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 3, column 0&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell" data-tip="row 3, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell f-reward" data-tip="row 3, column 2&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 3, column 3&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 3, column 4&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 3, column 5&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 3, column 6&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell f-reward" data-tip="row 3, column 7&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell" data-tip="row 3, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell f-reward" data-tip="row 3, column 9&lt;br&gt;token 4&lt;br&gt;reward"></div><div class="cell" data-tip="row 4, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell trail" data-tip="row 7, column 6&lt;br&gt;token 16&lt;br&gt;trail"></div><div class="cell" data-tip="row 7, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell f-projectile" data-tip="row 8, column 7&lt;br&gt;token 8&lt;br&gt;projectile"></div><div class="cell" data-tip="row 8, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell f-player" data-tip="row 9, column 7&lt;br&gt;token 1&lt;br&gt;player"></div><div class="cell" data-tip="row 9, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div></div></div></div>
+    <div><div class="panel-label">The 100 cell tokens: each is the sum of its channels' bits</div><div class="frame-wrap"><div class="grid10"><div class="cell tok zero" data-tip="row 0, column 0&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 0, column 1&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 0, column 2&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 0, column 3&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 0, column 4&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 0, column 5&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 0, column 6&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 0, column 7&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 0, column 8&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 0, column 9&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok" data-tip="row 1, column 0&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 1, column 1&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 1, column 2&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 1, column 3&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 1, column 4&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 1, column 5&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 1, column 6&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 1, column 7&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 1, column 8&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 1, column 9&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 2, column 0&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 2, column 1&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok zero" data-tip="row 2, column 2&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok" data-tip="row 2, column 3&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 2, column 4&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 2, column 5&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 2, column 6&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 2, column 7&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 2, column 8&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 2, column 9&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 3, column 0&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok zero" data-tip="row 3, column 1&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok" data-tip="row 3, column 2&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 3, column 3&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 3, column 4&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 3, column 5&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 3, column 6&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok" data-tip="row 3, column 7&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok zero" data-tip="row 3, column 8&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok" data-tip="row 3, column 9&lt;br&gt;token 4&lt;br&gt;reward">4</div><div class="cell tok zero" data-tip="row 4, column 0&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 4, column 1&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 4, column 2&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 4, column 3&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 4, column 4&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 4, column 5&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 4, column 6&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 4, column 7&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 4, column 8&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 4, column 9&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 5, column 0&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 5, column 1&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 5, column 2&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 5, column 3&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 5, column 4&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 5, column 5&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 5, column 6&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 5, column 7&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 5, column 8&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 5, column 9&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 6, column 0&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 6, column 1&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 6, column 2&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 6, column 3&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 6, column 4&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 6, column 5&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 6, column 6&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 6, column 7&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 6, column 8&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 6, column 9&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 7, column 0&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 7, column 1&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 7, column 2&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 7, column 3&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 7, column 4&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 7, column 5&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok" data-tip="row 7, column 6&lt;br&gt;token 16&lt;br&gt;trail">16</div><div class="cell tok zero" data-tip="row 7, column 7&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 7, column 8&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 7, column 9&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 8, column 0&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 8, column 1&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 8, column 2&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 8, column 3&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 8, column 4&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 8, column 5&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 8, column 6&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok" data-tip="row 8, column 7&lt;br&gt;token 8&lt;br&gt;projectile">8</div><div class="cell tok zero" data-tip="row 8, column 8&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 8, column 9&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 9, column 0&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 9, column 1&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 9, column 2&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 9, column 3&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 9, column 4&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 9, column 5&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 9, column 6&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok" data-tip="row 9, column 7&lt;br&gt;token 1&lt;br&gt;player">1</div><div class="cell tok zero" data-tip="row 9, column 8&lt;br&gt;token 0&lt;br&gt;empty">0</div><div class="cell tok zero" data-tip="row 9, column 9&lt;br&gt;token 0&lt;br&gt;empty">0</div></div></div>
+      <div class="panel-label" style="margin-top:12px">Then six action tokens, where the network writes its logits</div><div class="slots"><div class="slot" data-tip="index 100, token 64&lt;br&gt;action 0: no-op&lt;br&gt;logit 30.00, probability 0.250">
+<div class="slot-tok">64</div><div class="slot-name">no-op</div><div class="slot-logit">30</div><div class="slot-p">25%</div></div><div class="slot" data-tip="index 101, token 65&lt;br&gt;action 1: left&lt;br&gt;logit 0.00, probability 0.000">
+<div class="slot-tok">65</div><div class="slot-name">left</div><div class="slot-logit">0</div><div class="slot-p">0%</div></div><div class="slot" data-tip="index 102, token 66&lt;br&gt;action 2: up&lt;br&gt;logit 30.00, probability 0.250">
+<div class="slot-tok">66</div><div class="slot-name">up</div><div class="slot-logit">30</div><div class="slot-p">25%</div></div><div class="slot" data-tip="index 103, token 67&lt;br&gt;action 3: right&lt;br&gt;logit 0.00, probability 0.000">
+<div class="slot-tok">67</div><div class="slot-name">right</div><div class="slot-logit">0</div><div class="slot-p">0%</div></div><div class="slot" data-tip="index 104, token 68&lt;br&gt;action 4: down&lt;br&gt;logit 30.00, probability 0.250">
+<div class="slot-tok">68</div><div class="slot-name">down</div><div class="slot-logit">30</div><div class="slot-p">25%</div></div><div class="slot" data-tip="index 105, token 69&lt;br&gt;action 5: fire&lt;br&gt;logit 30.00, probability 0.250">
+<div class="slot-tok">69</div><div class="slot-name">fire</div><div class="slot-logit">30</div><div class="slot-p">25%</div></div></div></div>
+  </div>
+  <div class="minis"><figure class="mini"><div class="frame-wrap"><div class="grid10"><div class="cell" data-tip="row 0, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell trail" data-tip="row 1, column 0&lt;br&gt;token 16&lt;br&gt;trail"></div><div class="cell" style="background:linear-gradient(135deg,var(--ch-danger) 50%,var(--ch-reward) 50%)" data-tip="row 1, column 1&lt;br&gt;token 6&lt;br&gt;danger, reward"></div><div class="cell" data-tip="row 1, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell f-player" data-tip="row 2, column 2&lt;br&gt;token 1&lt;br&gt;player"></div><div class="cell f-player trail" data-tip="row 2, column 3&lt;br&gt;token 17&lt;br&gt;player, trail"></div><div class="cell" data-tip="row 2, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell f-gauge" data-tip="row 9, column 0&lt;br&gt;token 32&lt;br&gt;gauge"></div><div class="cell f-gauge" data-tip="row 9, column 1&lt;br&gt;token 32&lt;br&gt;gauge"></div><div class="cell f-gauge" data-tip="row 9, column 2&lt;br&gt;token 32&lt;br&gt;gauge"></div><div class="cell f-gauge" data-tip="row 9, column 3&lt;br&gt;token 32&lt;br&gt;gauge"></div><div class="cell f-gauge" data-tip="row 9, column 4&lt;br&gt;token 32&lt;br&gt;gauge"></div><div class="cell f-gauge" data-tip="row 9, column 5&lt;br&gt;token 32&lt;br&gt;gauge"></div><div class="cell f-gauge" data-tip="row 9, column 6&lt;br&gt;token 32&lt;br&gt;gauge"></div><div class="cell" data-tip="row 9, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell f-gauge" data-tip="row 9, column 8&lt;br&gt;token 32&lt;br&gt;gauge"></div><div class="cell" data-tip="row 9, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div></div></div><figcaption>Seaquest, step 46</figcaption></figure><figure class="mini"><div class="frame-wrap"><div class="grid10"><div class="cell" data-tip="row 0, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 0, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell f-danger" data-tip="row 1, column 2&lt;br&gt;token 2&lt;br&gt;danger"></div><div class="cell trail" data-tip="row 1, column 3&lt;br&gt;token 16&lt;br&gt;trail"></div><div class="cell" data-tip="row 1, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 1, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell f-player" data-tip="row 2, column 6&lt;br&gt;token 1&lt;br&gt;player"></div><div class="cell" data-tip="row 2, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 2, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell trail" data-tip="row 3, column 4&lt;br&gt;token 16&lt;br&gt;trail"></div><div class="cell f-danger" data-tip="row 3, column 5&lt;br&gt;token 2&lt;br&gt;danger"></div><div class="cell" data-tip="row 3, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 3, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell f-danger" data-tip="row 4, column 6&lt;br&gt;token 2&lt;br&gt;danger"></div><div class="cell trail" data-tip="row 4, column 7&lt;br&gt;token 16&lt;br&gt;trail"></div><div class="cell" data-tip="row 4, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 4, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 5, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell trail" data-tip="row 5, column 8&lt;br&gt;token 16&lt;br&gt;trail"></div><div class="cell f-danger" data-tip="row 5, column 9&lt;br&gt;token 2&lt;br&gt;danger"></div><div class="cell" data-tip="row 6, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 6, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 7, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell f-danger" data-tip="row 7, column 8&lt;br&gt;token 2&lt;br&gt;danger"></div><div class="cell trail" data-tip="row 7, column 9&lt;br&gt;token 16&lt;br&gt;trail"></div><div class="cell" data-tip="row 8, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 8, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 0&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 1&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 2&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 3&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 4&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 5&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 6&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 7&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 8&lt;br&gt;token 0&lt;br&gt;empty"></div><div class="cell" data-tip="row 9, column 9&lt;br&gt;token 0&lt;br&gt;empty"></div></div></div><figcaption>Asterix, step 64</figcaption></figure></div>
+  <figcaption>Bricks are reward (4), the ball is a projectile (8) and the ball's previous cell is its trail (16), so the ball's direction is visible in a single frame. In this frame the program writes logit 30 on the four actions that keep the paddle where it is and 0 on left and right. A cell that is in two channels, such as a Seaquest enemy (danger and reward), is drawn split diagonally.</figcaption>
+</figure>
+
+<section class="col">
+  <h2>Results</h2>
+  <p>The paper's networks are released, so we re-scored them with our evaluation before scoring anything of ours. All three land within noise of the paper's numbers. Breakout is 1.7 standard errors below, Seaquest 1.5 above and Asterix 0.8 above. The Opus and Astra columns below therefore compare like with like.</p>
+</section>
+<div class="wide tbl"><table>
+  <thead><tr><th>Game</th><th>Opus 5.5 · RASP → Tracr</th><th>Astra · MLP (our scoring)</th><th>Astra · MLP (paper)</th><th>PPO 100M, best seed</th><th>PPO 500M, best seed</th></tr></thead>
+  <tbody><tr><th scope="row">Breakout</th><td class="hl">501.4 <small>± 6.0</small></td>
+<td>498.6 <small>± 7.8</small></td><td>517.4 <small>± 7.4</small></td>
+<td>15.8</td><td>25.3</td></tr><tr><th scope="row">Seaquest</th><td class="hl">14.1 <small>± 0.5</small></td>
+<td>55.9 <small>± 1.4</small></td><td>53.1 <small>± 1.4</small></td>
+<td>5.6</td><td>88.9</td></tr><tr><th scope="row">Asterix</th><td class="hl">19.4 <small>± 0.7</small></td>
+<td>54.4 <small>± 1.0</small></td><td>53.2 <small>± 1.0</small></td>
+<td>25.8</td><td>55.2</td></tr></tbody>
+</table></div>
+<section class="col">
+  <p>Breakout is the clearest result. Opus and Astra independently chose the same strategy: predict where the ball will land and move the paddle there early. Both networks reach about 500 points, while PPO trained for 500 million steps reaches 25. In Seaquest and Asterix, Opus's programs score less than a third of Astra's. Its Seaquest program still beats the best 100M-step PPO network and two of the three 500M-step seeds (7.5 and 4.4).</p>
+</section>
+
+<section class="col">
+  <h2>Three programs</h2>
+  <p>Each reply opens with a short design and then a single Python block. The blocks are 120 to 259 lines of ordinary RASP built with <code>Map</code>, <code>SequenceMap</code>, <code>Select</code> and <code>Aggregate</code>. Each section shows the plan in Opus's own words beside Astra's, then the full program and the transformer Tracr built from it.</p>
+</section>
+<div class="wide"><section class="game" id="breakout">
+<div class="game-head"><h3>Breakout</h3><div class="chips"><span class="chip opus">Opus · RASP 501.4</span><span class="chip astra">Astra · MLP 498.6</span></div></div>
+<div class="plans"><figure class="plan"><figcaption>Opus 5.5's plan</figcaption><blockquote>The policy predicts the column where the paddle must be when the ball comes down, and moves the paddle there early.</blockquote></figure>
+<figure class="plan"><figcaption>Astra's plan, from the paper's logs</figcaption><blockquote>The first layer computes four landing-position errors and two direction indicators.</blockquote></figure></div>
+<p>Wall bounces are handled by unfolding the board into a periodic coordinate. The ball&#x27;s direction comes from comparing the ball cell with its trail cell, and the predicted landing column becomes a two-cell target region. Five attention heads in one layer copy the ball, trail and paddle positions to every position. A chain of exact categorical lookup MLPs then turns them into one wanted action, which gets logit 30.</p>
+<details class="code"><summary>The whole program, 120 lines, as written in the reply</summary><pre><code class="language-python">from tracr.rasp import rasp
+
+MLP_EXACTNESS = 100
+
+LOGIT = 30.0
+
+
+def _fold(u):
+    # MinAtar wall behaviour in unfolded coordinates (clamp + flip =&gt; period 20)
+    v = u % 20
+    return v if v &lt; 10 else 19 - v
+
+
+def program():
+    tokens = rasp.tokens
+    indices = rasp.indices
+
+    # ---------------- per-cell features (MLP of layer 0) ----------------
+    is_ball = rasp.categorical(
+        rasp.Map(lambda t: bool(t &lt; 64 and (t &amp; 8)), tokens)).named(&quot;is_ball&quot;)
+    is_trail = rasp.categorical(
+        rasp.Map(lambda t: bool(t &lt; 64 and (t &amp; 16)), tokens)).named(&quot;is_trail&quot;)
+    is_pad = rasp.categorical(
+        rasp.Map(lambda t: bool(t &lt; 64 and (t &amp; 1)), tokens)).named(&quot;is_pad&quot;)
+    col = rasp.categorical(rasp.Map(lambda i: i % 10, indices)).named(&quot;col&quot;)
+    row = rasp.categorical(
+        rasp.Map(lambda i: min(i // 10, 9), indices)).named(&quot;row&quot;)
+    slot = rasp.categorical(
+        rasp.Map(lambda i: &quot;L&quot; if i == 101 else (&quot;R&quot; if i == 103 else &quot;N&quot;),
+                 indices)).named(&quot;slot&quot;)
+
+    # ---------------- broadcast positions (attention of layer 1) ----------------
+    sel_ball = rasp.Select(is_ball, col, lambda k, q: bool(k)).named(&quot;sel_ball&quot;)
+    sel_trail = rasp.Select(is_trail, col, lambda k, q: bool(k)).named(&quot;sel_trail&quot;)
+    sel_pad = rasp.Select(is_pad, col, lambda k, q: bool(k)).named(&quot;sel_pad&quot;)
+
+    bx = rasp.categorical(rasp.Aggregate(sel_ball, col)).named(&quot;bx&quot;)
+    by = rasp.categorical(rasp.Aggregate(sel_ball, row)).named(&quot;by&quot;)
+    tx = rasp.categorical(rasp.Aggregate(sel_trail, col)).named(&quot;tx&quot;)
+    ty = rasp.categorical(rasp.Aggregate(sel_trail, row)).named(&quot;ty&quot;)
+    px = rasp.categorical(rasp.Aggregate(sel_pad, col)).named(&quot;px&quot;)
+
+    # ---------------- direction inference ----------------
+    def e_fn(b, t):
+        # horizontal: +-1 if it moved, +-2 if clamped at a wall (or reset)
+        if b &gt; t:
+            return 1
+        if b &lt; t:
+            return -1
+        return 2 if b == 0 else -2
+    e = rasp.SequenceMap(e_fn, bx, tx).named(&quot;e&quot;)
+
+    def vs_fn(b, t):
+        # vertical state: D = moving down, U = moving up, C = just caught (up)
+        if b == 8 and t == 8:
+            return &quot;C&quot;
+        if b &gt; t:
+            return &quot;D&quot;
+        if b &lt; t:
+            return &quot;U&quot;
+        if b == 1:
+            return &quot;U&quot;
+        return &quot;D&quot;
+    vs = rasp.SequenceMap(vs_fn, by, ty).named(&quot;vs&quot;)
+
+    pb = rasp.SequenceMap(lambda p, b: p == b, px, bx).named(&quot;pb&quot;)
+    pslot = rasp.SequenceMap(lambda p, s: (p, s), px, slot).named(&quot;pslot&quot;)
+
+    def kvs_fn(b, v):
+        # number of unfolded horizontal steps until the ball is on row 8
+        if v == &quot;D&quot;:
+            k = 8 - b
+        elif b &gt;= 4:
+            k = b + 1          # assume bounce off a row-3 brick (earliest case)
+        elif b &gt;= 2:
+            k = 9 - b          # assume bounce at the current row
+        elif b == 1:
+            k = 10             # goes to row 0, then the top wall
+        else:
+            k = 9              # top wall bounce
+        k = max(0, min(10, k))
+        return (k, v == &quot;C&quot;)
+    kvs = rasp.SequenceMap(kvs_fn, by, vs).named(&quot;kvs&quot;)
+
+    epb = rasp.SequenceMap(lambda a, c: (a, bool(c)), e, pb).named(&quot;epb&quot;)
+
+    def kd_fn(kv, ep):
+        k, is_c = kv
+        ev, pbv = ep
+        d = 1 if ev &gt; 0 else -1
+        # reversing catch (paddle under the ball&#x27;s new column): direction flipped
+        if is_c and pbv and abs(ev) == 1:
+            d = -d
+        return (k, d)
+    kd = rasp.SequenceMap(kd_fn, kvs, epb).named(&quot;kd&quot;)
+
+    # ---------------- target region at the paddle row ----------------
+    def reg_fn(b, kdv):
+        k, d = kdv
+        a = _fold(b + k * d)
+        c = _fold(b + (k + 1) * d)
+        return (min(a, c), max(a, c))
+    reg = rasp.SequenceMap(reg_fn, bx, kd).named(&quot;reg&quot;)
+
+    # ---------------- action selection per output slot ----------------
+    def lg_fn(r, ps):
+        lo, hi = r
+        p, s = ps
+        if p &lt; lo:
+            want = &quot;R&quot;
+        elif p &gt; hi:
+            want = &quot;L&quot;
+        else:
+            want = &quot;N&quot;
+        return want == s
+    lg = rasp.SequenceMap(lg_fn, reg, pslot).named(&quot;lg&quot;)
+
+    out = rasp.numerical(
+        rasp.Map(lambda v: LOGIT if v else 0.0, lg)).named(&quot;out&quot;)
+    return out</code></pre></details>
+<h4 class="sub">What Tracr compiled it to</h4>
+<div class="arch"><div class="lm"><div class="lm-head"><span>Layer</span><span>Attention heads</span><span>MLP hidden units (log scale)</span></div><div class="lm-row"><div class="lm-l">1</div><div class="lm-heads" data-tip="layer 1: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:40.8%" data-tip="layer 1: MLP with 29 hidden units in use"></div><span>29</span></div></div><div class="lm-row"><div class="lm-l">2</div><div class="lm-heads" data-tip="layer 2: 5 attention head(s), every one reading the board (none purely positional)"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:69.5%" data-tip="layer 2: MLP with 330 hidden units in use"></div><span>330</span></div></div><div class="lm-row"><div class="lm-l">3</div><div class="lm-heads" data-tip="layer 3: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:43.9%" data-tip="layer 3: MLP with 38 hidden units in use"></div><span>38</span></div></div><div class="lm-row"><div class="lm-l">4</div><div class="lm-heads" data-tip="layer 4: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:59.0%" data-tip="layer 4: MLP with 136 hidden units in use"></div><span>136</span></div></div><div class="lm-row"><div class="lm-l">5</div><div class="lm-heads" data-tip="layer 5: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:64.7%" data-tip="layer 5: MLP with 220 hidden units in use"></div><span>220</span></div></div><div class="lm-row"><div class="lm-l">6</div><div class="lm-heads" data-tip="layer 6: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:69.5%" data-tip="layer 6: MLP with 330 hidden units in use"></div><span>330</span></div></div><div class="lm-row"><div class="lm-l">7</div><div class="lm-heads" data-tip="layer 7: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:8.3%" data-tip="layer 7: MLP with 1 hidden units in use"></div><span>1</span></div></div></div>
+<div class="arch-facts"><dl><dt>Layers</dt><dd>7</dd><dt>Attention heads, total</dt><dd>5 (at most 5 in a layer)</dd><dt>Key size</dt><dd>12</dd><dt>Widest MLP</dt><dd>330 hidden units</dd><dt>Residual stream</dt><dd>358 dimensions</dd><dt>SOps</dt><dd>20 categorical, 2 numerical</dd><dt>Parameters</dt><dd>2,328,064 dense, 5,195 nonzero</dd><dt>MLP_EXACTNESS</dt><dd>100</dd><dt>Compile time</dt><dd>11 s</dd><dt>Speed</dt><dd>1.7 s per 1,000 positions</dd></dl><p class="vs">Astra's network for the same game: 600 → 32 → 32 → 6 tanh, 20,486 parameters, 815 nonzero.</p></div></div>
+</section><section class="game" id="seaquest">
+<div class="game-head"><h3>Seaquest</h3><div class="chips"><span class="chip opus">Opus · RASP 14.1</span><span class="chip astra">Astra · MLP 55.9</span></div></div>
+<div class="plans"><figure class="plan"><figcaption>Opus 5.5's plan</figcaption><blockquote>The policy is a hand-written reactive heuristic. It is computed relative to the submarine&#x27;s front cell.</blockquote></figure>
+<figure class="plan"><figcaption>Astra's plan, from the paper's logs</figcaption><blockquote>The policy stays at the starting column, firing left while changing rows to intercept divers and attack enemies.</blockquote></figure></div>
+<p>Every move is checked against danger at its destination cell. Fire is rewarded when an enemy is ahead, and divers attract the sub. It surfaces only when oxygen is low and a diver is aboard, read from two cells of the gauge row. The program keeps every attention space at 57 dimensions or fewer so that Tracr&#x27;s scaled attention stays sharp, and it raises MLP_EXACTNESS to 1,000.</p>
+<details class="code"><summary>The whole program, 205 lines, as written in the reply</summary><pre><code class="language-python">from tracr.rasp import rasp
+
+MLP_EXACTNESS = 1000
+
+_DEST = {0: (0, 0), 1: (0, -1), 2: (-1, 0), 3: (0, 1), 4: (1, 0), 5: (0, 0)}
+
+
+def _dec(k):
+  return k // 11 - 2, k % 11 - 5
+
+
+def _near(k, q, lo, hi):
+  if k == 99 or q == 99:
+    return False
+  r, c = _dec(k)
+  if r == 0 and c == 0:
+    return True
+  dr, dc = _DEST[q // 2]
+  return r == dr and lo &lt;= abs(c - dc) &lt;= hi
+
+
+def _pred_dang(k, q):
+  return _near(k, q, 0, 1)
+
+
+def _pred_b2(k, q):
+  return _near(k, q, 2, 2)
+
+
+def _pred_eline(k, q):
+  if k == 99 or q == 99:
+    return False
+  r, c = _dec(k)
+  if r == 0 and c == 0:
+    return True
+  a, f = q // 2, q % 2
+  if a == 5:
+    return r == 0 and ((c &gt; 0) if f == 1 else (c &lt; 0))
+  if a == 1:
+    return f == 1 and r == 0 and c &lt; 0
+  if a == 3:
+    return f == 0 and r == 0 and c &gt; 0
+  if a == 2:
+    return r &lt; 0
+  if a == 4:
+    return r &gt; 0
+  return False
+
+
+def _pred_diver(k, q):
+  if k == 99 or q == 99:
+    return False
+  r, c = _dec(k)
+  if r == 0 and c == 0:
+    return True
+  a = q // 2
+  if a == 1:
+    return r == 0 and c &lt; 0
+  if a == 3:
+    return r == 0 and c &gt; 0
+  if a == 2:
+    return r &lt; 0
+  if a == 4:
+    return r &gt; 0
+  return False
+
+
+def _logit(acode, gcode):
+  a1, a2 = acode // 4, acode % 4
+  a, dg = a1 // 2, a1 % 2
+  el, dv = a2 // 2, a2 % 2
+  g1, osv = gcode // 3, gcode % 3
+  prc, pcc = g1 // 5, g1 % 5
+  if a &gt; 5:
+    return 0
+  s = 40
+  if a == 0:
+    s += 2
+  elif a == 5:
+    s += 12 if el else -3
+  elif a in (1, 3) and el:
+    s += 6
+  if osv == 1:
+    if a == 2:
+      if prc == 1:
+        s += 25
+      elif prc &gt;= 2:
+        s += 12
+    elif a == 4:
+      s -= 6
+  else:
+    if a in (2, 4) and el:
+      s += 4
+    if dv:
+      b = 4 if a in (1, 3) else (3 if a in (2, 4) else 0)
+      if osv == 2 and b &gt; 0:
+        b += 7
+      s += b
+  if a == 2:
+    if prc == 0:
+      s -= 3
+    elif prc == 1 and osv != 1:
+      s -= 45
+    elif prc == 2 and osv == 0:
+      s -= 10
+  elif a == 4:
+    if prc == 0:
+      s += 6
+    elif prc == 1 and osv != 1:
+      s += 3
+    elif prc == 4:
+      s -= 35
+  elif a == 1:
+    if pcc == 0:
+      s -= 35
+    elif pcc == 1:
+      s -= 8
+  elif a == 3:
+    if pcc == 4:
+      s -= 35
+    elif pcc == 3:
+      s -= 8
+  if dg:
+    s -= 30
+  return max(s, 0)
+
+
+def _cmap(f, x, name):
+  return rasp.categorical(rasp.Map(f, x)).named(name)
+
+
+def _nmap(f, x, name):
+  return rasp.numerical(rasp.Map(f, x)).named(name)
+
+
+def _cseq(f, x, y, name):
+  return rasp.categorical(rasp.SequenceMap(f, x, y)).named(name)
+
+
+def program():
+  tok = rasp.tokens
+  idx = rasp.indices
+
+  # per-position maps
+  is_front = _cmap(lambda t: 1 if (t &lt; 64 and (t &amp; 1) and not (t &amp; 16)) else 0, tok, &quot;is_front&quot;)
+  is_back = _cmap(lambda t: 1 if (t &lt; 64 and (t &amp; 1) and (t &amp; 16)) else 0, tok, &quot;is_back&quot;)
+  gbit = _cmap(lambda t: 1 if (t &lt; 64 and (t &amp; 32)) else 0, tok, &quot;gbit&quot;)
+  aid = _cmap(lambda t: t - 64 if t &gt;= 64 else 9, tok, &quot;aid&quot;)
+  row = _cmap(lambda i: i // 10 if i &lt; 100 else 10, idx, &quot;row&quot;)
+  col = _cmap(lambda i: i % 10 if i &lt; 100 else 10, idx, &quot;col&quot;)
+  gkey = _cmap(lambda i: 1 if i == 92 else (2 if i == 98 else 0), idx, &quot;gkey&quot;)
+
+  v_dang = _nmap(lambda t: 1 if (t &lt; 64 and (t &amp; 2)) else 0, tok, &quot;v_dang&quot;)
+  v_bul = _nmap(lambda t: 1 if (t &lt; 64 and (t &amp; 2) and not (t &amp; 4)) else 0, tok, &quot;v_bul&quot;)
+  v_enemy = _nmap(lambda t: 1 if (t &lt; 64 and (t &amp; 2) and (t &amp; 4)) else 0, tok, &quot;v_enemy&quot;)
+  v_diver = _nmap(lambda t: 1 if (t &lt; 64 and (t &amp; 4) and not (t &amp; 2)) else 0, tok, &quot;v_diver&quot;)
+
+  # broadcast player position / gauges
+  sel_front = rasp.Select(is_front, is_front, lambda k, q: k == 1)
+  sel_back = rasp.Select(is_back, is_front, lambda k, q: k == 1)
+  sel_g2 = rasp.Select(gkey, is_front, lambda k, q: k == 1)
+  sel_g8 = rasp.Select(gkey, is_front, lambda k, q: k == 2)
+  PR = rasp.categorical(rasp.Aggregate(sel_front, row)).named(&quot;PR&quot;)
+  PC = rasp.categorical(rasp.Aggregate(sel_front, col)).named(&quot;PC&quot;)
+  BC = rasp.categorical(rasp.Aggregate(sel_back, col)).named(&quot;BC&quot;)
+  G2 = rasp.categorical(rasp.Aggregate(sel_g2, gbit)).named(&quot;G2&quot;)
+  G8 = rasp.categorical(rasp.Aggregate(sel_g8, gbit)).named(&quot;G8&quot;)
+
+  # relative coordinates and context
+  dr = _cseq(lambda r, p: max(-2, min(2, r - p)) if (r &lt; 10 and p &lt; 10) else 9, row, PR, &quot;dr&quot;)
+  dc = _cseq(lambda c, p: max(-5, min(5, c - p)) if (c &lt; 10 and p &lt; 10) else 9, col, PC, &quot;dc&quot;)
+  facing = _cseq(lambda p, b: 1 if b &lt; p else 0, PC, BC, &quot;facing&quot;)
+  osurf = _cseq(lambda a, b: 0 if a == 1 else (1 if b == 1 else 2), G2, G8, &quot;osurf&quot;)
+  PRc = _cmap(lambda p: 0 if p == 0 else (1 if p == 1 else (2 if p == 2 else (4 if p &gt;= 8 else 3))), PR, &quot;PRc&quot;)
+  PCc = _cmap(lambda p: 0 if p == 0 else (1 if p == 1 else (3 if p == 8 else (4 if p &gt;= 9 else 2))), PC, &quot;PCc&quot;)
+
+  rel = _cseq(lambda a, b: (a + 2) * 11 + (b + 5) if (a != 9 and b != 9) else 99, dr, dc, &quot;rel&quot;)
+  qq = _cseq(lambda a, f: a * 2 + f if a &lt; 6 else 99, aid, facing, &quot;qq&quot;)
+  G1 = _cseq(lambda r, c: r * 5 + c, PRc, PCc, &quot;G1&quot;)
+  G = _cseq(lambda g, o: g * 3 + o, G1, osurf, &quot;G&quot;)
+
+  # per-action feature heads
+  def head(pred, val, name):
+    return rasp.numerical(
+        rasp.Aggregate(rasp.Select(rel, qq, pred), val, default=0)).named(name)
+
+  H_dang = head(_pred_dang, v_dang, &quot;H_dang&quot;)
+  H_b2 = head(_pred_b2, v_bul, &quot;H_b2&quot;)
+  H_el = head(_pred_eline, v_enemy, &quot;H_el&quot;)
+  H_dv = head(_pred_diver, v_diver, &quot;H_dv&quot;)
+
+  thr = lambda x: 1 if x &gt; 0.003 else 0
+  Dg1 = _cmap(thr, H_dang, &quot;Dg1&quot;)
+  Db = _cmap(thr, H_b2, &quot;Db&quot;)
+  El = _cmap(thr, H_el, &quot;El&quot;)
+  Dv = _cmap(thr, H_dv, &quot;Dv&quot;)
+
+  # combine into logits
+  Dg = _cseq(lambda x, y: 1 if (x == 1 or y == 1) else 0, Dg1, Db, &quot;Dg&quot;)
+  A2 = _cseq(lambda e, v: e * 2 + v, El, Dv, &quot;A2&quot;)
+  A1 = _cseq(lambda a, d: a * 2 + d, aid, Dg, &quot;A1&quot;)
+  A = _cseq(lambda x, y: x * 4 + y, A1, A2, &quot;A&quot;)
+  LC = _cseq(_logit, A, G, &quot;LC&quot;)
+  out = _nmap(lambda v: v, LC, &quot;out&quot;)
+  return out</code></pre></details>
+<h4 class="sub">What Tracr compiled it to</h4>
+<div class="arch"><div class="lm"><div class="lm-head"><span>Layer</span><span>Attention heads</span><span>MLP hidden units (log scale)</span></div><div class="lm-row"><div class="lm-l">1</div><div class="lm-heads" data-tip="layer 1: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:45.1%" data-tip="layer 1: MLP with 42 hidden units in use"></div><span>42</span></div></div><div class="lm-row"><div class="lm-l">2</div><div class="lm-heads" data-tip="layer 2: 5 attention head(s), every one reading the board (none purely positional)"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:71.1%" data-tip="layer 2: MLP with 377 hidden units in use"></div><span>377</span></div></div><div class="lm-row"><div class="lm-l">3</div><div class="lm-heads" data-tip="layer 3: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:56.6%" data-tip="layer 3: MLP with 111 hidden units in use"></div><span>111</span></div></div><div class="lm-row"><div class="lm-l">4</div><div class="lm-heads" data-tip="layer 4: 4 attention head(s), every one reading the board (none purely positional)"><i></i><i></i><i></i><i></i></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:51.9%" data-tip="layer 4: MLP with 75 hidden units in use"></div><span>75</span></div></div><div class="lm-row"><div class="lm-l">5</div><div class="lm-heads" data-tip="layer 5: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:30.7%" data-tip="layer 5: MLP with 12 hidden units in use"></div><span>12</span></div></div><div class="lm-row"><div class="lm-l">6</div><div class="lm-heads" data-tip="layer 6: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:26.3%" data-tip="layer 6: MLP with 8 hidden units in use"></div><span>8</span></div></div><div class="lm-row"><div class="lm-l">7</div><div class="lm-heads" data-tip="layer 7: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:32.5%" data-tip="layer 7: MLP with 14 hidden units in use"></div><span>14</span></div></div><div class="lm-row"><div class="lm-l">8</div><div class="lm-heads" data-tip="layer 8: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:48.5%" data-tip="layer 8: MLP with 56 hidden units in use"></div><span>56</span></div></div><div class="lm-row"><div class="lm-l">9</div><div class="lm-heads" data-tip="layer 9: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:100.0%" data-tip="layer 9: MLP with 4,200 hidden units in use"></div><span>4,200</span></div></div><div class="lm-row"><div class="lm-l">10</div><div class="lm-heads" data-tip="layer 10: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:8.3%" data-tip="layer 10: MLP with 1 hidden units in use"></div><span>1</span></div></div></div>
+<div class="arch-facts"><dl><dt>Layers</dt><dd>10</dd><dt>Attention heads, total</dt><dd>9 (at most 5 in a layer)</dd><dt>Key size</dt><dd>57</dd><dt>Widest MLP</dt><dd>4,200 hidden units</dd><dt>Residual stream</dt><dd>599 dimensions</dd><dt>SOps</dt><dd>31 categorical, 10 numerical</dd><dt>Parameters</dt><dd>57,314,351 dense, 22,758 nonzero</dd><dt>MLP_EXACTNESS</dt><dd>1,000</dd><dt>Compile time</dt><dd>207 s</dd><dt>Speed</dt><dd>10.3 s per 1,000 positions</dd></dl><p class="vs">Astra's network for the same game: 600 → 32 → 32 → 6 tanh, 20,486 parameters, 803 nonzero.</p></div></div>
+</section><section class="game" id="asterix">
+<div class="game-head"><h3>Asterix</h3><div class="chips"><span class="chip opus">Opus · RASP 19.4</span><span class="chip astra">Astra · MLP 54.4</span></div></div>
+<div class="plans"><figure class="plan"><figcaption>Opus 5.5's plan</figcaption><blockquote>The policy does a one-step lookahead with risk scoring for each of the 5 distinct moves.</blockquote></figure>
+<figure class="plan"><figcaption>Astra's plan, from the paper's logs</figcaption><blockquote>I use a conservative interception policy: stay in column 5, approach nearby incoming treasure, and wait in its row.</blockquote></figure></div>
+<p>Each row holds at most one entity and entities move only sideways. An enemy is approaching a cell when the cell beside it on that side is not its trail. Each of the five distinct moves gets a base score of 60 if its target is safe, minus penalties for approaching enemies and plus bonuses for gold.</p>
+<details class="code"><summary>The whole program, 259 lines, as written in the reply</summary><pre><code class="language-python">from tracr.rasp import rasp
+
+MLP_EXACTNESS = 100
+
+# cell classes
+C_N, C_R, C_G, C_E = 0, 1, 2, 3
+# effective action -&gt; (dx, dy) of the target cell
+OFFS = {0: (0, 0), 1: (-1, 0), 2: (0, -1), 3: (1, 0), 4: (0, 1)}
+WX = 4  # half width of the relative window (dx in [-4, 4], dy in [-1, 1])
+
+BASE = 60
+GOLD_HERE = 20
+PEN = {1: 30, 2: 10, 3: 4}     # enemy approaching target at distance d
+BON = {1: 8, 2: 3, 3: 1}       # gold approaching target at distance d
+GOLD_SEEK = {1: 4, 2: 3, 3: 2}  # near / mid / any gold in move direction
+DIR_KEY = {1: 30, 2: 10, 3: 40, 4: 20}  # left-&gt;L*, up-&gt;U*, right-&gt;R*, down-&gt;D*
+
+
+def _code(dx, dy):
+    return (dx + WX) + (2 * WX + 1) * (dy + 1)
+
+
+def _cell_class(t):
+    if t &gt;= 64:
+        return C_N
+    if t &amp; 2:
+        return C_E
+    if t &amp; 4:
+        return C_G
+    if t &amp; 16:
+        return C_R
+    return C_N
+
+
+def _is_player(t):
+    return 1 if (t &lt; 64 and (t &amp; 1)) else 0
+
+
+def _is_gold(t):
+    return 1 if (t &lt; 64 and (t &amp; 4)) else 0
+
+
+def _act(t):
+    return t - 64 if t &gt;= 64 else -1
+
+
+def _eff_h(a, pc):
+    if a == 5:
+        return 0
+    if a == 1 and pc &lt;= 0:
+        return 0
+    if a == 3 and pc &gt;= 9:
+        return 0
+    return a
+
+
+def _eff_v(a, pr):
+    if a == 2 and pr &lt;= 1:
+        return 0
+    if a == 4 and pr &gt;= 8:
+        return 0
+    return a
+
+
+def _rel(a, b):
+    if -WX &lt;= a &lt;= WX and -1 &lt;= b &lt;= 1:
+        return _code(a, b)
+    return -1
+
+
+def _fetch_pred(s):
+    def pred(k, q):
+        if q not in OFFS:
+            return False
+        ox, oy = OFFS[q]
+        return k == _code(ox + s, oy)
+    return pred
+
+
+def _approach(cnear, cfar):
+    # entity at the far cell moves toward the target unless the cell between
+    # (or the target itself) is its trail
+    if cnear == C_R:
+        return 0
+    if cfar == C_E:
+        return 2
+    if cfar == C_G:
+        return 1
+    return 0
+
+
+def _base_score(c):
+    if c == C_E:
+        return 0
+    if c == C_G:
+        return BASE + GOLD_HERE
+    return BASE
+
+
+def _gold_v(g, d):
+    if g != 1:
+        return 99
+    if d &lt;= -4:
+        return -3
+    if d &lt;= -2:
+        return -2
+    if d == -1:
+        return -1
+    if d == 0:
+        return 0
+    if d == 1:
+        return 1
+    if d &lt;= 3:
+        return 2
+    return 3
+
+
+def _gold_key(v, x):
+    if v == 99:
+        return 0
+    if v &lt; 0:
+        return 10 - v   # 11..13 : gold above
+    if v &gt; 0:
+        return 20 + v   # 21..23 : gold below
+    if x == 0:
+        return 0
+    ax = abs(x)
+    b = 1 if ax &lt;= 2 else (2 if ax &lt;= 5 else 3)
+    return (30 if x &lt; 0 else 40) + b  # 31..33 left, 41..43 right
+
+
+def _gold_pred(maxb):
+    def pred(k, q):
+        if q not in DIR_KEY:
+            return False
+        b = DIR_KEY[q]
+        return b + 1 &lt;= k &lt;= b + maxb
+    return pred
+
+
+def _tc(pc, a):
+    if a not in OFFS:
+        return -1
+    return pc + OFFS[a][0]
+
+
+def _tr(pr, a):
+    if a not in OFFS:
+        return -1
+    return pr + OFFS[a][1]
+
+
+def _col_pen(c):
+    if c in (0, 9):
+        return 5
+    if c in (1, 8):
+        return 2
+    return 0
+
+
+def _row_pen(r):
+    return 1 if r in (1, 8) else 0
+
+
+def _num_map(sop, f, name):
+    return rasp.numerical(rasp.Map(f, sop)).named(name)
+
+
+def _lin(a, b, fa, fb, name):
+    return rasp.numerical(rasp.LinearSequenceMap(a, b, fa, fb)).named(name)
+
+
+def _tree_sum(terms, prefix):
+    terms = list(terms)
+    level = 0
+    while len(terms) &gt; 1:
+        nxt = []
+        for i in range(0, len(terms) - 1, 2):
+            nxt.append(_lin(terms[i], terms[i + 1], 1, 1,
+                            &quot;%s_%d_%d&quot; % (prefix, level, i)))
+        if len(terms) % 2 == 1:
+            nxt.append(terms[-1])
+        terms = nxt
+        level += 1
+    return terms[0]
+
+
+def program():
+    tokens = rasp.tokens
+    indices = rasp.indices
+
+    # ---- per-position features (MLP) ----
+    row = rasp.Map(lambda i: i // 10, indices).named(&quot;row&quot;)
+    col = rasp.Map(lambda i: i % 10, indices).named(&quot;col&quot;)
+    is_player = rasp.Map(_is_player, tokens).named(&quot;is_player&quot;)
+    is_gold = rasp.Map(_is_gold, tokens).named(&quot;is_gold&quot;)
+    cls = rasp.Map(_cell_class, tokens).named(&quot;cls&quot;)
+    act = rasp.Map(_act, tokens).named(&quot;act&quot;)
+
+    # ---- broadcast player position ----
+    sel_player = rasp.Select(is_player, is_player,
+                             lambda k, q: k == 1).named(&quot;sel_player&quot;)
+    prow = rasp.Aggregate(sel_player, row).named(&quot;prow&quot;)
+    pcol = rasp.Aggregate(sel_player, col).named(&quot;pcol&quot;)
+
+    # ---- relative coordinates and effective action ----
+    dx = rasp.SequenceMap(lambda c, pc: c - pc, col, pcol).named(&quot;dx&quot;)
+    dy = rasp.SequenceMap(lambda r, pr: r - pr, row, prow).named(&quot;dy&quot;)
+    eff_h = rasp.SequenceMap(_eff_h, act, pcol).named(&quot;eff_h&quot;)
+    eff = rasp.SequenceMap(_eff_v, eff_h, prow).named(&quot;eff&quot;)
+    rel = rasp.SequenceMap(_rel, dx, dy).named(&quot;rel&quot;)
+
+    # ---- fetch classes of target cell and its horizontal neighbours ----
+    fetched = {}
+    for s in (0, -1, 1, -2, 2, -3, 3):
+        sel = rasp.Select(rel, eff, _fetch_pred(s)).named(&quot;sel_cell_%d&quot; % (s + 3))
+        fetched[s] = rasp.Aggregate(sel, cls).named(&quot;cell_%d&quot; % (s + 3))
+
+    pos_terms = []
+    neg_terms = []
+
+    # base value of the target cell (0 = enemy there, bonus for gold there)
+    pos_terms.append(_num_map(fetched[0], _base_score, &quot;base&quot;))
+
+    # approaching enemies / gold at distance 1..3 on both sides
+    for side in (-1, 1):
+        for d in (1, 2, 3):
+            near = fetched[side * (d - 1)]
+            far = fetched[side * d]
+            ap = rasp.SequenceMap(_approach, near, far).named(
+                &quot;appr_%d_%d&quot; % (side + 1, d))
+            neg_terms.append(_num_map(
+                ap, lambda v, w=PEN[d]: w if v == 2 else 0,
+                &quot;pen_%d_%d&quot; % (side + 1, d)))
+            pos_terms.append(_num_map(
+                ap, lambda v, w=BON[d]: w if v == 1 else 0,
+                &quot;bon_%d_%d&quot; % (side + 1, d)))
+
+    # ---- gold seeking ----
+    gv = rasp.SequenceMap(_gold_v, is_gold, dy).named(&quot;gold_v&quot;)
+    gkey = rasp.SequenceMap(_gold_key, gv, dx).named(&quot;gold_key&quot;)
+    for mb in (1, 2, 3):
+        sel = rasp.Select(gkey, eff, _gold_pred(mb)).named(&quot;sel_gold_%d&quot; % mb)
+        agg = rasp.Aggregate(sel, is_gold).named(&quot;gold_dir_%d&quot; % mb)
+        pos_terms.append(_num_map(
+            agg, lambda v, w=GOLD_SEEK[mb]: w if v == 1 else 0,
+            &quot;gold_bonus_%d&quot; % mb))
+
+    # ---- edge penalties (spawn risk / fewer escape routes) ----
+    tc = rasp.SequenceMap(_tc, pcol, eff).named(&quot;tcol&quot;)
+    tr = rasp.SequenceMap(_tr, prow, eff).named(&quot;trow&quot;)
+    neg_terms.append(_num_map(tc, _col_pen, &quot;pen_col&quot;))
+    neg_terms.append(_num_map(tr, _row_pen, &quot;pen_row&quot;))
+
+    # ---- final logits ----
+    spos = _tree_sum(pos_terms, &quot;spos&quot;)
+    sneg = _tree_sum(neg_terms, &quot;sneg&quot;)
+    logits = _lin(spos, sneg, 1, -1, &quot;logits&quot;)
+    return logits</code></pre></details>
+<h4 class="sub">What Tracr compiled it to</h4>
+<div class="arch"><div class="lm"><div class="lm-head"><span>Layer</span><span>Attention heads</span><span>MLP hidden units (log scale)</span></div><div class="lm-row"><div class="lm-l">1</div><div class="lm-heads" data-tip="layer 1: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:43.3%" data-tip="layer 1: MLP with 36 hidden units in use"></div><span>36</span></div></div><div class="lm-row"><div class="lm-l">2</div><div class="lm-heads" data-tip="layer 2: 2 attention head(s), every one reading the board (none purely positional)"><i></i><i></i></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:68.0%" data-tip="layer 2: MLP with 291 hidden units in use"></div><span>291</span></div></div><div class="lm-row"><div class="lm-l">3</div><div class="lm-heads" data-tip="layer 3: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:74.7%" data-tip="layer 3: MLP with 507 hidden units in use"></div><span>507</span></div></div><div class="lm-row"><div class="lm-l">4</div><div class="lm-heads" data-tip="layer 4: 7 attention head(s), every one reading the board (none purely positional)"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:67.5%" data-tip="layer 4: MLP with 278 hidden units in use"></div><span>278</span></div></div><div class="lm-row"><div class="lm-l">5</div><div class="lm-heads" data-tip="layer 5: 3 attention head(s), every one reading the board (none purely positional)"><i></i><i></i><i></i></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:55.2%" data-tip="layer 5: MLP with 99 hidden units in use"></div><span>99</span></div></div><div class="lm-row"><div class="lm-l">6</div><div class="lm-heads" data-tip="layer 6: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:35.9%" data-tip="layer 6: MLP with 19 hidden units in use"></div><span>19</span></div></div><div class="lm-row"><div class="lm-l">7</div><div class="lm-heads" data-tip="layer 7: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:41.9%" data-tip="layer 7: MLP with 32 hidden units in use"></div><span>32</span></div></div><div class="lm-row"><div class="lm-l">8</div><div class="lm-heads" data-tip="layer 8: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:34.0%" data-tip="layer 8: MLP with 16 hidden units in use"></div><span>16</span></div></div><div class="lm-row"><div class="lm-l">9</div><div class="lm-heads" data-tip="layer 9: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:26.3%" data-tip="layer 9: MLP with 8 hidden units in use"></div><span>8</span></div></div><div class="lm-row"><div class="lm-l">10</div><div class="lm-heads" data-tip="layer 10: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:19.3%" data-tip="layer 10: MLP with 4 hidden units in use"></div><span>4</span></div></div><div class="lm-row"><div class="lm-l">11</div><div class="lm-heads" data-tip="layer 11: 0 attention head(s), every one reading the board (none purely positional)"><span class="none">none</span></div>
+<div class="lm-mlp"><div class="lm-bar" style="width:19.3%" data-tip="layer 11: MLP with 4 hidden units in use"></div><span>4</span></div></div></div>
+<div class="arch-facts"><dl><dt>Layers</dt><dd>11</dd><dt>Attention heads, total</dt><dd>12 (at most 7 in a layer)</dd><dt>Key size</dt><dd>29</dd><dt>Widest MLP</dt><dd>507 hidden units</dd><dt>Residual stream</dt><dd>449 dimensions</dd><dt>SOps</dt><dd>33 categorical, 36 numerical</dd><dt>Parameters</dt><dd>9,121,139 dense, 6,080 nonzero</dd><dt>MLP_EXACTNESS</dt><dd>100</dd><dt>Compile time</dt><dd>13 s</dd><dt>Speed</dt><dd>6.4 s per 1,000 positions</dd></dl><p class="vs">Astra's network for the same game: 600 → 32 → 32 → 6 tanh, 20,486 parameters, 637 nonzero.</p></div></div>
+</section></div>
+
+<section class="col">
+  <h2>Did Tracr compile what Opus wrote?</h2>
+  <p>Tracr can be inexact: its attention is a softmax with finite temperature and its numerical MLPs approximate functions on a grid. So we compared each compiled network with RASP's own reference evaluator, <code>rasp.evaluate</code>, on 256 positions from the network's own games.</p>
+</section>
+<div class="wide tbl"><table>
+  <thead><tr><th>Game</th><th>SOps rasp.evaluate fails on</th><th>Logits RASP defines</th><th>Largest logit difference</th><th>Same best action</th><th>Policy difference (total variation)</th></tr></thead>
+  <tbody><tr><th scope="row">Breakout</th><td>0 of 23</td><td>100.0%</td>
+<td>0.00016</td><td>100%</td>
+<td>0.000</td></tr><tr><th scope="row">Seaquest</th><td>14 of 42</td><td>99.2%</td>
+<td>0.31</td><td>96%</td>
+<td>0.002</td></tr><tr><th scope="row">Asterix</th><td>0 of 70</td><td>0.8%</td>
+<td>0.0083</td><td>–</td>
+<td>–</td></tr></tbody>
+</table></div>
+<section class="col">
+  <p>The Breakout program compiles exactly: every logit is defined, the largest difference is 0.0002, and the two policies are identical. Seaquest's RASP fails on only 2 of the 256 positions, where a <code>None</code> reaches an integer division; on the rest the compiled policy differs from the program by a total variation of 0.002. The disagreements in the best action are near-ties.</p>
+  <p>Asterix is the interesting case. When an attention selects no cell, for example a neighbour off the board, RASP returns <code>None</code>, and <code>None</code> passes through every later operation. The compiled transformer instead carries a zero vector, which behaves like "nothing here". The Asterix program relies on that behaviour, so RASP leaves 99% of its logits undefined. Where RASP does give a value, it matches the compiled network to within 0.008. None of the three programs used the stronger tricks seen in our multi-turn Go runs, where writers turned selector predicates into real-valued attention scores that <code>rasp.evaluate</code> rejects outright.</p>
+</section>
+
+<section class="col">
+  <h2>Why Seaquest and Asterix fell short</h2>
+  <p>A weak score could mean the program misread the game, or that compilation broke it. Neither is the case. The Seaquest program reads the oxygen and diver gauges correctly, never runs out of oxygen and surfaces with divers about twice per episode. Per step, both programs score about as fast as Astra's networks: 0.049 against 0.061 points in Asterix, and 0.043 against 0.038 in Seaquest. What differs is how long they live.</p>
+  <p>To see what kills them, we replayed 100 episodes per network. At every death we tried each action on a copy of the game to see whether any would have survived that step.</p>
+</section>
+
+<figure class="wide">
+  <div class="fig-title">What caused each of 100 deaths</div>
+  <div class="fig-sub">Sticky actions 0.1, as in scoring. Right: mean episode length.</div>
+  <div class="legend"><span><i style="background:var(--s-sticky)"></i>a sticky repeat played the fatal action</span><span><i style="background:var(--s-policy)"></i>the policy chose the fatal action</span><span><i style="background:var(--s-none)"></i>no action would have survived</span></div>
+  <div class="sb-row"><div class="sb-label"><b>Asterix</b> Opus 5.5 · RASP</div><div class="sb"><div class="seg s-sticky" style="flex:94 0 0" tabindex="0" data-tip="Asterix, Opus 5.5 · RASP&lt;br&gt;&lt;b&gt;94 of 100 deaths&lt;/b&gt;: a sticky repeat played the fatal action">94</div><div class="seg s-policy" style="flex:4 0 0" tabindex="0" data-tip="Asterix, Opus 5.5 · RASP&lt;br&gt;&lt;b&gt;4 of 100 deaths&lt;/b&gt;: the policy itself chose the fatal action"></div><div class="seg s-none" style="flex:2 0 0" tabindex="0" data-tip="Asterix, Opus 5.5 · RASP&lt;br&gt;&lt;b&gt;2 of 100 deaths&lt;/b&gt;: no action would have survived the step"></div></div>
+<div class="sb-len">406 steps</div></div><div class="sb-row"><div class="sb-label"><b>Asterix</b> Astra · MLP</div><div class="sb"><div class="seg s-sticky" style="flex:41 0 0" tabindex="0" data-tip="Asterix, Astra · MLP&lt;br&gt;&lt;b&gt;41 of 100 deaths&lt;/b&gt;: a sticky repeat played the fatal action">41</div><div class="seg s-policy" style="flex:59 0 0" tabindex="0" data-tip="Asterix, Astra · MLP&lt;br&gt;&lt;b&gt;59 of 100 deaths&lt;/b&gt;: the policy itself chose the fatal action">59</div></div>
+<div class="sb-len">900 steps</div></div><div class="sb-row"><div class="sb-label"><b>Seaquest</b> Opus 5.5 · RASP</div><div class="sb"><div class="seg s-sticky" style="flex:87 0 0" tabindex="0" data-tip="Seaquest, Opus 5.5 · RASP&lt;br&gt;&lt;b&gt;87 of 100 deaths&lt;/b&gt;: a sticky repeat played the fatal action">87</div><div class="seg s-policy" style="flex:13 0 0" tabindex="0" data-tip="Seaquest, Opus 5.5 · RASP&lt;br&gt;&lt;b&gt;13 of 100 deaths&lt;/b&gt;: the policy itself chose the fatal action">13</div></div>
+<div class="sb-len">377 steps</div></div><div class="sb-row"><div class="sb-label"><b>Seaquest</b> Astra · MLP</div><div class="sb"><div class="seg s-sticky" style="flex:73 0 0" tabindex="0" data-tip="Seaquest, Astra · MLP&lt;br&gt;&lt;b&gt;73 of 100 deaths&lt;/b&gt;: a sticky repeat played the fatal action">73</div><div class="seg s-policy" style="flex:24 0 0" tabindex="0" data-tip="Seaquest, Astra · MLP&lt;br&gt;&lt;b&gt;24 of 100 deaths&lt;/b&gt;: the policy itself chose the fatal action">24</div><div class="seg s-none" style="flex:3 0 0" tabindex="0" data-tip="Seaquest, Astra · MLP&lt;br&gt;&lt;b&gt;3 of 100 deaths&lt;/b&gt;: no action would have survived the step"></div></div>
+<div class="sb-len">1,392 steps</div></div>
+  <figcaption>MinAtar replays the previous action instead of the chosen one 10% of the time. Opus's networks almost never choose a move that dies on the spot: their top-scored action was never fatal at an Asterix death and fatal at only two Seaquest deaths. Their deaths come from replays of an action that was safe when chosen.</figcaption>
+</figure>
+
+<section class="col">
+  <p>Both programs give every safe move the same base score, and their bonuses rarely apply, so the softmax spreads probability almost evenly and the player wanders. A wandering player is often in a spot where replaying its previous move would be fatal. Astra's networks behave differently: they hold one safe default action most of the time and move only up or down. In Seaquest and Asterix, Astra's replies also say so directly: they stay in one column and model sticky movement.</p>
+</section>
+<div class="wide tbl"><table>
+  <thead><tr><th>Network</th><th>Steps moving</th><th>Steps changing action</th><th>Steps where a replay would be fatal</th><th>Most common action</th><th>Left or right</th></tr></thead>
+  <tbody><tr><th scope="row">Asterix · Opus 5.5 · RASP</th><td>72%</td><td>73%</td>
+<td>2.33%</td><td>left 18%</td><td>36%</td></tr><tr><th scope="row">Asterix · Astra · MLP</th><td>30%</td><td>35%</td>
+<td>0.39%</td><td>no-op 70%</td><td>0%</td></tr><tr><th scope="row">Seaquest · Opus 5.5 · RASP</th><td>63%</td><td>60%</td>
+<td>2.61%</td><td>down 25%</td><td>14%</td></tr><tr><th scope="row">Seaquest · Astra · MLP</th><td>21%</td><td>23%</td>
+<td>0.49%</td><td>fire 79%</td><td>0%</td></tr></tbody>
+</table></div>
+
+<figure class="wide">
+  <div class="fig-title">The same networks with sticky actions switched off</div>
+  <div class="fig-sub">Mean score over 200 episodes. A diagnostic replay, not the official score.</div>
+  <div class="legend"><span><i class="ring" style="border-color:var(--ink-2)"></i>sticky actions 0.1 (official)</span><span><i style="background:var(--ink-2)"></i>sticky actions off</span><span><i style="background:var(--opus)"></i>Opus 5.5</span><span><i style="background:var(--astra)"></i>Astra</span></div>
+  <div class="db"><div class="db-row"><div class="db-label"><b>Asterix</b> Opus 5.5 · RASP</div><div class="db-track">
+<div class="db-line opus" style="left:12.63%;width:49.52%"></div>
+<div class="db-dot on opus" style="left:12.63%" tabindex="0" data-tip="Asterix, Opus 5.5 · RASP&lt;br&gt;sticky actions 0.1 (official): &lt;b&gt;20.2 ± 1.4&lt;/b&gt;&lt;br&gt;mean episode 414 steps"></div>
+<span class="db-v on" style="left:12.63%">20</span>
+<div class="db-dot off opus" style="left:62.15%" tabindex="0" data-tip="Asterix, Opus 5.5 · RASP&lt;br&gt;sticky actions off: &lt;b&gt;99.4 ± 4.5&lt;/b&gt;&lt;br&gt;mean episode 1,155 steps"></div>
+<span class="db-v off" style="left:62.15%">99</span></div></div><div class="db-row"><div class="db-label"><b>Asterix</b> Astra · MLP</div><div class="db-track">
+<div class="db-line astra" style="left:33.76%;width:7.25%"></div>
+<div class="db-dot on astra" style="left:33.76%" tabindex="0" data-tip="Asterix, Astra · MLP&lt;br&gt;sticky actions 0.1 (official): &lt;b&gt;54.0 ± 2.2&lt;/b&gt;&lt;br&gt;mean episode 867 steps"></div>
+<span class="db-v on" style="left:33.76%">54</span>
+<div class="db-dot off astra" style="left:41.01%" tabindex="0" data-tip="Asterix, Astra · MLP&lt;br&gt;sticky actions off: &lt;b&gt;65.6 ± 2.4&lt;/b&gt;&lt;br&gt;mean episode 980 steps"></div>
+<span class="db-v off" style="left:41.01%">66</span></div></div><div class="db-row"><div class="db-label"><b>Seaquest</b> Opus 5.5 · RASP</div><div class="db-track">
+<div class="db-line opus" style="left:10.81%;width:81.07%"></div>
+<div class="db-dot on opus" style="left:10.81%" tabindex="0" data-tip="Seaquest, Opus 5.5 · RASP&lt;br&gt;sticky actions 0.1 (official): &lt;b&gt;17.3 ± 1.2&lt;/b&gt;&lt;br&gt;mean episode 398 steps"></div>
+<span class="db-v on" style="left:10.81%">17</span>
+<div class="db-dot off opus" style="left:91.88%" tabindex="0" data-tip="Seaquest, Opus 5.5 · RASP&lt;br&gt;sticky actions off: &lt;b&gt;147.0 ± 5.8&lt;/b&gt;&lt;br&gt;mean episode 2,252 steps"></div>
+<span class="db-v off" style="left:91.88%">147</span></div></div><div class="db-row"><div class="db-label"><b>Seaquest</b> Astra · MLP</div><div class="db-track">
+<div class="db-line astra" style="left:30.71%;width:30.74%"></div>
+<div class="db-dot on astra" style="left:30.71%" tabindex="0" data-tip="Seaquest, Astra · MLP&lt;br&gt;sticky actions 0.1 (official): &lt;b&gt;49.1 ± 2.9&lt;/b&gt;&lt;br&gt;mean episode 1,326 steps"></div>
+<span class="db-v on" style="left:30.71%">49</span>
+<div class="db-dot off astra" style="left:61.44%" tabindex="0" data-tip="Seaquest, Astra · MLP&lt;br&gt;sticky actions off: &lt;b&gt;98.3 ± 3.2&lt;/b&gt;&lt;br&gt;mean episode 2,276 steps"></div>
+<span class="db-v off" style="left:61.44%">98</span></div></div><div class="db-grid"><i style="left:0.00%"></i><i style="left:25.00%"></i><i style="left:50.00%"></i><i style="left:75.00%"></i><i style="left:100.00%"></i></div></div><div class="db-axis"><div></div><div class="db-ticks"><span style="left:0.00%">0</span><span style="left:25.00%">40</span><span style="left:50.00%">80</span><span style="left:75.00%">120</span><span style="left:100.00%">160</span></div></div>
+  <figcaption>Without sticky actions, Opus's Asterix program scores 99.4 (Astra 65.6) and its Seaquest program 147.0 (Astra 98.3). Its tactics are sound; it is the random replays the prompt describes that break them. The Breakout reply was built around sticky actions: it aims at a two-cell target region "so a sticky-action overshoot after arrival therefore usually still lands inside the region". The Seaquest reply handles them in two narrow cases, and the Asterix reply never mentions them.</figcaption>
+</figure>
+
+<section class="col">
+  <h2>Effort</h2>
+  <p>Opus wrote far longer replies than Astra, with most of the output going to reasoning, and took two to six times as long. The three replies together cost about $14.50 at list price, as estimated by Claude Code.</p>
+</section>
+<div class="wide tbl"><table>
+  <thead><tr><th>Game</th><th>Astra output tokens</th><th>Astra time</th><th>Opus output tokens</th><th>Opus time</th><th>Opus cost</th><th>Program</th></tr></thead>
+  <tbody><tr><th scope="row">Breakout</th><td>20,567</td><td>8 min</td>
+<td>105,650</td><td>17 min</td><td>$2.75</td><td>120 lines</td></tr><tr><th scope="row">Seaquest</th><td>23,894</td><td>9 min</td>
+<td>347,516</td><td>57 min</td><td>$8.93</td><td>205 lines</td></tr><tr><th scope="row">Asterix</th><td>28,993</td><td>10 min</td>
+<td>107,968</td><td>18 min</td><td>$2.80</td><td>259 lines</td></tr></tbody>
+</table></div>
+
+<section class="col">
+  <h2>What to keep in mind</h2>
+  <ul class="lede-list">
+    <li>Each game is one reply, so each result is a sample of one. A second reply could land elsewhere, in either direction.</li>
+    <li>The PPO baselines are the paper's numbers; their checkpoints are not released. Our re-scoring of Astra's networks matches the paper's within noise, which supports comparing against them.</li>
+    <li>The transformer sees the same information as Astra's MLP, encoded as one token per cell instead of 600 separate inputs.</li>
+    <li>Opus's prompt was longer, because it includes Tracr's source. Without it, Opus would have had to recall the compiler's rules from memory.</li>
+  </ul>
+  <h2>Sources</h2>
+  <ul class="sources">
+    <li>The paper: <a href="https://rikiyat.github.io/blog/weight-space-programming/">Sparks of Weight-Space Programming</a> (Takehi, Teoh, Zhang and Khattab, 2026), and its <a href="https://github.com/RikiyaT/lm_understand-logs/tree/main/exp5_write_from_scratch">Experiment 5 logs</a>, with Astra's prompts, replies and networks.</li>
+    <li>This experiment: <a href="https://github.com/andre15silva/auto-rasp/tree/claude/weight-space-rasp-tracr-4qob1j">the repository</a>. Each run's prompt, reply, extracted program and compile record are in <code>runs/opus55_minatar_&lt;game&gt;/</code>. Scores, faithfulness checks and the death diagnosis are in <code>results/</code>.</li>
+    <li>Tracr (DeepMind) compiles RASP programs into transformer weights. MinAtar (Young and Tian, 2019) is the game suite; its source appears in the prompts under GPL-3.0.</li>
+  </ul>
+</section>
+
+<footer class="col">Built from the experiment's own result files. Every number on this page comes from <code>results/</code> or <code>runs/</code> in the repository.</footer>
+</div>
+<div id="tip" role="tooltip"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+(function () {
+  try { if (window.hljs) document.querySelectorAll("pre code.language-python").forEach(function (el) { window.hljs.highlightElement(el); }); } catch (e) {}
+  var tip = document.getElementById("tip");
+  function show(el, x, y) {
+    tip.innerHTML = el.getAttribute("data-tip");
+    tip.classList.add("on");
+    var r = tip.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
+    var left = Math.min(Math.max(8, x + 14), W - r.width - 8), top = y + 16;
+    if (top + r.height > H - 8) top = y - r.height - 12;
+    tip.style.left = left + "px"; tip.style.top = Math.max(8, top) + "px";
+  }
+  function hide() { tip.classList.remove("on"); }
+  document.addEventListener("pointermove", function (e) {
+    var el = e.target.closest ? e.target.closest("[data-tip]") : null;
+    if (el) show(el, e.clientX, e.clientY); else hide();
+  });
+  document.addEventListener("focusin", function (e) {
+    var el = e.target.closest ? e.target.closest("[data-tip]") : null;
+    if (el) { var r = el.getBoundingClientRect(); show(el, r.left + r.width / 2, r.bottom); }
+  });
+  document.addEventListener("focusout", hide);
+  document.addEventListener("scroll", hide, { passive: true });
+})();
+</script>

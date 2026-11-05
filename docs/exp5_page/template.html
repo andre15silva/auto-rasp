@@ -1,0 +1,402 @@
+<title>RASP Plays MinAtar</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column on cool grid paper; figures step out to a wider measure. */
+:root {
+  --bg: #f3f5f8; --surface: #fbfcfd; --surface-2: #e8ecf1; --ink: #0f141b; --ink-2: #455062; --muted: #6f7888;
+  --rule: #d8dde5; --rule-2: #c3cad5;
+  --opus: #2a78d6; --opus-soft: #b7d3f6; --astra: #eb6834; --ppo: #aab1bb;
+  --s-sticky: #6250d6; --s-policy: #1baf7a; --s-none: #aab1bb;
+  --ch-player: #008300; --ch-danger: #e34948; --ch-reward: #eda100; --ch-projectile: #6250d6; --ch-gauge: #9aa2ad;
+  --code-bg: #edf0f4; --tk-key: #5b45c9; --tk-str: #17734b; --tk-num: #a84a0c; --tk-com: #6f7888; --tk-fn: #1c5cab; --tk-bi: #9b2f70;
+  --tip-bg: #0f141b; --tip-fg: #f3f5f8;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Literata", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1116; --surface: #151a21; --surface-2: #1e252e; --ink: #e8edf3; --ink-2: #b1bac6; --muted: #858e9b;
+    --rule: #252c35; --rule-2: #343c47;
+    --opus: #3987e5; --opus-soft: #1c3f6e; --astra: #d95926; --ppo: #58606b;
+    --s-sticky: #9085e9; --s-policy: #199e70; --s-none: #58606b;
+    --ch-player: #008300; --ch-danger: #e34948; --ch-reward: #c98500; --ch-projectile: #9085e9; --ch-gauge: #5f6772;
+    --code-bg: #11161c; --tk-key: #ab9ff2; --tk-str: #5cc49a; --tk-num: #f0a064; --tk-com: #7f8896; --tk-fn: #6da7ec; --tk-bi: #e58ab0;
+    --tip-bg: #e8edf3; --tip-fg: #0e1116;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1116; --surface: #151a21; --surface-2: #1e252e; --ink: #e8edf3; --ink-2: #b1bac6; --muted: #858e9b;
+  --rule: #252c35; --rule-2: #343c47;
+  --opus: #3987e5; --opus-soft: #1c3f6e; --astra: #d95926; --ppo: #58606b;
+  --s-sticky: #9085e9; --s-policy: #199e70; --s-none: #58606b;
+  --ch-player: #008300; --ch-danger: #e34948; --ch-reward: #c98500; --ch-projectile: #9085e9; --ch-gauge: #5f6772;
+  --code-bg: #11161c; --tk-key: #ab9ff2; --tk-str: #5cc49a; --tk-num: #f0a064; --tk-com: #7f8896; --tk-fn: #6da7ec; --tk-bi: #e58ab0;
+  --tip-bg: #e8edf3; --tip-fg: #0e1116;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.62;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 64px;
+  background-image: linear-gradient(var(--rule) 1px, transparent 1px), linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 28px 28px; background-attachment: local;
+}
+.paper { max-width: 1080px; margin: 0 auto; background: var(--surface); border-inline: 1px solid var(--rule);
+  padding-block: 56px 40px; padding-inline: clamp(16px, 5vw, 64px); }
+.col { max-width: 700px; margin: 0 auto; }
+.wide { max-width: 940px; margin: 0 auto; }
+h1, h2, h3, h4 { font-family: var(--font-display); text-wrap: balance; color: var(--ink); line-height: 1.12; }
+h1 { font-size: clamp(2.4rem, 6vw, 3.9rem); font-weight: 700; letter-spacing: -0.02em; margin: 10px 0 18px; }
+h2 { font-size: 1.85rem; font-weight: 700; margin: 64px 0 14px; letter-spacing: -0.01em; }
+h3 { font-size: 1.45rem; font-weight: 700; margin: 0; }
+h4 { font-size: 1rem; font-weight: 700; margin: 0 0 10px; }
+p { margin: 0 0 1em; }
+a { color: var(--opus); text-underline-offset: 2px; }
+a:focus-visible, [tabindex]:focus-visible, summary:focus-visible { outline: 2px solid var(--opus); outline-offset: 2px; border-radius: 3px; }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+:not(pre) > code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+.kicker { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.stand { font-size: 1.22rem; line-height: 1.5; color: var(--ink-2); max-width: 640px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); margin-top: 22px;
+  padding-top: 14px; border-top: 1px solid var(--rule); }
+.lede-list { padding-left: 1.1em; margin: 0 0 1em; }
+.lede-list li { margin-bottom: 0.4em; }
+figure { margin: 36px 0 44px; }
+figcaption, .caption { font-family: var(--font-display); font-size: 0.86rem; line-height: 1.45; color: var(--ink-2); margin-top: 12px; }
+.fig-title { font-family: var(--font-display); font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+.fig-sub { font-family: var(--font-display); font-size: 0.86rem; color: var(--muted); margin-bottom: 16px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--font-display); font-size: 0.84rem; color: var(--ink-2); margin-bottom: 14px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.legend i.ring { background: transparent !important; border: 2px solid var(--ink-2); }
+
+/* results: small multiples */
+.sms { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 28px 36px; }
+.sm { min-width: 0; }
+.sm h4 { font-size: 0.95rem; margin-bottom: 8px; }
+.hb { position: relative; display: grid; gap: 9px; }
+.hb-row { position: relative; z-index: 1; }
+.hb-label { font-family: var(--font-display); font-size: 0.8rem; color: var(--ink-2); margin-bottom: 3px; }
+.hb-track { position: relative; height: 14px; margin-right: 52px; }
+.hb-bar { height: 14px; border-radius: 0 4px 4px 0; background: var(--ppo); }
+.hb-bar.opus { background: var(--opus); }
+.hb-bar.astra { background: var(--astra); }
+.hb-val { position: absolute; top: -2px; transform: translateX(6px); font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink); white-space: nowrap; }
+.hb-grid { position: absolute; inset: 0 52px 0 0; pointer-events: none; }
+.hb-grid i { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--rule); }
+.hb-axis { display: grid; margin-top: 6px; }
+.hb-ticks { position: relative; height: 16px; margin-right: 52px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); }
+.hb-ticks span { position: absolute; transform: translateX(-50%); }
+.hb-ticks span:first-child { transform: none; }
+
+/* tables */
+.tbl { overflow-x: auto; margin: 20px 0; }
+table { border-collapse: collapse; width: 100%; font-family: var(--font-display); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+thead th { font-size: 0.74rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--rule-2); }
+td small { color: var(--muted); font-size: 0.8em; }
+td.hl { font-weight: 700; }
+.proto td:first-child, .proto th:first-child { width: 22%; color: var(--muted); }
+
+/* frames */
+.frames { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.frame-wrap { background: var(--surface-2); padding: 6px; border-radius: 6px; }
+.grid10 { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; aspect-ratio: 1; max-width: 100%; }
+.cell { background: var(--surface); border-radius: 2px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: clamp(0.5rem, 1.6vw, 0.74rem); color: var(--ink); min-width: 0; }
+.cell.f-player { background: var(--ch-player); }
+.cell.f-danger { background: var(--ch-danger); }
+.cell.f-reward { background: var(--ch-reward); }
+.cell.f-projectile { background: var(--ch-projectile); }
+.cell.f-gauge { background: var(--ch-gauge); }
+.cell.trail { box-shadow: inset 0 0 0 2px var(--ink-2); }
+.cell.tok { font-weight: 600; }
+.cell.tok.zero { color: var(--rule-2); font-weight: 400; }
+.slots { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; margin-top: 10px; }
+.slot { background: var(--surface-2); border-radius: 4px; padding: 6px 4px; text-align: center; font-family: var(--font-mono); font-size: 0.7rem; min-width: 0; }
+.slot-tok { font-weight: 600; font-size: 0.8rem; }
+.slot-name { color: var(--muted); font-size: 0.66rem; overflow-wrap: anywhere; }
+.slot-logit { margin-top: 4px; font-size: 0.85rem; font-weight: 600; color: var(--opus); }
+.slot-p { color: var(--ink-2); }
+.panel-label { font-family: var(--font-display); font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; }
+.minis { display: grid; grid-template-columns: repeat(2, minmax(0, 200px)); gap: 20px; margin-top: 22px; }
+.mini { margin: 0; }
+.mini figcaption { margin-top: 6px; }
+
+/* game sections */
+.game { border-top: 1px solid var(--rule-2); padding-top: 28px; margin-top: 40px; }
+.game-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; margin-bottom: 18px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { font-family: var(--font-mono); font-size: 0.76rem; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--rule-2); color: var(--ink); display: inline-flex; align-items: center; gap: 6px; }
+.chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; }
+.chip.opus::before { background: var(--opus); }
+.chip.astra::before { background: var(--astra); }
+.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 0 0 18px; }
+.plan { margin: 0; background: var(--surface-2); border-radius: 6px; padding: 12px 16px; min-width: 0; }
+.plan figcaption { margin: 0 0 4px; font-size: 0.74rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.plan blockquote { margin: 0; font-style: italic; color: var(--ink); }
+details.code { margin: 18px 0; border: 1px solid var(--rule); border-radius: 6px; background: var(--code-bg); }
+details.code summary { cursor: pointer; padding: 10px 14px; font-family: var(--font-display); font-size: 0.9rem; color: var(--ink-2); }
+details.code pre { margin: 0; max-height: 520px; overflow: auto; padding: 4px 16px 16px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55; color: var(--ink); }
+details.code code { font-family: inherit; font-size: inherit; }
+.hljs-keyword, .hljs-meta { color: var(--tk-key); }
+.hljs-string { color: var(--tk-str); }
+.hljs-number, .hljs-literal { color: var(--tk-num); }
+.hljs-comment { color: var(--tk-com); font-style: italic; }
+.hljs-title, .hljs-title.function_ { color: var(--tk-fn); }
+.hljs-built_in, .hljs-params { color: var(--tk-bi); }
+.sub { margin-top: 24px; }
+.arch { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.lm { display: grid; gap: 4px; min-width: 0; }
+.lm-head, .lm-row { display: grid; grid-template-columns: 40px 96px minmax(0, 1fr); gap: 10px; align-items: center; }
+.lm-head span { font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.lm-l { font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted); }
+.lm-heads { display: flex; gap: 3px; flex-wrap: wrap; min-height: 12px; }
+.lm-heads i { width: 10px; height: 10px; border-radius: 2px; background: var(--opus); }
+.lm-heads .none { font-family: var(--font-mono); font-size: 0.66rem; color: var(--rule-2); }
+.lm-mlp { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.lm-bar { height: 10px; border-radius: 0 3px 3px 0; background: var(--opus-soft); min-width: 2px; }
+.lm-mlp span { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-2); }
+.arch-facts dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 5px 14px; margin: 0; font-family: var(--font-display); font-size: 0.85rem; }
+.arch-facts dt { color: var(--muted); }
+.arch-facts dd { margin: 0; font-variant-numeric: tabular-nums; }
+.arch-facts .vs { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--rule); font-family: var(--font-display); font-size: 0.85rem; color: var(--ink-2); }
+
+/* death causes */
+.sb-row { display: grid; grid-template-columns: 190px minmax(0, 1fr) 84px; gap: 12px; align-items: center; margin-bottom: 8px; }
+.sb-label { font-family: var(--font-display); font-size: 0.85rem; color: var(--ink-2); }
+.sb-label b { color: var(--ink); font-weight: 700; margin-right: 4px; }
+.sb { display: flex; gap: 2px; height: 28px; }
+.seg { border-radius: 4px; color: #ffffff; font-family: var(--font-mono); font-size: 0.74rem; display: flex; align-items: center; padding-left: 8px; min-width: 0; }
+.seg.s-sticky { background: var(--s-sticky); }
+.seg.s-policy { background: var(--s-policy); }
+.seg.s-none { background: var(--s-none); }
+.sb-len { font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted); text-align: right; }
+
+/* dumbbell */
+.db { position: relative; display: grid; gap: 18px; padding-top: 18px; }
+.db-row { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 12px; align-items: center; position: relative; z-index: 1; }
+.db-label { font-family: var(--font-display); font-size: 0.85rem; color: var(--ink-2); }
+.db-label b { color: var(--ink); margin-right: 4px; }
+.db-track { position: relative; height: 14px; margin-right: 24px; }
+.db-line { position: absolute; top: 6px; height: 2px; background: var(--ppo); }
+.db-line.opus { background: var(--opus); }
+.db-line.astra { background: var(--astra); }
+.db-dot { position: absolute; top: 1px; width: 12px; height: 12px; border-radius: 50%; transform: translateX(-6px); box-shadow: 0 0 0 2px var(--surface); }
+.db-dot.off.opus { background: var(--opus); }
+.db-dot.off.astra { background: var(--astra); }
+.db-dot.on { background: var(--surface); }
+.db-dot.on.opus { border: 2px solid var(--opus); }
+.db-dot.on.astra { border: 2px solid var(--astra); }
+.db-v { position: absolute; top: -17px; transform: translateX(-50%); font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink); }
+.db-v.on { color: var(--muted); }
+.db-grid { position: absolute; top: 0; bottom: 0; left: 202px; right: 24px; pointer-events: none; }
+.db-grid i { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--rule); }
+.db-axis { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 12px; margin-top: 8px; }
+.db-ticks { position: relative; height: 16px; margin-right: 24px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); }
+.db-ticks span { position: absolute; transform: translateX(-50%); }
+.db-ticks span:first-child { transform: none; }
+
+.note { font-family: var(--font-display); font-size: 0.88rem; color: var(--ink-2); background: var(--surface-2); border-radius: 6px; padding: 12px 16px; }
+.sources { font-family: var(--font-display); font-size: 0.88rem; color: var(--ink-2); }
+.sources li { margin-bottom: 6px; }
+footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--rule); font-family: var(--font-display); font-size: 0.82rem; color: var(--muted); }
+
+#tip { position: fixed; z-index: 20; pointer-events: none; background: var(--tip-bg); color: var(--tip-fg); font-family: var(--font-display);
+  font-size: 0.8rem; line-height: 1.4; padding: 7px 10px; border-radius: 6px; max-width: 280px; opacity: 0; transition: opacity 0.08s; }
+#tip span { opacity: 0.75; }
+#tip.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { #tip { transition: none; } }
+
+@media (max-width: 720px) {
+  body { font-size: 16px; }
+  .paper { padding-block: 32px 28px; border-inline: 0; }
+  .frames { grid-template-columns: minmax(0, 1fr); }
+  .arch { grid-template-columns: minmax(0, 1fr); }
+  .sb-row { grid-template-columns: minmax(0, 1fr) 74px; }
+  .sb-row .sb-label { grid-column: 1 / -1; }
+  .db-row, .db-axis { grid-template-columns: minmax(0, 1fr); }
+  .db-axis > div:first-child { display: none; }
+  .db-grid { left: 0; }
+  .db-label { margin-bottom: 14px; }
+  .minis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+</style>
+
+<div class="paper">
+<header class="col">
+  <div class="kicker">Experiment 5, rebuilt as a RASP program</div>
+  <h1>RASP Plays MinAtar</h1>
+  <p class="stand">In <a href="%%POST%%">Sparks of Weight-Space Programming</a>, GPT-6 Astra writes the weights of small MinAtar policies in a single reply, with no tools. We gave Claude Opus 5.5 the same three games and the same one-reply rule, but asked for a RASP program instead. Tracr compiled each program into a transformer once, and that transformer played.</p>
+  <div class="meta"><span>November 2026</span><span>Claude Opus 5.5 via Claude Code</span><span>Tracr compiler</span><span>MinAtar 1.0.15</span><span>1,000 episodes per score</span></div>
+</header>
+
+<section class="col" style="margin-top:36px">
+  <ul class="lede-list">
+    <li>All three one-shot programs compiled on the first and only try, into transformers of 7 to 11 layers.</li>
+    <li>Breakout's compiled transformer scores <b>501.4</b>, level with Astra's directly written weights (498.6 under our scoring) and about 20 times the best PPO network in the paper.</li>
+    <li>Seaquest (14.1) and Asterix (19.4) fall far short of Astra (55.9 and 54.4). The compiled networks do what their programs say. The programs wander between equally scored safe moves, and MinAtar's sticky actions punish that. With sticky actions switched off, both programs outscore Astra's networks.</li>
+  </ul>
+</section>
+
+<figure class="wide">
+  <div class="fig-title">Mean score per episode</div>
+  <div class="fig-sub">1,000 episodes each, sticky actions 0.1, episodes cut at 10,000 steps. Each game has its own scale.</div>
+  <div class="legend"><span><i style="background:var(--opus)"></i>Opus 5.5, RASP program compiled by Tracr</span><span><i style="background:var(--astra)"></i>Astra, MLP weights</span><span><i style="background:var(--ppo)"></i>PPO baselines from the paper</span></div>
+  <div class="sms">%%RESULTS_CHART%%</div>
+  <figcaption>Astra's bars are our re-scoring of the networks released with the paper. PPO numbers are the paper's (best seed at each training length); their checkpoints are not released. Hover a bar for its standard error.</figcaption>
+</figure>
+
+<section class="col">
+  <h2>The task</h2>
+  <p>In the paper's Experiment 5, Astra sees one MinAtar game per conversation: its rules, the game's own source file, the layout of the network's input and output, and how the network will be scored. It replies once, with an <code>edits</code> block that sets the weights of a 600 → 32 → 32 → 6 tanh network that starts at zero. It cannot run code, the network never plays before it is scored, and it gets no feedback.</p>
+  <p>We kept the game text, the game source, the channel layout and the scoring exactly as the paper wrote them. Only the answer changes. Opus 5.5 replies with one Python block that defines <code>program()</code>, a RASP program whose numerical output gives the six action logits. We compile it once with <code>compile_rasp_to_model(program(), vocab=set(range(70)), max_seq_len=106, compiler_bos="BOS")</code> and play the result. Opus cannot open the compiler either, so the prompt includes Tracr's 26 non-test source files, much as the paper's prompt includes the game's source.</p>
+</section>
+
+<div class="wide tbl"><table class="proto">
+  <thead><tr><th></th><th>Paper's Experiment 5</th><th>This variant</th></tr></thead>
+  <tbody>
+    <tr><td>Writer</td><td>GPT-6 Astra via the Codex CLI, every tool off</td><td>Claude Opus 5.5 via <code>claude -p</code>, effort xhigh, every tool off</td></tr>
+    <tr><td>Answer</td><td>An <code>edits</code> block setting 20,486 MLP weights</td><td>A Python block defining a RASP program</td></tr>
+    <tr><td>Network</td><td>600 → 32 → 32 → 6 tanh, fixed</td><td>Whatever transformer Tracr compiles the program into</td></tr>
+    <tr><td>Input</td><td>600 bits: a 10 × 10 grid × 6 channels</td><td>The same bits as 100 cell tokens (0–63) plus 6 action tokens</td></tr>
+    <tr><td>Prompt extras</td><td>The game's MinAtar source</td><td>The game's MinAtar source and Tracr's source</td></tr>
+    <tr><td>Feedback</td><td>None, one reply</td><td>None, one reply</td></tr>
+    <tr><td>Scoring</td><td colspan="2">Mean score over 1,000 episodes of MinAtar 1.0.15, sticky actions 0.1, actions sampled from the softmax of the logits, episodes cut at 10,000 steps</td></tr>
+  </tbody>
+</table></div>
+
+<figure class="wide">
+  <div class="fig-title">What the transformer reads</div>
+  <div class="fig-sub">One Breakout frame from a game played by the compiled network, step %%BK_STEP%%.</div>
+  <div class="legend"><span><i style="background:var(--ch-player)"></i>player (bit 1)</span><span><i style="background:var(--ch-danger)"></i>danger (2)</span><span><i style="background:var(--ch-reward)"></i>reward (4)</span><span><i style="background:var(--ch-projectile)"></i>projectile (8)</span><span><i class="ring"></i>trail (16)</span><span><i style="background:var(--ch-gauge)"></i>gauge (32)</span></div>
+  <div class="frames">
+    <div><div class="panel-label">The board, in the paper's six channels</div><div class="frame-wrap">%%FRAME_BREAKOUT%%</div></div>
+    <div><div class="panel-label">The 100 cell tokens: each is the sum of its channels' bits</div><div class="frame-wrap">%%TOKENS_BREAKOUT%%</div>
+      <div class="panel-label" style="margin-top:12px">Then six action tokens, where the network writes its logits</div><div class="slots">%%ACTIONS_BREAKOUT%%</div></div>
+  </div>
+  <div class="minis">%%FRAMES_SMALL%%</div>
+  <figcaption>Bricks are reward (4), the ball is a projectile (8) and the ball's previous cell is its trail (16), so the ball's direction is visible in a single frame. In this frame the program writes logit 30 on the four actions that keep the paddle where it is and 0 on left and right. A cell that is in two channels, such as a Seaquest enemy (danger and reward), is drawn split diagonally.</figcaption>
+</figure>
+
+<section class="col">
+  <h2>Results</h2>
+  <p>The paper's networks are released, so we re-scored them with our evaluation before scoring anything of ours. All three land within noise of the paper's numbers. Breakout is 1.7 standard errors below, Seaquest 1.5 above and Asterix 0.8 above. The Opus and Astra columns below therefore compare like with like.</p>
+</section>
+<div class="wide tbl"><table>
+  <thead><tr><th>Game</th><th>Opus 5.5 · RASP → Tracr</th><th>Astra · MLP (our scoring)</th><th>Astra · MLP (paper)</th><th>PPO 100M, best seed</th><th>PPO 500M, best seed</th></tr></thead>
+  <tbody>%%RESULTS_TABLE%%</tbody>
+</table></div>
+<section class="col">
+  <p>Breakout is the clearest result. Opus and Astra independently chose the same strategy: predict where the ball will land and move the paddle there early. Both networks reach about 500 points, while PPO trained for 500 million steps reaches 25. In Seaquest and Asterix, Opus's programs score less than a third of Astra's. Its Seaquest program still beats the best 100M-step PPO network and two of the three 500M-step seeds (7.5 and 4.4).</p>
+</section>
+
+<section class="col">
+  <h2>Three programs</h2>
+  <p>Each reply opens with a short design and then a single Python block. The blocks are 120 to 259 lines of ordinary RASP built with <code>Map</code>, <code>SequenceMap</code>, <code>Select</code> and <code>Aggregate</code>. Each section shows the plan in Opus's own words beside Astra's, then the full program and the transformer Tracr built from it.</p>
+</section>
+<div class="wide">%%GAMES%%</div>
+
+<section class="col">
+  <h2>Did Tracr compile what Opus wrote?</h2>
+  <p>Tracr can be inexact: its attention is a softmax with finite temperature and its numerical MLPs approximate functions on a grid. So we compared each compiled network with RASP's own reference evaluator, <code>rasp.evaluate</code>, on 256 positions from the network's own games.</p>
+</section>
+<div class="wide tbl"><table>
+  <thead><tr><th>Game</th><th>SOps rasp.evaluate fails on</th><th>Logits RASP defines</th><th>Largest logit difference</th><th>Same best action</th><th>Policy difference (total variation)</th></tr></thead>
+  <tbody>%%FAITH_ROWS%%</tbody>
+</table></div>
+<section class="col">
+  <p>The Breakout program compiles exactly: every logit is defined, the largest difference is 0.0002, and the two policies are identical. Seaquest's RASP fails on only 2 of the 256 positions, where a <code>None</code> reaches an integer division; on the rest the compiled policy differs from the program by a total variation of 0.002. The disagreements in the best action are near-ties.</p>
+  <p>Asterix is the interesting case. When an attention selects no cell, for example a neighbour off the board, RASP returns <code>None</code>, and <code>None</code> passes through every later operation. The compiled transformer instead carries a zero vector, which behaves like "nothing here". The Asterix program relies on that behaviour, so RASP leaves 99% of its logits undefined. Where RASP does give a value, it matches the compiled network to within 0.008. None of the three programs used the stronger tricks seen in our multi-turn Go runs, where writers turned selector predicates into real-valued attention scores that <code>rasp.evaluate</code> rejects outright.</p>
+</section>
+
+<section class="col">
+  <h2>Why Seaquest and Asterix fell short</h2>
+  <p>A weak score could mean the program misread the game, or that compilation broke it. Neither is the case. The Seaquest program reads the oxygen and diver gauges correctly, never runs out of oxygen and surfaces with divers about twice per episode. Per step, both programs score about as fast as Astra's networks: 0.049 against 0.061 points in Asterix, and 0.043 against 0.038 in Seaquest. What differs is how long they live.</p>
+  <p>To see what kills them, we replayed 100 episodes per network. At every death we tried each action on a copy of the game to see whether any would have survived that step.</p>
+</section>
+
+<figure class="wide">
+  <div class="fig-title">What caused each of 100 deaths</div>
+  <div class="fig-sub">Sticky actions 0.1, as in scoring. Right: mean episode length.</div>
+  <div class="legend"><span><i style="background:var(--s-sticky)"></i>a sticky repeat played the fatal action</span><span><i style="background:var(--s-policy)"></i>the policy chose the fatal action</span><span><i style="background:var(--s-none)"></i>no action would have survived</span></div>
+  %%DEATHS%%
+  <figcaption>MinAtar replays the previous action instead of the chosen one 10% of the time. Opus's networks almost never choose a move that dies on the spot: their top-scored action was never fatal at an Asterix death and fatal at only two Seaquest deaths. Their deaths come from replays of an action that was safe when chosen.</figcaption>
+</figure>
+
+<section class="col">
+  <p>Both programs give every safe move the same base score, and their bonuses rarely apply, so the softmax spreads probability almost evenly and the player wanders. A wandering player is often in a spot where replaying its previous move would be fatal. Astra's networks behave differently: they hold one safe default action most of the time and move only up or down. In Seaquest and Asterix, Astra's replies also say so directly: they stay in one column and model sticky movement.</p>
+</section>
+<div class="wide tbl"><table>
+  <thead><tr><th>Network</th><th>Steps moving</th><th>Steps changing action</th><th>Steps where a replay would be fatal</th><th>Most common action</th><th>Left or right</th></tr></thead>
+  <tbody>%%BEHAVIOUR_ROWS%%</tbody>
+</table></div>
+
+<figure class="wide">
+  <div class="fig-title">The same networks with sticky actions switched off</div>
+  <div class="fig-sub">Mean score over 200 episodes. A diagnostic replay, not the official score.</div>
+  <div class="legend"><span><i class="ring" style="border-color:var(--ink-2)"></i>sticky actions 0.1 (official)</span><span><i style="background:var(--ink-2)"></i>sticky actions off</span><span><i style="background:var(--opus)"></i>Opus 5.5</span><span><i style="background:var(--astra)"></i>Astra</span></div>
+  %%DUMBBELL%%
+  <figcaption>Without sticky actions, Opus's Asterix program scores 99.4 (Astra 65.6) and its Seaquest program 147.0 (Astra 98.3). Its tactics are sound; it is the random replays the prompt describes that break them. The Breakout reply was built around sticky actions: it aims at a two-cell target region "so a sticky-action overshoot after arrival therefore usually still lands inside the region". The Seaquest reply handles them in two narrow cases, and the Asterix reply never mentions them.</figcaption>
+</figure>
+
+<section class="col">
+  <h2>Effort</h2>
+  <p>Opus wrote far longer replies than Astra, with most of the output going to reasoning, and took two to six times as long. The three replies together cost about $14.50 at list price, as estimated by Claude Code.</p>
+</section>
+<div class="wide tbl"><table>
+  <thead><tr><th>Game</th><th>Astra output tokens</th><th>Astra time</th><th>Opus output tokens</th><th>Opus time</th><th>Opus cost</th><th>Program</th></tr></thead>
+  <tbody>%%EFFORT_ROWS%%</tbody>
+</table></div>
+
+<section class="col">
+  <h2>What to keep in mind</h2>
+  <ul class="lede-list">
+    <li>Each game is one reply, so each result is a sample of one. A second reply could land elsewhere, in either direction.</li>
+    <li>The PPO baselines are the paper's numbers; their checkpoints are not released. Our re-scoring of Astra's networks matches the paper's within noise, which supports comparing against them.</li>
+    <li>The transformer sees the same information as Astra's MLP, encoded as one token per cell instead of 600 separate inputs.</li>
+    <li>Opus's prompt was longer, because it includes Tracr's source. Without it, Opus would have had to recall the compiler's rules from memory.</li>
+  </ul>
+  <h2>Sources</h2>
+  <ul class="sources">
+    <li>The paper: <a href="%%POST%%">Sparks of Weight-Space Programming</a> (Takehi, Teoh, Zhang and Khattab, 2026), and its <a href="%%LOGS%%">Experiment 5 logs</a>, with Astra's prompts, replies and networks.</li>
+    <li>This experiment: <a href="%%REPO%%">the repository</a>. Each run's prompt, reply, extracted program and compile record are in <code>runs/opus55_minatar_&lt;game&gt;/</code>. Scores, faithfulness checks and the death diagnosis are in <code>results/</code>.</li>
+    <li>Tracr (DeepMind) compiles RASP programs into transformer weights. MinAtar (Young and Tian, 2019) is the game suite; its source appears in the prompts under GPL-3.0.</li>
+  </ul>
+</section>
+
+<footer class="col">Built from the experiment's own result files. Every number on this page comes from <code>results/</code> or <code>runs/</code> in the repository.</footer>
+</div>
+<div id="tip" role="tooltip"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+(function () {
+  try { if (window.hljs) document.querySelectorAll("pre code.language-python").forEach(function (el) { window.hljs.highlightElement(el); }); } catch (e) {}
+  var tip = document.getElementById("tip");
+  function show(el, x, y) {
+    tip.innerHTML = el.getAttribute("data-tip");
+    tip.classList.add("on");
+    var r = tip.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
+    var left = Math.min(Math.max(8, x + 14), W - r.width - 8), top = y + 16;
+    if (top + r.height > H - 8) top = y - r.height - 12;
+    tip.style.left = left + "px"; tip.style.top = Math.max(8, top) + "px";
+  }
+  function hide() { tip.classList.remove("on"); }
+  document.addEventListener("pointermove", function (e) {
+    var el = e.target.closest ? e.target.closest("[data-tip]") : null;
+    if (el) show(el, e.clientX, e.clientY); else hide();
+  });
+  document.addEventListener("focusin", function (e) {
+    var el = e.target.closest ? e.target.closest("[data-tip]") : null;
+    if (el) { var r = el.getBoundingClientRect(); show(el, r.left + r.width / 2, r.bottom); }
+  });
+  document.addEventListener("focusout", hide);
+  document.addEventListener("scroll", hide, { passive: true });
+})();
+</script>
