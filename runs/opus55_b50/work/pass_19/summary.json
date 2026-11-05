@@ -1,0 +1,71 @@
+{
+ "ok": true,
+ "pass": 19,
+ "kind": "games",
+ "per_opponent": {
+  "strong": {
+   "games": 64,
+   "score": 0.359375,
+   "wins": 23,
+   "losses": 41,
+   "score_as_black": 0.28125,
+   "score_as_white": 0.4375,
+   "mean_margin": 12.234375,
+   "mean_length": 102.484375,
+   "stones_captured_per_game": 25.703125,
+   "stones_lost_per_game": 17.578125,
+   "passes_per_game": 2.734375,
+   "games_with_a_pass_before_move_60": 0,
+   "end_two_passes": 62,
+   "end_repetition": 2,
+   "end_move_limit": 0
+  },
+  "weak": {
+   "games": 32,
+   "score": 0.625,
+   "wins": 20,
+   "losses": 12,
+   "score_as_black": 0.5625,
+   "score_as_white": 0.6875,
+   "mean_margin": 25.375,
+   "mean_length": 104.84375,
+   "stones_captured_per_game": 38.59375,
+   "stones_lost_per_game": 13.90625,
+   "passes_per_game": 2.78125,
+   "games_with_a_pass_before_move_60": 0,
+   "end_two_passes": 30,
+   "end_repetition": 2,
+   "end_move_limit": 0
+  },
+  "random": {
+   "games": 32,
+   "score": 1.0,
+   "wins": 32,
+   "losses": 0,
+   "score_as_black": 1.0,
+   "score_as_white": 1.0,
+   "mean_margin": 69.34375,
+   "mean_length": 111.375,
+   "stones_captured_per_game": 72.15625,
+   "stones_lost_per_game": 1.375,
+   "passes_per_game": 1.25,
+   "games_with_a_pass_before_move_60": 0,
+   "end_two_passes": 32,
+   "end_repetition": 0,
+   "end_move_limit": 0
+  }
+ },
+ "network": {
+  "layers": 25,
+  "heads": 8,
+  "key_size": 84,
+  "mlp_hidden_size": 2034,
+  "residual_dims": 1225,
+  "dense_params": 207175250,
+  "nonzero_params": 48453
+ },
+ "seconds_per_1000_positions": 11.13,
+ "seconds": 208.0,
+ "files": "/work/pass_19/",
+ "readme": "games.json: one entry per game (opponent, net_color, result +1/-1, margin = net's area score minus the opponent's incl. komi, end, stones captured / lost, moves: ply, by, move (row*9+col, 81 = pass), and for the network's moves its top-5 [move, probability]). boards.npy: (games, 162, 81) int8, the board AFTER each ply (1 Black, -1 White, 0 empty; index row*9+col); valid.npy: (games, 162) which plies were played."
+}

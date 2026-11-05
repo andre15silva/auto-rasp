@@ -257,9 +257,20 @@ def build(stop=None):
     t5c = cat(SM(lambda inf, cp: round(OFF5 + (INFL[cp[1]].get(inf, 0.0) if cp[0] == 'E' else 0.0), 2), infl, cph), 't5c')
     t5 = num(M(lambda v: v, t5c), 't5')
 
+    def pside(k, q):
+        return SEL if k == 81 else UNSEL
+    sideall = cat(rasp.Aggregate(rasp.Select(idx, idx, pside), side), 'sideall')
+    def lsf(ps, sd):
+        tc, nc = ps
+        win = (tc >= 5) if sd == 'B' else (tc >= 2)
+        return (not win) and nc <= 1
+    losing = cat(SM(lsf, pstate, sideall), 'losing')
+    t7c = cat(SM(lambda rg, l: round(OFF7 + (INV if (rg == 'opp' and l) else 0.0), 2), region, losing), 't7c')
+    t7 = num(M(lambda v: v, t7c), 't7')
     s14 = lsm(t1, t4, 's14')
     s56 = lsm(t5, t6, 's56')
-    return lsm(s14, s56, 'logits')
+    s567 = lsm(s56, t7, 's567')
+    return lsm(s14, s567, 'logits')
 
 
 
@@ -293,6 +304,7 @@ def tactical(l):
 
 # ---------------- tables
 OFF1, OFF4, OFF5, OFF6 = 25.0, 20.0, 5.0, 10.0
+OFF7, INV = 1.0, 6.0
 TACT = {'cap_s': 8.0, 'cap_m': 11.0, 'cap_extra': 1.5, 'capsave': 2.0,
         'esc3': {'s': 6.5, 'm': 9.0}, 'esc2': {'s': 0.5, 'm': 2.5}, 'escf': -5.0,
         'sui': -10.0, 'sa_s': -6.0, 'sa_m': -9.0, 'fill2': -1.0, 'noE': -2.0,

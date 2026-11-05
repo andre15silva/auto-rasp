@@ -1,0 +1,8 @@
+OUTPUT of Python run 115 of at most 120:
+```
+15 repetition (last mover, our result): [('net', -1), ('opponent', 1), ('net', -1)]  blowouts>60: 36  close losses: 50
+16 repetition (last mover, our result): [('opponent', 1), ('net', -1)]  blowouts>60: 35  close losses: 50
+17 repetition (last mover, our result): [('opponent', 1), ('net', -1), ('net', -1), ('net', -1), ('net', -1), ('net', -1)]  blowouts>60: 26  close losses: 56
+18 repetition (last mover, our result): [('net', -1), ('net', -1), ('opponent', 1), ('net', -1), ('net', -1), ('opponent', 1), ('net', -1)]  blowouts>60: 31  close losses: 45
+
+```
