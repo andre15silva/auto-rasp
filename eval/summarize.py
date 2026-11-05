@@ -36,21 +36,26 @@ lines = ["| writer | passes | vs PPO s0 | vs PPO s2 | **main** | vs random | vs 
 for w, b, n, s0, s2, m, rnd, ref, size, fa, st in rows:
     lines.append(f"| {w} | {b} | {pct(s0)} | {pct(s2)} | **{pct(m)}** | {pct(rnd)} | "
                  + " | ".join("—" if n == r else pct(x) for r, x in zip(REF, ref)) + f" | {size} |")
-lines += ["", "Win rates in %, 2,000 games per cell, the written network Black in half, both sides sampling "
-          "(1 s.e. ≈ 1.1 points at 50 %). main = mean of the two PPO columns.", ""]
+lines += ["", "Win rates in % of the row's network, Black in half of the games, both sides sampling at "
+          "temperature 1. 2,000 games per cell against PPO and random (1 s.e. ≈ 1.1 points at 50 %); head-to-heads "
+          "against Astra's networks: 2,000 games in the Astra rows, 1,000 in the Opus rows (1 s.e. ≈ 1.6 points). "
+          "main = mean of the two PPO columns (the paper's main measure, here with its same-size PPO networks).", ""]
 fl = [r for r in rows if r[9]]
 if fl:
-    lines += ["Faithfulness of the compiled network to its own RASP program (256 positions from its games vs PPO s0):",
-              "", "| run | legal-move logits where RASP is defined | max abs logit diff (where defined) | "
-              "argmax agreement | mean TV distance of policies |", "|---|---|---|---|---|"]
+    lines += ["Can RASP's reference evaluator run the program? (`rasp.evaluate` per SOp on 256 positions from the "
+              "network's games vs PPO s0; and the evaluation runtime vs the passes' reference runtime)", "",
+              "| run | SOps | SOps rasp.evaluate fails on | output evaluable | first error | eval runtime vs reference "
+              "(max abs logit diff) |", "|---|---|---|---|---|---|"]
     for r in fl:
         fa = r[9]
-        if fa.get("ok"):
-            lines.append(f"| {r[2]} | {pct(fa['legal_entries_rasp_defined'])} % | "
-                         f"{fa['max_abs_logit_diff'] if fa['max_abs_logit_diff'] is None else round(fa['max_abs_logit_diff'], 4)} | "
-                         f"{pct(fa['argmax_agreement'])} % | {fa['mean_total_variation'] if fa['mean_total_variation'] is None else round(fa['mean_total_variation'], 4)} |")
+        ev = json.load(open(os.path.join(REPO, "results", r[2], "eval.json")))
+        fr = (ev.get("fast_runtime_check") or {}).get("max_abs_logit_diff")
+        if fa.get("ok") and fa.get("rasp_sops") is not None:
+            err = (fa.get("rasp_first_error") or "").split(" Received")[0][:90]
+            lines.append(f"| {r[2]} | {fa['rasp_sops']} | {fa['rasp_sops_failed']} | "
+                         f"{'no' if fa['rasp_output_failed'] else 'yes'} | {err} | {fr} |")
         else:
-            lines.append(f"| {r[2]} | failed: {fa.get('error', '')[:80]} | | | |")
+            lines.append(f"| {r[2]} | | | | failed: {str(fa.get('error', ''))[:80]} | {fr} |")
     lines.append("")
 st_rows = [r for r in rows if r[10]]
 if st_rows:

@@ -6,3 +6,5 @@ opus55_b25 vs random: 1.0000 (B 1.000 W 1.000) [595.0s]
 opus55_b25 vs astra_b25: 0.8110 (B 0.726 W 0.896) [238.5s]
 opus55_b25 vs astra_b50: 0.6690 (B 0.588 W 0.750) [253.4s]
 fast runtime vs reference: {'positions': 256, 'max_abs_logit_diff': 0.0}
+faithfulness: {"ok": true, "positions": 256, "rasp_seconds": 8.8, "rasp_sops": 95, "rasp_sops_failed": 80, "rasp_output_failed": true, "rasp_first_error": "ValueError: Only types int, bool, and float are supported for aggregation. Received sequence: ['E', 'E', 'E', 'E', 'O', 'E', 'E', 'E', 'E', 'E', 'X', 'O', 'O', 'O', 'O', 'X', 'O', 'E', 'E', 'X', 'O', 'X', 'X', 'O', 'X', 'X', 'E', 'E', 'E', 'X', 'X', 'O', 'O', 'X', 'O', 'E', 'E', 'E', 'X', 'X', 'X', ", "legal_entries_rasp_defined": 0.0, "positions_rasp_defined_on_all_legal_moves": 0, "mean_abs_logit_diff": null, "max_abs_logit_diff": null, "argmax_agreement": null, "mean_total_variation": null}
+opus55_b25: main 0.79375
