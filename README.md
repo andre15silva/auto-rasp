@@ -1,15 +1,26 @@
 # auto-rasp: weight-space programming through RASP and Tracr
 
-A variant of **Experiment 6** of *Sparks of Weight-Space Programming: LLMs can understand and write neural network
-weights* (Takehi, Teoh, Zhang and Khattab, 2026; [post](https://rikiyat.github.io/blog/weight-space-programming/),
+Variants of **Experiments 6 and 5** of *Sparks of Weight-Space Programming: LLMs can understand and write neural
+network weights* (Takehi, Teoh, Zhang and Khattab, 2026; [post](https://rikiyat.github.io/blog/weight-space-programming/),
 [logs](https://github.com/RikiyaT/lm_understand-logs)).
 
-In the paper, a frontier model ("Astra") writes the 1,480,274 weights of an MLP that plays 9x9 Go, from scratch and
-without training. Here the model, **Claude Opus 5.5 via Claude Code**, instead writes a **RASP program**. The program
-is compiled by [**Tracr**](https://github.com/google-deepmind/tracr) into transformer weights, and we check whether
-**the compiled transformer** plays Go. Everything else follows the paper's protocol as closely as the released
-material allows: the same game, the same budgets of 0/10/25/50 "passes", the same one-block-per-turn harness and
-the same kind of hidden evaluation.
+In the paper, a frontier model ("Astra") writes neural-network weights directly, from scratch and without training:
+the 1,480,274 weights of an MLP that plays 9x9 Go (Experiment 6), and, in a single reply, small MLPs that play
+MinAtar games (Experiment 5). Here the model, **Claude Opus 5.5 via Claude Code**, instead writes a **RASP
+program**. The program is compiled by [**Tracr**](https://github.com/google-deepmind/tracr) into transformer
+weights, and we check whether **the compiled transformer** can do the task. Everything else follows the paper's
+protocols as closely as the released material allows: the same games, the same budgets of 0/10/25/50 "passes" for
+Go, one reply with no tools for MinAtar, the same harness style and the same kind of evaluation.
+
+**In short:**
+- **Go (Experiment 6).** Compiled RASP programs beat the paper's same-size PPO networks at every budget. They beat
+  Astra's weights at 0, 10 and 25 passes; at 50 passes Astra's network is better.
+- **MinAtar (Experiment 5).** All three one-shot programs compiled on the first try. Breakout matches Astra's
+  network (501 vs 499, about 20× PPO). SEAQUEST_SUMMARY Asterix is weak (19 vs 54).
+- **The programs target Tracr, not textbook RASP.** The Go programs use real-valued selector scores, which RASP's
+  reference evaluator rejects. The one-shot Breakout program is valid RASP and compiles exactly.
+
+# Experiment 6: 9×9 Go
 
 ## Results
 
@@ -108,6 +119,89 @@ iterated against, the compiled network, which is the only thing their move score
 networks themselves were run with a NumPy forward pass that matches Tracr's own (`fast_runtime_check` = 0.0 on
 256 positions for every network; the reference runtime matches Tracr's `apply` to about 1e-5).
 
+# Experiment 5: one-shot MinAtar, as a RASP program
+
+The paper's Experiment 5 asks for a network that plays one of three MinAtar games (Breakout, Seaquest, Asterix),
+written in **a single reply with no tools and no feedback**. The paper's version sets a 600→32→32→6 tanh MLP;
+here Opus 5.5 writes a RASP program instead, and we compile it once with Tracr.
+
+**Protocol.** One fresh `claude -p` conversation per game: `claude-opus-5-5`, `--effort xhigh`, every tool off,
+neutral system prompt. Every reply was audited as tool-free. The prompt
+([`harness/prompt_minatar.py`](harness/prompt_minatar.py); each run's `message.txt`) keeps the paper's task
+framing, game description, scoring text and the game's MinAtar 1.0.15 source. It replaces the network and "edits"
+sections with the RASP/Tracr ones below, and appends Tracr's 26 non-test source files (about 50k tokens), the
+analog of giving the game's source. The input is the paper's 10 × 10 × 6 observation (player, danger, reward,
+projectile, trail, gauge) as 106 tokens: one per cell, an integer 0..63 whose bit `ch` is channel `ch`, followed
+by 6 action tokens 64..69. The program's numerical output at indices 100..105 gives the 6 action logits. The network
+is `compile_rasp_to_model(program(), vocab=set(range(70)), max_seq_len=106, compiler_bos="BOS",
+mlp_exactness=MLP_EXACTNESS)`. If the reply's last python block failed to compile, the network would play
+uniformly at random. Scoring follows the paper: mean score over 1,000 episodes of MinAtar 1.0.15 with sticky
+actions 0.1 and difficulty ramping, actions sampled from the softmax of the logits, episodes cut at 10,000 steps
+([`eval/evaluate_minatar.py`](eval/evaluate_minatar.py)).
+
+**Validation.** The paper's written networks (`hand.npz`, released) re-scored with our setup:
+
+| Astra's network | paper | ours (1,000 episodes) |
+|---|---|---|
+| Breakout | 517.4 ± 7.4 | 498.6 ± 7.8 |
+| Seaquest | 53.1 ± 1.4 | 55.9 ± 1.4 |
+| Asterix | 53.2 ± 1.0 | 54.4 ± 1.1 |
+
+The differences are −1.7, +1.5 and +0.8 standard errors, all within noise.
+
+**Results.** All three one-shot programs compiled on the first and only try.
+
+| game | Opus 5.5 → RASP → Tracr, one reply | Astra → MLP weights, one reply (our scoring) | PPO 100M (paper, best seed) | PPO 500M (paper, best seed) |
+|---|---|---|---|---|
+| Breakout | **501.4 ± 6.0** | 498.6 ± 7.8 | 15.8 | 25.3 |
+| Seaquest | SEAQUEST_SCORE | 55.9 ± 1.4 | 5.6 | **88.9** |
+| Asterix | 19.4 ± 0.7 | 54.4 ± 1.1 | 25.8 | **55.2** |
+
+The PPO networks are not released, so their numbers are the paper's. They were scored with the same protocol, so
+they are comparable with the paper's own Astra numbers.
+
+- **Breakout.** The program predicts where the ball will land, unfolding the wall bounces into a periodic
+  coordinate, and moves the paddle there early (the reply's design notes are in `reply/answer.md`). It scores the
+  same as Astra's network and about 20× the best PPO network. It deliberately kept every attention head's key size
+  at 12 "so attention is very sharp", which avoids the √key_size softening described above.
+- **Asterix.** A one-step lookahead scores each move by danger and nearby gold. It dies early: a mean episode of
+  401 steps, against 871 for Astra's network.
+- **Seaquest.** A reactive heuristic: never step into danger, shoot enemies in the facing direction, collect
+  divers, and surface only when oxygen is low and a diver is on board. SEAQUEST_NOTE
+
+**Faithfulness** ([`eval/faithfulness_minatar.py`](eval/faithfulness_minatar.py), 256 observations from each
+network's own games, compiled logits against `rasp.evaluate`):
+
+| game | SOps rasp.evaluate fails on | logit entries RASP defines | max abs logit diff (where defined) | same argmax |
+|---|---|---|---|---|
+| Breakout | 0 of 23 | 100 % | 1.6e-4 | 100 % |
+| Seaquest | SEAQUEST_FAITH |
+| Asterix | 0 of 70 | 0.8 % | 0.008 | – |
+
+Unlike the Go programs, all three one-shot programs are valid RASP: the reference evaluator runs every SOp without
+error. The Breakout program compiles exactly. The compiled network and `rasp.evaluate` choose the same action in
+every sampled state, and their policies are identical. The Asterix program instead relies on how Tracr represents
+an attention that selects nothing (a zero vector, which acts as "nothing here"). RASP turns that case into `None`,
+which then propagates to the output, so RASP leaves 99 % of its logits undefined. Where it does define them, they
+match the compiled ones to within 0.008, so there is no sign that compilation caused the weak score.
+
+**Runs.**
+
+| game | reply time | output tokens | cost (Claude Code's estimate) | program | compiled network | speed |
+|---|---|---|---|---|---|---|
+| Breakout | 17 min | 106k | $2.75 | 120 lines | 7 layers, 358 dims, 5,195 nonzero | 1.7 s / 1k positions |
+| Seaquest | 57 min | 348k | $8.93 | 205 lines | 10 layers, 599 dims, 22,758 nonzero (`MLP_EXACTNESS` = 1,000) | 10.3 s / 1k |
+| Asterix | 18 min | 108k | $2.80 | 259 lines | 11 layers, 449 dims, 6,080 nonzero | 6.4 s / 1k |
+
+Each run's folder (`runs/opus55_minatar_<game>/`) holds `message.txt` (the prompt), `reply/` (`answer.md`, the raw
+`events.jsonl`, and `run.json` with usage and the tool-free audit), `work/program.py` (the program read from the
+reply) and `final/` (the compile record). Scores are in `results/opus55_minatar_<game>/eval.json` and
+`faithfulness.json`; Astra's re-scores are in `results/astra_minatar_<game>/`. The paper's MinAtar networks are
+fetched by `scripts/fetch_networks.sh`. The MinAtar game source in the prompts is GPL-3.0 (see
+`LICENSE-MinAtar`).
+
+# Experiment 6: protocol and details
+
 ## Protocol
 
 | | Paper, Experiment 6 | This repository |
@@ -167,6 +261,8 @@ pass and says that compilation is not guaranteed to be exact.
    gives millions, and a numerical `Map` on the sum then builds an MLP with one hidden unit per value. Our first
    harness test program used all 15 GB of the machine. Every compile therefore runs with a hard memory cap.
 
+# Running it, layout and notes
+
 ## Running it
 
 ```bash
@@ -180,6 +276,12 @@ python eval/evaluate.py --run runs/opus55_b50                    # hidden evalua
 python eval/evaluate.py --mlp networks/paper/budget_50 --name astra_b50
 python eval/run_stats.py                                         # results/run_stats.json
 python eval/summarize.py                                         # results/summary.md
+
+# Experiment 5 (MinAtar, one reply)
+python -m harness.run_oneshot --game breakout --run-id opus55_minatar_breakout
+python eval/evaluate_minatar.py --run runs/opus55_minatar_breakout
+python eval/evaluate_minatar.py --mlp networks/paper_minatar/breakout/hand.npz --game breakout --name astra_minatar_breakout
+python eval/faithfulness_minatar.py --run runs/opus55_minatar_breakout
 ```
 
 The evaluations reported here ran with `OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1`, `nice -n 19`, `--workers 2`
@@ -192,14 +294,16 @@ and `--ref-games 1000`.
 | path | what |
 |---|---|
 | `gorasp/go.py` | batched pgx Go, the 243-plane encoding (for the paper's networks) and the token encoding (for Tracr) |
+| `gorasp/minatar.py` | MinAtar for Experiment 5: the paper's 6-channel observation, its MLP format, the Tracr token encoding, seeded batched episodes |
 | `gorasp/policies.py`, `play.py`, `opponents.py` | policies, sampled batched play with the paper's summary fields, the opponent sets |
 | `gorasp/tracr_policy.py` | compile, export the weights as sparse matrices, the reference forward pass (used by the passes), residual-stream decoding |
 | `gorasp/tracr_fast.py` | the evaluation's forward pass: identical logits, with subnormals flushed to zero and a contiguous q·kᵀ matmul |
-| `harness/prompt.py` | the task prompt (the paper's, with the network, sandbox and rules rewritten for RASP/Tracr) |
+| `harness/prompt.py` | the Go task prompt (the paper's, with the network, sandbox and rules rewritten for RASP/Tracr) |
+| `harness/prompt_minatar.py`, `minatar_prompt_parts.json`, `run_oneshot.py` | Experiment 5: the one-shot prompt (the paper's game text, the MinAtar source, Tracr's source) and the single-call runner |
 | `harness/run_writer.py` | the turn loop around `claude -p` / `claude -p --resume`, with per-turn audit |
 | `harness/sandbox.py`, `prelude.py`, `compile_worker.py` | the bubblewrap sandbox, the writer's predefined names, and the compile done for passes and the evaluation |
 | `harness/passes.py` | the games and positions passes |
-| `eval/` | engine validation (`validate_engine.py`), hidden evaluation (`evaluate.py`), run statistics (`run_stats.py`), summary (`summarize.py`) |
+| `eval/` | engine validation (`validate_engine.py`), hidden evaluation (`evaluate.py`), run statistics (`run_stats.py`), summary (`summarize.py`); Experiment 5: `evaluate_minatar.py`, `faithfulness_minatar.py` |
 | `scripts/` | environment setup, fetching the paper's networks, the run watcher and the safe driver restart used during the runs |
 | `tests/` | the Tracr runtime test, an end-to-end harness test with scripted replies, and the harness-test RASP program (never shown to the writers) |
 | `runs/<id>/` | one writer run: `message.txt` (task prompt), `turns/tNNN/` (`prompt.txt` sent, `answer.md` received, `events.jsonl` the raw Claude Code stream, `run.json` with usage and the tool-free audit), `tool_calls.jsonl` (every sandbox run's code and output and every pass), `work/` (the writer's files, pass summaries), `final/` (the final program's sources and compile record), `loop.log`, `state.json` |
@@ -272,5 +376,8 @@ as Tracr compilations.
 
 ## Licences
 
-Code: MIT. The paper's networks fetched into `networks/paper/` and quoted parts of its prompt: CC BY 4.0, from
-[RikiyaT/lm_understand-logs](https://github.com/RikiyaT/lm_understand-logs). Tracr: Apache 2.0. pgx: Apache 2.0.
+Code: MIT. The paper's networks fetched into `networks/paper/` and `networks/paper_minatar/`, and the quoted parts of
+its prompts (including `harness/minatar_prompt_parts.json`): CC BY 4.0, from
+[RikiyaT/lm_understand-logs](https://github.com/RikiyaT/lm_understand-logs). Tracr: Apache 2.0; its source appears
+in the Experiment 5 prompts. pgx: Apache 2.0. MinAtar (Young & Tian): GPL-3.0; its game sources appear in the
+Experiment 5 prompts (`runs/opus55_minatar_*/message.txt`), see `LICENSE-MinAtar`.
