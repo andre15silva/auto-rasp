@@ -24,7 +24,7 @@ MAX_SEQ_LEN = 82
 BOS = "BOS"
 
 
-def compile_sop(sop, mlp_exactness=100):
+def compile_sop(sop, mlp_exactness=100, vocab=VOCAB, max_seq_len=MAX_SEQ_LEN):
     from tracr.compiler import compiling
     from tracr.rasp import rasp
     if not isinstance(sop, rasp.SOp):
@@ -32,7 +32,7 @@ def compile_sop(sop, mlp_exactness=100):
     if not rasp.is_numerical(sop):
         raise ValueError("the output SOp must be numerical (wrap it in rasp.numerical(...)): its value at each "
                          "position is that move's logit")
-    return compiling.compile_rasp_to_model(sop, vocab=set(VOCAB), max_seq_len=MAX_SEQ_LEN, compiler_bos=BOS,
+    return compiling.compile_rasp_to_model(sop, vocab=set(vocab), max_seq_len=max_seq_len, compiler_bos=BOS,
                                            mlp_exactness=mlp_exactness)
 
 
@@ -49,7 +49,7 @@ def model_stats(m):
             "dense_params": int(dense), "nonzero_params": int(nnz)}
 
 
-def export(m, sop, path, extra=None):
+def export(m, sop, path, extra=None, vocab=VOCAB, max_seq_len=MAX_SEQ_LEN):
     arrays = {}
     for mod, d in m.params.items():
         for name, a in d.items():
@@ -67,8 +67,8 @@ def export(m, sop, path, extra=None):
             "mlp_hidden_size": c.mlp_hidden_size, "causal": bool(c.causal), "layer_norm": bool(c.layer_norm),
             "residual_labels": labels, "input_encoding": {str(k): int(v) for k, v in
                                                           m.input_encoder.encoding_map.items()},
-            "output_label": sop.label, "output_index": labels.index(sop.label), "vocab": list(VOCAB),
-            "max_seq_len": MAX_SEQ_LEN, "bos": BOS, "stats": model_stats(m)}
+            "output_label": sop.label, "output_index": labels.index(sop.label), "vocab": list(vocab),
+            "max_seq_len": max_seq_len, "bos": BOS, "stats": model_stats(m)}
     meta.update(extra or {})
     np.savez_compressed(path, meta=np.array(json.dumps(meta)), **arrays)
     return meta
@@ -91,6 +91,8 @@ class TracrModel:
         self.labels = meta["residual_labels"]
         self.D = len(self.labels)
         self.enc = meta["input_encoding"]
+        self.vocab = meta.get("vocab", list(VOCAB))
+        self.max_seq_len = meta.get("max_seq_len", MAX_SEQ_LEN)
         self.out_index = meta["output_index"]
         self.max_rows = max_rows
 
@@ -121,10 +123,10 @@ class TracrModel:
                           rv=_ix(rv), v=v[rv], bv=bv[cs][vo], co=_ix(co), o=o[:, co], w=None)
                 if positional[rq].all() and positional[rk].all():
                     # the pattern depends only on positions: compute it once (same arithmetic as below)
-                    x0 = np.full((1, MAX_SEQ_LEN + 1), self.enc["."], np.int64)
+                    x0 = np.full((1, self.max_seq_len + 1), self.enc[str(self.vocab[0])], np.int64)
                     x0[0, 0] = self.enc[BOS]
                     x0 = self._embed(x0)
-                    hd["w"] = self._attn_weights(hd, x0, 1, MAX_SEQ_LEN + 1)[0]
+                    hd["w"] = self._attn_weights(hd, x0, 1, self.max_seq_len + 1)[0]
                 heads.append(hd)
             W1, W2 = mat(f"{p}/mlp/linear_1/w"), mat(f"{p}/mlp/linear_2/w")
             b1, b2 = z[f"{p}/mlp/linear_1/b"], z[f"{p}/mlp/linear_2/b"]
@@ -137,9 +139,16 @@ class TracrModel:
 
     # ---- inputs
     def encode(self, token_rows):
-        """token_rows: (n, 82) array of point/colour tokens (no BOS) -> (n, 83) int ids."""
-        lut = {t: self.enc[t] for t in VOCAB}
-        ids = np.vectorize(lut.__getitem__, otypes=[np.int64])(np.asarray(token_rows))
+        """token_rows: (n, max_seq_len) array of vocab tokens (no BOS) -> (n, max_seq_len + 1) int ids."""
+        rows = np.asarray(token_rows)
+        if all(isinstance(t, int) for t in self.vocab):  # integer vocab (MinAtar): array lookup
+            lut = np.zeros(max(self.vocab) + 1, np.int64)
+            for t in self.vocab:
+                lut[t] = self.enc[str(t)]
+            ids = lut[rows.astype(np.int64)]
+        else:
+            lut = {t: self.enc[str(t)] for t in self.vocab}
+            ids = np.vectorize(lut.__getitem__, otypes=[np.int64])(rows)
         return np.concatenate([np.full((len(ids), 1), self.enc[BOS]), ids], axis=1)
 
     # ---- forward
@@ -164,7 +173,7 @@ class TracrModel:
         for lay in self.layers:
             upd = []
             for h in lay["heads"]:
-                w = h["w"] if (h["w"] is not None and T == MAX_SEQ_LEN + 1) else self._attn_weights(h, x, n, T)
+                w = h["w"] if (h["w"] is not None and T == self.max_seq_len + 1) else self._attn_weights(h, x, n, T)
                 v = (x[:, h["rv"]] @ h["v"] + h["bv"]).reshape(n, T, -1)
                 a = np.matmul(w, v).reshape(n * T, -1)
                 upd.append((h["co"], a @ h["o"]))

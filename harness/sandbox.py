@@ -108,7 +108,7 @@ def run_writer_code(code, work_dir, log):
     return out or "(no output)"
 
 
-def compile_in_sandbox(work_dir, out_dir, rasp_inputs=None, timing=True):
+def compile_in_sandbox(work_dir, out_dir, rasp_inputs=None, timing=True, task="go"):
     """Compiles /work/program.py (read-only) exactly as the evaluation does; writes out_dir/model.npz and
     out_dir/compile.json (and out_dir/rasp.npz if rasp_inputs). Returns the compile.json dict."""
     os.makedirs(out_dir, exist_ok=True)
@@ -117,7 +117,7 @@ def compile_in_sandbox(work_dir, out_dir, rasp_inputs=None, timing=True):
     worker = open(os.path.join(HERE, "compile_worker.py")).read()
     binds = [("ro", work_dir, "/work"), ("rw", out_dir, "/out"),
              ("ro", os.path.join(REPO, "gorasp", "tracr_policy.py"), "/harness/tracr_policy.py")]
-    code = worker + f"\nmain(timing={bool(timing)})\n"
+    code = worker + f"\nmain(timing={bool(timing)}, task={task!r})\n"
     with heavy_lock():
         out, rc, secs = run(bwrap_cmd(binds, code))
     res_path = os.path.join(out_dir, "compile.json")

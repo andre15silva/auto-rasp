@@ -1,0 +1,38 @@
+{
+ "breakout": {
+  "game_text": "THE GAME: Breakout from MinAtar (Young & Tian 2019), on a 10 x 10 grid. The player moves a one-cell paddle along the bottom row and must bounce a ball to break 3 rows of bricks near the top. Each brick broken gives +1; when all bricks are cleared, 3 new rows appear. The ball moves only diagonally; when it hits the paddle it is sent up to the left or to the right depending on the side of the paddle it hits; it is reflected by walls and bricks. The episode ends when the ball reaches the bottom row without being caught.\nActions: left and right move the paddle; up, down and fire do nothing (they act as no-op).\n\nThe game's exact implementation (the MinAtar package, version 1.0.15, file minatar/environments/breakout.py) follows. The environment wrapper calls act(a) with a = 0..5 meaning 'n' (no-op), 'l', 'u', 'r', 'd', 'f' (this file's action_map), and with probability 0.1 it repeats the previous action instead of the new one (sticky actions). The observation the network gets is built from this file's state() as described under THE INPUT.",
+  "channel_lines": [
+   "  channel 0 (player): the paddle",
+   "  channel 1 (danger): always empty in this game",
+   "  channel 2 (reward): the bricks",
+   "  channel 3 (projectile): the ball",
+   "  channel 4 (trail): the ball's previous cell (it shows which way the ball moves)",
+   "  channel 5 (gauge): always empty in this game"
+  ],
+  "how_built": "How the 6 channels are built from the game's own channels (state() in the source): channel 0 (player) <- paddle; channel 1 (danger) <- nothing; channel 2 (reward) <- brick; channel 3 (projectile) <- ball; channel 4 (trail) <- trail; channel 5 (gauge) <- nothing. A cell is 1 in a channel if any of its source channels is 1."
+ },
+ "seaquest": {
+  "game_text": "THE GAME: Seaquest from MinAtar (Young & Tian 2019), on a 10 x 10 grid. The player steers a two-cell submarine (front and back) in all 4 directions and fires bullets from its front. Enemy fish and enemy submarines cross the screen; enemy submarines shoot. Hitting an enemy with a bullet gives +1. Divers can be picked up (up to 6; a bar along the bottom counts them). Oxygen runs down (another bar along the bottom) and is refilled by surfacing at the top row with at least one diver on board (surfacing with fewer than 6 removes one diver; with 6, all are removed and a bonus is paid). The episode ends when the submarine is hit, runs out of oxygen, or surfaces with no diver.\nActions: left, up, right, down move the submarine, fire shoots.\n\nThe game's exact implementation (the MinAtar package, version 1.0.15, file minatar/environments/seaquest.py) follows. The environment wrapper calls act(a) with a = 0..5 meaning 'n' (no-op), 'l', 'u', 'r', 'd', 'f' (this file's action_map), and with probability 0.1 it repeats the previous action instead of the new one (sticky actions). The observation the network gets is built from this file's state() as described under THE INPUT.",
+  "channel_lines": [
+   "  channel 0 (player): the submarine (front and back cells)",
+   "  channel 1 (danger): enemy fish, enemy submarines and enemy bullets",
+   "  channel 2 (reward): enemy fish, enemy submarines and divers",
+   "  channel 3 (projectile): the player's bullets",
+   "  channel 4 (trail): the cell just behind each enemy and diver, and the submarine's back cell",
+   "  channel 5 (gauge): the oxygen bar and the diver bar along the bottom row"
+  ],
+  "how_built": "How the 6 channels are built from the game's own channels (state() in the source): channel 0 (player) <- sub_front, sub_back; channel 1 (danger) <- enemy_fish, enemy_sub, enemy_bullet; channel 2 (reward) <- enemy_fish, enemy_sub, diver; channel 3 (projectile) <- friendly_bullet; channel 4 (trail) <- trail, sub_back; channel 5 (gauge) <- oxygen_guage, diver_guage. A cell is 1 in a channel if any of its source channels is 1."
+ },
+ "asterix": {
+  "game_text": "THE GAME: Asterix from MinAtar (Young & Tian 2019), on a 10 x 10 grid. The player moves freely in the 4 directions. Enemies and treasure enter from the sides and move horizontally. Picking up a treasure gives +1. The episode ends when the player touches an enemy. The difficulty rises over time (enemies and treasure move faster and appear more often).\nActions: left, up, right, down move the player; fire does nothing (it acts as no-op).\n\nThe game's exact implementation (the MinAtar package, version 1.0.15, file minatar/environments/asterix.py) follows. The environment wrapper calls act(a) with a = 0..5 meaning 'n' (no-op), 'l', 'u', 'r', 'd', 'f' (this file's action_map), and with probability 0.1 it repeats the previous action instead of the new one (sticky actions). The observation the network gets is built from this file's state() as described under THE INPUT.",
+  "channel_lines": [
+   "  channel 0 (player): the player",
+   "  channel 1 (danger): enemies",
+   "  channel 2 (reward): treasure",
+   "  channel 3 (projectile): always empty in this game",
+   "  channel 4 (trail): the cell just behind each enemy and treasure (it shows which way it moves)",
+   "  channel 5 (gauge): always empty in this game"
+  ],
+  "how_built": "How the 6 channels are built from the game's own channels (state() in the source): channel 0 (player) <- player; channel 1 (danger) <- enemy; channel 2 (reward) <- gold; channel 3 (projectile) <- nothing; channel 4 (trail) <- trail; channel 5 (gauge) <- nothing. A cell is 1 in a channel if any of its source channels is 1."
+ }
+}

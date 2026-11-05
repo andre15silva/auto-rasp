@@ -9,7 +9,7 @@ import math
 
 import numpy as np
 
-from .tracr_policy import MAX_SEQ_LEN, TracrModel, TracrPolicy
+from .tracr_policy import TracrModel, TracrPolicy
 
 TINY = np.finfo(np.float32).tiny
 
@@ -35,7 +35,7 @@ class FastTracrModel(TracrModel):
         for lay in self.layers:
             upd = []
             for h in lay["heads"]:
-                w = h["w"] if (h["w"] is not None and T == MAX_SEQ_LEN + 1) else self._attn_weights(h, x, n, T)
+                w = h["w"] if (h["w"] is not None and T == self.max_seq_len + 1) else self._attn_weights(h, x, n, T)
                 v = (x[:, h["rv"]] @ h["v"] + h["bv"]).reshape(n, T, -1)
                 u = np.matmul(w, v).reshape(n * T, -1) @ h["o"]
                 u[np.abs(u) < TINY] = 0.0

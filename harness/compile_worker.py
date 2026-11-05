@@ -18,7 +18,13 @@ def _fail(msg):
     sys.exit(0)
 
 
-def main(timing=True):
+TASKS = {  # task -> (vocab, max_seq_len, dummy token row used for timing)
+    "go": (None, None, ["."] * 81 + ["B"]),
+    "minatar": (list(range(70)), 106, [0] * 100 + list(range(64, 70))),
+}
+
+
+def main(timing=True, task="go"):
     import numpy as np
     import tracr_policy as TP
     from tracr.rasp import rasp
@@ -31,17 +37,19 @@ def main(timing=True):
         spec.loader.exec_module(mod)
         exact = int(getattr(mod, "MLP_EXACTNESS", 100))
         sop = mod.program()
-        m = TP.compile_sop(sop, mlp_exactness=exact)
+        vocab, msl, _ = TASKS[task]
+        kw = {} if vocab is None else {"vocab": vocab, "max_seq_len": msl}
+        m = TP.compile_sop(sop, mlp_exactness=exact, **kw)
     except BaseException:
         _fail("compiling /work/program.py failed:\n" + traceback.format_exc())
     t_compile = time.time() - t0
-    meta = TP.export(m, sop, "/out/model.npz", extra={"mlp_exactness": exact})
+    meta = TP.export(m, sop, "/out/model.npz", extra={"mlp_exactness": exact, "task": task}, **kw)
     res = {"ok": True, "stats": meta["stats"], "mlp_exactness": exact, "compile_seconds": round(t_compile, 1),
            "output_label": meta["output_label"]}
     if timing:
         # best of 3: the machine is shared by concurrent runs, and contention can only make a timing slower
         tm = TP.TracrModel("/out/model.npz")
-        toks = np.array([["."] * 81 + ["B"]] * 128)
+        toks = np.array([TASKS[task][2]] * 128)
         tm.logits_from_tokens(toks[:8])
         times = []
         for _ in range(3):

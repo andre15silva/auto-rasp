@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 # fetched by scripts/fetch_networks.sh (CC BY 4.0, from the paper's logs repository)
 networks/paper/
+networks/paper_minatar/
 # large or regenerable run artifacts
 runs/*/compiled/
 runs/*/work/pass_*/games.json
