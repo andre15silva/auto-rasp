@@ -196,10 +196,6 @@ def build(stop=None):
         if e == 'eye': v += EYE
         elif e == 'feye': v += FEYE
         return round(OFF4 + v, 2)
-    t4c = cat(SM(s4, aux, linec), 't4c')
-    t4 = num(M(lambda v: v, t4c), 't4')
-    t5c = cat(SM(lambda inf, c: round(OFF5 + (INFL.get(inf, 0.0) if c == 'E' else 0.0), 2), infl, color), 't5c')
-    t5 = num(M(lambda v: v, t5c), 't5')
     if stop == 't5': return lsm(t4, t5, 'dbg5')
 
     # ---- pass: Tromp-Taylor estimate
@@ -219,6 +215,13 @@ def build(stop=None):
     def pall(k, q):
         return SEL if k < 81 else UNSEL
     selall = rasp.Select(idx, idx, pall)
+    stn = num(M(lambda v: (PH_DUM.get(v[1], 0) if isinstance(v, tuple) else (1 if v in ('X', 'O') else 0)), colT), 'stn')
+    mst = num(rasp.Aggregate(selall, stn, default=0), 'mst')
+    def phf(x):
+        for v, cl in PH_KEEP:
+            if abs(x - v) < 1e-9: return cl
+        return None
+    phase = cat(M(phf, mst), 'phase')
     mtt = num(rasp.Aggregate(selall, ttn, default=0), 'mtt')
     mneu = num(rasp.Aggregate(selall, neun, default=0), 'mneu')
     # thresholds: TT margin for mover = 162*(m - 0.5) +/- komi
@@ -239,7 +242,20 @@ def build(stop=None):
         return round(OFF6 + PASSTAB(tc, nc, sd), 2)
     t6c = cat(SM(passf, pstate, side), 't6c')
     t6 = num(M(lambda v: v, t6c), 't6')
-    if stop == 't6': return t6
+    lp = cat(SM(lambda ln, ph: (ln, ph), linec, phase), 'lp')
+    def s4p(a, lph):
+        e, rg = a
+        ln, ph = lph
+        if e == 'side': return OFF4
+        v = REG[rg] + (PRIOR[ph][ln] if ln < 9 else 0.0)
+        if e == 'eye': v += EYE
+        elif e == 'feye': v += FEYE
+        return round(OFF4 + v, 2)
+    t4c = cat(SM(s4p, aux, lp), 't4c')
+    t4 = num(M(lambda v: v, t4c), 't4')
+    cph = cat(SM(lambda c, ph: (c, ph), color, phase), 'cph')
+    t5c = cat(SM(lambda inf, cp: round(OFF5 + (INFL[cp[1]].get(inf, 0.0) if cp[0] == 'E' else 0.0), 2), infl, cph), 't5c')
+    t5 = num(M(lambda v: v, t5c), 't5')
 
     s14 = lsm(t1, t4, 's14')
     s56 = lsm(t5, t6, 's56')
@@ -278,15 +294,21 @@ def tactical(l):
 # ---------------- tables
 OFF1, OFF4, OFF5, OFF6 = 25.0, 20.0, 2.0, 10.0
 TACT = {'cap_s': 8.0, 'cap_m': 11.0, 'cap_extra': 1.5, 'capsave': 2.0,
-        'esc3': {'s': 6.5, 'm': 9.0}, 'esc2': {'s': 1.5, 'm': 3.5}, 'escf': -5.0,
+        'esc3': {'s': 6.5, 'm': 9.0}, 'esc2': {'s': 0.5, 'm': 2.5}, 'escf': -5.0,
         'sui': -10.0, 'sa_s': -6.0, 'sa_m': -9.0, 'fill2': -1.0, 'noE': -2.0,
-        'atari': 2.0, 'def2': 1.5}
+        'atari': 2.0, 'def2': 2.5}
 SHAPE = {(1, 0): -0.2, (2, 0): -0.8, (3, 0): -1.5, (0, 1): 0.2, (0, 2): 0.3, (1, 1): 0.5, (2, 1): 0.3, (1, 2): 0.6}
 REG = {'own': -1.5, 'opp': -1.0, 'both': 0.0, 'none': 0.0}
-PRIOR = [-2.0, -0.6, 0.6, 0.7, 0.8]
+PRIOR = {0: [-3.0, -1.5, 0.8, 1.6, 2.0], 1: [-1.5, -0.4, 0.5, 0.6, 0.6], 2: [-0.3, 0.0, 0.0, 0.0, 0.0]}
+_PHD = [(9, 0), (10, 1), (39, 1), (40, 2)]
+PH_KEEP = [(n / 81.0, c) for n, c in _PHD]
+PH_DUM = {k: n / 81.0 for k, (n, c) in enumerate(_PHD)}
 EYE, FEYE = -12.0, -5.0
-INFL = {(0, 0): 1.0, (1, 0): 0.5, (2, 0): -0.3, (3, 0): -1.5, (0, 1): 0.7, (0, 2): -0.2, (0, 3): -1.5,
+_INFL_MID = {(0, 0): 1.0, (1, 0): 0.5, (2, 0): -0.3, (3, 0): -1.5, (0, 1): 0.7, (0, 2): -0.2, (0, 3): -1.5,
         (1, 1): 1.0, (2, 1): 0.7, (1, 2): 0.7, (2, 2): 0.3, (3, 3): -0.3}
+_INFL_OPEN = {(0, 0): 1.0, (1, 0): -0.5, (2, 0): -1.5, (3, 0): -2.5, (0, 1): 0.6, (0, 2): -0.5, (0, 3): -2.0,
+        (1, 1): 0.5, (2, 1): 0.0, (1, 2): 0.0, (2, 2): 0.0, (3, 3): -0.3}
+INFL = {0: _INFL_OPEN, 1: _INFL_MID, 2: _INFL_MID}
 # Tromp-Taylor: m = 0.5 + d/162, d = own - opp area; classes c0..c6 by thresholds -15.5,-7.5,-0.5,0.5,7.5,15.5
 def _m(d): return 0.5 + d / 162.0
 _TTD = [(-16, 0), (-15, 1), (-8, 1), (-7, 2), (-1, 2), (0, 3), (1, 4), (7, 4), (8, 5), (15, 5), (16, 6)]
