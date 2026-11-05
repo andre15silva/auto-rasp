@@ -74,6 +74,7 @@ class TracrMinAtarPolicy:
         self.model = (FastTracrModel if fast else TracrModel)(path, max_rows=8192)
         assert self.model.meta["max_seq_len"] == TRACR_MAX_SEQ_LEN
         self.cache = {}
+        self.max_cache = 2_000_000
         self.forward_positions = 0
 
     def logits(self, o):
@@ -81,8 +82,12 @@ class TracrMinAtarPolicy:
         keys = [x.tobytes() for x in np.packbits(o.reshape(len(o), -1), axis=1)]
         miss = [i for i, k in enumerate(keys) if k not in self.cache]
         if miss:
+            if len(self.cache) > self.max_cache:
+                self.cache.clear()
             toks = tokens_from_obs6(o[miss])
-            z = self.model.residual(self.model.encode(toks))[:, 1 + 100:1 + 106, self.model.out_index]
+            # copy: a view would keep the whole (n, 107, D) residual alive for as long as the cache holds it
+            z = np.array(self.model.residual(self.model.encode(toks))[:, 1 + 100:1 + 106, self.model.out_index],
+                         dtype=np.float32, copy=True)
             self.forward_positions += len(miss)
             for i, row in zip(miss, z):
                 self.cache[keys[i]] = row
@@ -94,13 +99,15 @@ class ZeroPolicy:
         return np.zeros((len(o), N_ACTIONS), np.float32)
 
 
-def run_episodes(game, policy, n_episodes, seed, max_steps=MAX_STEPS, batch=None, progress=None):
-    """Plays n_episodes in lockstep batches; returns per-episode (score, length)."""
+def run_episodes(game, policy, n_episodes, seed, max_steps=MAX_STEPS, batch=None, progress=None, starts=None):
+    """Plays n_episodes in lockstep batches of `batch` episodes; returns per-episode (score, length).
+    Episode i is seeded with seed and i; each batch samples actions from its own stream default_rng([seed, start]),
+    so results do not depend on how batches are spread over processes (`starts` = the batches to play here)."""
     idx = channel_index(game)
     batch = batch or n_episodes
-    scores, lengths = np.zeros(n_episodes), np.zeros(n_episodes, int)
-    rng = np.random.default_rng(seed)
-    for start in range(0, n_episodes, batch):
+    scores, lengths = np.full(n_episodes, np.nan), np.zeros(n_episodes, int)
+    for start in (range(0, n_episodes, batch) if starts is None else starts):
+        rng = np.random.default_rng([seed, start])
         ids = list(range(start, min(n_episodes, start + batch)))
         envs = []
         for i in ids:
@@ -121,7 +128,7 @@ def run_episodes(game, policy, n_episodes, seed, max_steps=MAX_STEPS, batch=None
             a = (np.cumsum(p, axis=1) < rng.random((len(act), 1))).sum(axis=1).clip(0, N_ACTIONS - 1)
             for j, aj in zip(act, a):
                 r, term = envs[j].act(int(aj))
-                scores[ids[j]] += r
+                scores[ids[j]] = (0.0 if np.isnan(scores[ids[j]]) else scores[ids[j]]) + r
                 lengths[ids[j]] += 1
                 if term:
                     alive[j] = False
