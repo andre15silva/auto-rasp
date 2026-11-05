@@ -208,3 +208,9 @@
 [2026-11-05T00:00:03+0000] turn 103: resume (2,549 chars)
 [2026-11-05T00:00:28+0000] turn 103: python; runs 95, passes 7/50, tool-free True
 [2026-11-05T00:00:28+0000] turn 104: resume (1,327 chars)
+[2026-11-05T00:02:08+0000] turn 104: python; runs 96, passes 7/50, tool-free True
+[2026-11-05T00:02:08+0000] turn 105: resume (316 chars)
+[2026-11-05T00:03:05+0000] turn 105: python; runs 97, passes 7/50, tool-free True
+[2026-11-05T00:03:05+0000] turn 106: resume (324 chars)
+[2026-11-05T00:08:47+0000] container restarted; driver restarted
+[2026-11-05T00:09:01+0000] turn 106: resumed after a restart; acting on the saved answer

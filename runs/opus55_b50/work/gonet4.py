@@ -292,7 +292,7 @@ def tactical(l):
     return round(v, 2)
 
 # ---------------- tables
-OFF1, OFF4, OFF5, OFF6 = 25.0, 20.0, 2.0, 10.0
+OFF1, OFF4, OFF5, OFF6 = 25.0, 20.0, 5.0, 10.0
 TACT = {'cap_s': 8.0, 'cap_m': 11.0, 'cap_extra': 1.5, 'capsave': 2.0,
         'esc3': {'s': 6.5, 'm': 9.0}, 'esc2': {'s': 0.5, 'm': 2.5}, 'escf': -5.0,
         'sui': -10.0, 'sa_s': -6.0, 'sa_m': -9.0, 'fill2': -1.0, 'noE': -2.0,
