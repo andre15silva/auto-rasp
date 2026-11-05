@@ -1,0 +1,21 @@
+{
+ "ok": true,
+ "stats": {
+  "layers": 25,
+  "heads": 8,
+  "key_size": 84,
+  "mlp_hidden_size": 2034,
+  "residual_dims": 1225,
+  "dense_params": 207175250,
+  "nonzero_params": 48453
+ },
+ "mlp_exactness": 500000,
+ "compile_seconds": 37.8,
+ "output_label": "logits_1",
+ "rasp_sops": 117,
+ "rasp_sops_failed": 77,
+ "rasp_output_failed": true,
+ "rasp_first_error": "ValueError: Only types int, bool, and float are supported for aggregation. Received sequence: ['X', 'E', 'E', 'X', 'E', 'E']",
+ "rasp_seconds": 8.5,
+ "seconds_total": 49.2
+}

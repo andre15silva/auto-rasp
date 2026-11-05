@@ -11,7 +11,102 @@ is compiled by [**Tracr**](https://github.com/google-deepmind/tracr) into transf
 material allows: the same game, the same budgets of 0/10/25/50 "passes", the same one-block-per-turn harness and
 the same kind of hidden evaluation.
 
-RESULTS_PLACEHOLDER
+## Results
+
+**The compiled transformers play Go, and well.** At every budget, Opus 5.5's RASP program compiled with stock
+Tracr into a network that beats the paper's same-size PPO networks. These are 512×6 MLPs trained on 20.5 M
+self-play games, and the writer never played them. At 0, 10 and 25 passes the compiled networks score 21–31
+points above Astra's directly written weights on the main measure, under the identical protocol. They also win
+the same-budget head-to-heads: narrowly at 0 and 10 passes, decisively at 25. At 50 passes the order reverses.
+
+| passes | Opus 5.5 → RASP → Tracr: main | Astra → MLP weights: main | Opus vs Astra at the same budget (head-to-head) |
+|---|---|---|---|
+| 0 | **61.7 %** | 39.0 % | 54.5 % |
+| 10 | **71.5 %** | 51.2 % | 54.5 % |
+| 25 | **79.4 %** | 48.6 % | 81.1 % |
+| 50 | 54.6 % | **78.5 %** | 15.7 % |
+
+"main" is the paper's main measure: the win rate against the hidden RL opponents, averaged over the two PPO
+networks (2,000 games each, s.e. ≈ 1.1 points). Head-to-heads are 1,000 games (s.e. ≈ 1.6).
+
+- **No passes at all (budget 0).** Without ever running its network, Opus wrote a 17-layer program that wins 60.0 %
+  and 63.5 % against the two PPO networks. Astra's zero-pass network scores 40.6 % and 37.5 %.
+- **Best network (budget 25).** It wins 80.2 % and 78.5 % against the PPO networks, level with Astra's best
+  (50-pass) network on the main measure. It beats every Astra network head-to-head, including the 50-pass one
+  66.9 % of the time.
+- **Budget 50 fell behind.** Its practice score against "strong" plateaued at about 40 % from its third games pass
+  to its last (46 games passes). It used 118 of its 120 Python runs. It also designed around the speed limit (see
+  the notes below), keeping only 9 board-dependent attention heads. Its network beats the PPO networks
+  (55.4 % and 53.8 %) but loses to every Astra network head-to-head (15.7–38.9 %).
+- **Head-to-heads are not transitive.** Budget 50 is above Astra's 0-pass network against PPO (54.6 vs 39.0 %) but
+  loses to it head-to-head (38.9 %). Budget 0 is above Astra's 25-pass network against PPO (61.7 vs 48.6 %) but
+  loses to it head-to-head (43.6 %).
+- **Random.** Every network beats a uniform random player 99.7–100 % of the time.
+- **One run per budget.** Run-to-run variance is unknown. The drop from budget 25 to budget 50 should not be read
+  as an effect of the budget. Astra's own scores under this protocol are not monotonic either (10 passes: 51.2 %,
+  25 passes: 48.6 %).
+- **Ko and repetition.** Budget 0's network, which never saw a game, loses more games to the repeated-position rule
+  (end by repetition in 159 and 108 of 2,000 games against the two PPO networks, against 16–33 for budgets 10 and
+  25). The writers with passes learned to push ko recaptures below pass.
+
+### Full evaluation
+
+| writer | passes | vs PPO s0 | vs PPO s2 | **main** | vs random | vs Astra b0 | vs Astra b10 | vs Astra b25 | vs Astra b50 | compiled network |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Opus 5.5 → RASP → Tracr | 0 | 60.0 | 63.5 | **61.7** | 99.7 | 54.5 | 49.6 | 43.6 | 35.9 | 17 layers, 2,226 dims, 148,742 nonzero of 69.5 M |
+| Opus 5.5 → RASP → Tracr | 10 | 71.3 | 71.7 | **71.5** | 100.0 | 65.8 | 54.5 | 58.3 | 40.5 | 28 layers, 1,398 dims, 24,330 nonzero of 55.4 M |
+| Opus 5.5 → RASP → Tracr | 25 | 80.2 | 78.5 | **79.4** | 100.0 | 94.9 | 80.4 | 81.1 | 66.9 | 27 layers, 829 dims, 174,536 nonzero of 51.3 M |
+| Opus 5.5 → RASP → Tracr | 50 | 55.4 | 53.8 | **54.6** | 99.8 | 38.9 | 32.9 | 32.1 | 15.7 | 25 layers, 1,225 dims, 48,453 nonzero of 207.2 M |
+| Astra (paper) → MLP weights | 0 | 40.6 | 37.5 | **39.0** | 99.8 | — | 45.6 | 51.7 | 14.6 | 243→512×6→82 (1.48 M) |
+| Astra (paper) → MLP weights | 10 | 45.8 | 56.6 | **51.2** | 99.4 | 53.8 | — | 41.4 | 22.4 | same |
+| Astra (paper) → MLP weights | 25 | 45.1 | 52.0 | **48.6** | 99.1 | 49.2 | 57.9 | — | 37.7 | same |
+| Astra (paper) → MLP weights | 50 | 75.4 | 81.6 | **78.5** | 100.0 | 85.2 | 78.5 | 61.0 | — | same |
+
+Win rates are in % for the row's network. It is Black in half of the games, and both sides sample at temperature 1.
+There are 2,000 games per cell against PPO and random. Head-to-heads with Astra's networks are 2,000 games in the
+Astra rows and 1,000 in the Opus rows. Sources: `results/<name>/eval.json` and `results/summary.md`.
+
+The Astra rows are not the post's numbers. The post evaluated against smaller PPO networks that are not released;
+see Protocol. Under our engine Astra's networks reproduce the paper's published head-to-heads (validation table
+below).
+
+### Practice games against "strong" (PPO seed 1), in pass order
+
+| run | win rate vs "strong" per games pass (%) |
+|---|---|
+| budget 10 | 61 · 68 · 65 · 68 · 75 · 62 · 66 |
+| budget 25 | 30 · 41 · 41 · 44 · 40 · 33 · 40 · **78** · 69 · 76 · 82 · 77 · 80 · 75 · 78 · 74 · 77 · 80 · 77 · 70 · 74 |
+| budget 50 | 2 · 30 · 39 · 41 · 42 · 36 · 40 · 37 · 36 · 45 · 42 · 44 · 37 · 46 · 36 · 41 · 44 · 40 · 41 · 48 · … (46 passes, mean of the last 30: 42) |
+
+Budget 25's jump at its 8th games pass came from one change, which its final answer describes: a +4 "contact"
+bonus for safe moves that touch an opponent stone. In its words, "the RL opponents often fall apart in close fights
+and lose whole groups".
+
+### Writer runs
+
+| run | turns | Python runs | games / positions passes | rejected pass requests | wall time | model time | cost (Claude Code's estimate) | output tokens | all turns tool-free |
+|---|---|---|---|---|---|---|---|---|---|
+| budget 0 | 61 | 61 | – | 0 | 3.6 h | 1.5 h | $809 | 0.59 M | yes |
+| budget 10 | 116 | 106 | 7 / 3 | 0 | 6.3 h | 1.6 h | $1,872 | 0.55 M | yes |
+| budget 25 | 128 | 101 | 21 / 4 | 2 | 4.5 h | 1.3 h | $1,671 | 0.43 M | yes |
+| budget 50 | 170 | 118 | 46 / 4 | 2 | 8.4 h | 1.4 h | $2,717 | 0.45 M | yes |
+
+The cost is Claude Code's list-price estimate (`total_cost_usd`), summed over turns: about $7,070 in total. Most
+of it comes from re-reading the cached conversation on every turn (25–74 M cache-read tokens per run). Wall time
+beyond model time went to sandbox runs, Tracr compiles (up to several minutes each) and passes, on a machine
+shared by the four runs. Full numbers: `results/run_stats.json`.
+
+### Did the compiled model do what the program says?
+
+The evaluation was meant to check that the compiled network computes what the RASP program means, by comparing it
+with `rasp.evaluate` of the same program. That check turned out to be mostly undefined: all four programs rely on
+Tracr implementation details that RASP's reference evaluator does not share (see *What the writers found out
+about Tracr* below). On positions from each
+network's own games, `rasp.evaluate` fails on 46 of 61 SOps (budget 0), 131 of 163 (budget 10), 80 of 95
+(budget 25) and 77 of 117 (budget 50), each time including the output. The programs were written for, and
+iterated against, the compiled network, which is the only thing their move scores are defined for. The compiled
+networks themselves were run with a NumPy forward pass that matches Tracr's own (`fast_runtime_check` = 0.0 on
+256 positions for every network; the reference runtime matches Tracr's `apply` to about 1e-5).
 
 ## Protocol
 
@@ -27,7 +122,7 @@ RESULTS_PLACEHOLDER
 | "Do not run the network" (rule c) | stated in the prompt, audited | stated in the prompt; in the sandbox, `rasp.evaluate`, `RASPExpr.__call__` and the compiled model's `apply`/`forward` raise errors. Compiling and inspecting the compiled weights are allowed |
 | Games pass | ≤ 128 games vs practice opponents "random", "weak" (REINFORCE), "strong" (PPO seed 1) | ≤ 128 games vs "random", "weak" (each move: "strong"'s with p = 0.7, else uniform random; beats random 94 %), "strong" (the paper's same-size PPO, seed 1; beats random 98.7 %) |
 | Positions pass | ≤ 256 positions → top moves, logits, probabilities, hidden activations | ≤ 256 positions → top moves, logits, probabilities, the value of every SOp as read from the compiled network's residual stream, and optionally `rasp.evaluate`'s value of every SOp |
-| Hidden evaluation | 2,000 games vs small PPO networks seeds 0 and 2 (243→32→32→82; main = their mean), REINFORCE networks and random | 2,000 games vs the paper's **same-size** PPO networks seeds 0 and 2 (main = their mean) and random, plus head-to-heads vs **Astra's four written networks** |
+| Hidden evaluation | 2,000 games vs small PPO networks seeds 0 and 2 (243→32→32→82; main = their mean), REINFORCE networks and random | 2,000 games vs the paper's **same-size** PPO networks seeds 0 and 2 (main = their mean) and random, plus 1,000-game head-to-heads vs **Astra's four written networks** (2,000 among Astra's own) |
 
 **Why different opponents.** The paper's hidden small-PPO and REINFORCE networks are not released. Its same-size PPO
 networks (512×6, three seeds, 20.5 M self-play games each) and Astra's written networks are. So, as in the paper,
@@ -49,11 +144,13 @@ four head-to-heads that the paper published, 2,000 games each (`results/validate
 All four differences are within sampling noise (the s.e. of a difference of two 2,000-game runs is about 1.4
 points), as are the game lengths (92.3 vs 92.6 moves for the first row).
 
-**Validation of the Tracr runtime.** Every pass and the evaluation run the compiled weights with
+**Validation of the Tracr runtime.** Every pass runs the compiled weights with
 [`gorasp/tracr_policy.py`](gorasp/tracr_policy.py). This is a sparse NumPy implementation of Tracr's own Haiku
 forward pass: no layer norm, attention logits divided by √key_size, ReLU MLPs, and input-independent attention
 patterns cached. It matches `AssembledTransformerModel.apply` to about 1e-5
-([`tests/test_tracr_policy.py`](tests/test_tracr_policy.py)) and is roughly 10× faster.
+([`tests/test_tracr_policy.py`](tests/test_tracr_policy.py)). The hidden evaluation uses a faster variant,
+[`gorasp/tracr_fast.py`](gorasp/tracr_fast.py), whose logits were identical to the reference on every evaluated
+network (see Notes on the runs).
 
 ### Two properties of stock Tracr that matter here
 
@@ -81,8 +178,12 @@ python eval/validate_engine.py       # optional: reproduce the paper's head-to-h
 python -m harness.run_writer --budget 50 --run-id opus55_b50     # a writer run (resumable)
 python eval/evaluate.py --run runs/opus55_b50                    # hidden evaluation of its final program
 python eval/evaluate.py --mlp networks/paper/budget_50 --name astra_b50
+python eval/run_stats.py                                         # results/run_stats.json
 python eval/summarize.py                                         # results/summary.md
 ```
+
+The evaluations reported here ran with `OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1`, `nice -n 19`, `--workers 2`
+and `--ref-games 1000`.
 
 `python -m harness.prompt 50` prints the exact task prompt (`runs/<id>/message.txt` holds the one each run got).
 
@@ -92,14 +193,17 @@ python eval/summarize.py                                         # results/summa
 |---|---|
 | `gorasp/go.py` | batched pgx Go, the 243-plane encoding (for the paper's networks) and the token encoding (for Tracr) |
 | `gorasp/policies.py`, `play.py`, `opponents.py` | policies, sampled batched play with the paper's summary fields, the opponent sets |
-| `gorasp/tracr_policy.py` | compile, export the weights as sparse matrices, fast forward pass, residual-stream decoding |
+| `gorasp/tracr_policy.py` | compile, export the weights as sparse matrices, the reference forward pass (used by the passes), residual-stream decoding |
+| `gorasp/tracr_fast.py` | the evaluation's forward pass: identical logits, with subnormals flushed to zero and a contiguous q·kᵀ matmul |
 | `harness/prompt.py` | the task prompt (the paper's, with the network, sandbox and rules rewritten for RASP/Tracr) |
 | `harness/run_writer.py` | the turn loop around `claude -p` / `claude -p --resume`, with per-turn audit |
 | `harness/sandbox.py`, `prelude.py`, `compile_worker.py` | the bubblewrap sandbox, the writer's predefined names, and the compile done for passes and the evaluation |
 | `harness/passes.py` | the games and positions passes |
-| `eval/` | engine validation, hidden evaluation, summary |
+| `eval/` | engine validation (`validate_engine.py`), hidden evaluation (`evaluate.py`), run statistics (`run_stats.py`), summary (`summarize.py`) |
+| `scripts/` | environment setup, fetching the paper's networks, the run watcher and the safe driver restart used during the runs |
+| `tests/` | the Tracr runtime test, an end-to-end harness test with scripted replies, and the harness-test RASP program (never shown to the writers) |
 | `runs/<id>/` | one writer run: `message.txt` (task prompt), `turns/tNNN/` (`prompt.txt` sent, `answer.md` received, `events.jsonl` the raw Claude Code stream, `run.json` with usage and the tool-free audit), `tool_calls.jsonl` (every sandbox run's code and output and every pass), `work/` (the writer's files, pass summaries), `final/` (the final program's sources and compile record), `loop.log`, `state.json` |
-| `results/` | evaluation results and `summary.md` |
+| `results/` | `<name>/eval.json` per network, `summary.md`, `run_stats.json`, `validate_engine.json` and the evaluation logs |
 
 Per-game records, boards, compiled weights and residual dumps are not committed (see `.gitignore`); they are
 regenerated by the commands above.
