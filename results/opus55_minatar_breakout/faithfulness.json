@@ -1,0 +1,17 @@
+{
+ "positions": 256,
+ "rasp_sops": 23,
+ "rasp_sops_failed": 0,
+ "rasp_output_failed": false,
+ "rasp_first_error": null,
+ "rasp_seconds": 2.7,
+ "positions_rasp_defined": 256,
+ "logit_entries_rasp_defined": 1.0,
+ "entrywise_max_abs_logit_diff": 0.00016021728515625,
+ "entrywise_mean_abs_logit_diff": 7.145106792449951e-05,
+ "max_abs_logit_diff": 0.00016021728515625,
+ "mean_abs_logit_diff": 7.145106792449951e-05,
+ "mean_total_variation": 1.8639667008866482e-17,
+ "argmax_agreement": 1.0,
+ "positions_policy_differs_by_tv_over_0.1": 0
+}

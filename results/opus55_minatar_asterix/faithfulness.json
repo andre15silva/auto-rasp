@@ -1,0 +1,12 @@
+{
+ "positions": 256,
+ "rasp_sops": 70,
+ "rasp_sops_failed": 0,
+ "rasp_output_failed": false,
+ "rasp_first_error": null,
+ "rasp_seconds": 7.6,
+ "positions_rasp_defined": 0,
+ "logit_entries_rasp_defined": 0.008463541666666666,
+ "entrywise_max_abs_logit_diff": 0.0083465576171875,
+ "entrywise_mean_abs_logit_diff": 0.007289593036358173
+}

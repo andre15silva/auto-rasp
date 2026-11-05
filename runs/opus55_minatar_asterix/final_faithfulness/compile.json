@@ -1,0 +1,21 @@
+{
+ "ok": true,
+ "stats": {
+  "layers": 11,
+  "heads": 7,
+  "key_size": 29,
+  "mlp_hidden_size": 507,
+  "residual_dims": 449,
+  "dense_params": 9121139,
+  "nonzero_params": 6080
+ },
+ "mlp_exactness": 100,
+ "compile_seconds": 11.7,
+ "output_label": "logits_1",
+ "rasp_sops": 70,
+ "rasp_sops_failed": 0,
+ "rasp_output_failed": false,
+ "rasp_first_error": null,
+ "rasp_seconds": 7.6,
+ "seconds_total": 21.2
+}
