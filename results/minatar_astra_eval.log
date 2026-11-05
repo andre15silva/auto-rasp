@@ -1,1 +1,11 @@
   [astra_minatar_breakout] episodes 0+: step 1000, 917 still playing, 43s
+  [astra_minatar_breakout] episodes 0+: step 2000, 854 still playing, 77s
+  [astra_minatar_breakout] episodes 0+: step 3000, 798 still playing, 112s
+  [astra_minatar_breakout] episodes 0+: step 4000, 746 still playing, 141s
+  [astra_minatar_breakout] episodes 0+: step 5000, 707 still playing, 168s
+  [astra_minatar_breakout] episodes 0+: step 6000, 639 still playing, 193s
+  [astra_minatar_breakout] episodes 0+: step 7000, 599 still playing, 218s
+  [astra_minatar_breakout] episodes 0+: step 8000, 563 still playing, 240s
+  [astra_minatar_breakout] episodes 0+: step 9000, 535 still playing, 261s
+  [astra_minatar_breakout] episodes 0+: step 10000, 493 still playing, 279s
+astra_minatar_breakout (breakout): mean 498.64 ± 7.79 over 1000 episodes, mean length 7109, 279s
