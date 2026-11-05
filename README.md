@@ -234,6 +234,21 @@ random action repeats the prompt describes. The replies show how much each desig
 With one reply and no feedback, nothing exposed the problem before scoring. One reply per game makes each result a
 sample of one.
 
+**The two kinds of network** ([`docs/exp5_page/arch_compare.py`](docs/exp5_page/arch_compare.py)). Astra's written
+networks are all the same fixed 600→32→32→6 tanh MLP (20,486 parameters), run once per move, with 3–4% of the
+weights set. Breakout's uses only 208 of the 600 inputs and 6 and 8 of the 32 hidden units. Opus's compiled networks
+are transformers over 107 positions (BOS, 100 cells, 6 action tokens) whose residual stream is mostly one-hot
+bookkeeping (106 dimensions for the position alone), so they are both much larger and much emptier:
+
+| game | parameters, Astra → Opus | nonzero | multiply-adds per move (nonzero weights) | multiply-adds as assembled |
+|---|---|---|---|---|
+| Breakout | 20,486 → 2.33M (×114) | 815 → 5,195 (×6.4) | 801 → 1.27M (×1,590) | 20,416 → 251M |
+| Seaquest | 20,486 → 57.3M (×2,798) | 803 → 22,758 (×28) | 740 → 5.50M (×7,436) | 20,416 → 6.18B |
+| Asterix | 20,486 → 9.12M (×445) | 637 → 6,080 (×9.5) | 567 → 4.13M (×7,279) | 20,416 → 1.02B |
+
+Opus's networks are 0.04–0.22% nonzero. 58–85% of their nonzero work is attention over 107×107 position pairs, which
+an MLP never pays. The published page draws Breakout's two networks to one scale.
+
 **Runs.**
 
 | game | reply time | output tokens | cost (Claude Code's estimate) | program | compiled network | speed |

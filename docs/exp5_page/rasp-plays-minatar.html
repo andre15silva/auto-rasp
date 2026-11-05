@@ -8,7 +8,7 @@
 :root {
   --bg: #f3f5f8; --surface: #fbfcfd; --surface-2: #e8ecf1; --ink: #0f141b; --ink-2: #455062; --muted: #6f7888;
   --rule: #d8dde5; --rule-2: #c3cad5;
-  --opus: #2a78d6; --opus-soft: #b7d3f6; --astra: #eb6834; --ppo: #aab1bb;
+  --opus: #2a78d6; --opus-soft: #b7d3f6; --astra: #eb6834; --ppo: #aab1bb; --opus-wash: #dfeafa; --astra-wash: #fbe3d8;
   --s-sticky: #6250d6; --s-policy: #1baf7a; --s-none: #aab1bb;
   --ch-player: #008300; --ch-danger: #e34948; --ch-reward: #eda100; --ch-projectile: #6250d6; --ch-gauge: #9aa2ad;
   --code-bg: #edf0f4; --tk-key: #5b45c9; --tk-str: #17734b; --tk-num: #a84a0c; --tk-com: #6f7888; --tk-fn: #1c5cab; --tk-bi: #9b2f70;
@@ -21,7 +21,7 @@
   :root:not([data-theme="light"]) {
     --bg: #0e1116; --surface: #151a21; --surface-2: #1e252e; --ink: #e8edf3; --ink-2: #b1bac6; --muted: #858e9b;
     --rule: #252c35; --rule-2: #343c47;
-    --opus: #3987e5; --opus-soft: #1c3f6e; --astra: #d95926; --ppo: #58606b;
+    --opus: #3987e5; --opus-soft: #1c3f6e; --astra: #d95926; --ppo: #58606b; --opus-wash: #17283e; --astra-wash: #3d2218;
     --s-sticky: #9085e9; --s-policy: #199e70; --s-none: #58606b;
     --ch-player: #008300; --ch-danger: #e34948; --ch-reward: #c98500; --ch-projectile: #9085e9; --ch-gauge: #5f6772;
     --code-bg: #11161c; --tk-key: #ab9ff2; --tk-str: #5cc49a; --tk-num: #f0a064; --tk-com: #7f8896; --tk-fn: #6da7ec; --tk-bi: #e58ab0;
@@ -32,7 +32,7 @@
 :root[data-theme="dark"] {
   --bg: #0e1116; --surface: #151a21; --surface-2: #1e252e; --ink: #e8edf3; --ink-2: #b1bac6; --muted: #858e9b;
   --rule: #252c35; --rule-2: #343c47;
-  --opus: #3987e5; --opus-soft: #1c3f6e; --astra: #d95926; --ppo: #58606b;
+  --opus: #3987e5; --opus-soft: #1c3f6e; --astra: #d95926; --ppo: #58606b; --opus-wash: #17283e; --astra-wash: #3d2218;
   --s-sticky: #9085e9; --s-policy: #199e70; --s-none: #58606b;
   --ch-player: #008300; --ch-danger: #e34948; --ch-reward: #c98500; --ch-projectile: #9085e9; --ch-gauge: #5f6772;
   --code-bg: #11161c; --tk-key: #ab9ff2; --tk-str: #5cc49a; --tk-num: #f0a064; --tk-com: #7f8896; --tk-fn: #6da7ec; --tk-bi: #e58ab0;
@@ -49,8 +49,8 @@ body {
 }
 .paper { max-width: 1080px; margin: 0 auto; background: var(--surface); border-inline: 1px solid var(--rule);
   padding-block: 56px 40px; padding-inline: clamp(16px, 5vw, 64px); }
-.col { max-width: 700px; margin: 0 auto; }
-.wide { max-width: 940px; margin: 0 auto; }
+.col { max-width: 700px; margin-inline: auto; }
+.wide { max-width: 940px; margin-inline: auto; }
 h1, h2, h3, h4 { font-family: var(--font-display); text-wrap: balance; color: var(--ink); line-height: 1.12; }
 h1 { font-size: clamp(2.4rem, 6vw, 3.9rem); font-weight: 700; letter-spacing: -0.02em; margin: 10px 0 18px; }
 h2 { font-size: 1.85rem; font-weight: 700; margin: 64px 0 14px; letter-spacing: -0.01em; }
@@ -168,6 +168,42 @@ details.code code { font-family: inherit; font-size: inherit; }
 .arch-facts dd { margin: 0; font-variant-numeric: tabular-nums; }
 .arch-facts .vs { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--rule); font-family: var(--font-display); font-size: 0.85rem; color: var(--ink-2); }
 
+
+/* architecture comparison */
+.scroll { overflow-x: auto; }
+.schem { width: 100%; min-width: 700px; height: auto; display: block; }
+.schem text { font-family: var(--font-display); }
+.sv-title { fill: var(--ink); font-size: 15px; font-weight: 700; }
+.sv-label { fill: var(--ink-2); font-size: 12px; }
+.sv-small { fill: var(--muted); font-size: 11px; }
+.sv-astra { fill: var(--astra); }
+.sv-opus { fill: var(--opus); }
+.sv-fan-a { fill: var(--astra-wash); }
+.sv-band { fill: var(--opus-wash); }
+.sv-ghost { fill: var(--surface); stroke: var(--rule-2); stroke-width: 1; }
+.sv-ruler { fill: var(--ink-2); }
+.lg-panel { margin-bottom: 22px; }
+.lg-title { font-family: var(--font-display); font-weight: 700; font-size: 0.92rem; margin-bottom: 8px; }
+.lg-title span { font-weight: 400; color: var(--muted); font-size: 0.82rem; margin-left: 6px; }
+.lg-rows { position: relative; display: grid; gap: 14px; padding-top: 14px; }
+.lg-row, .lg-axis { display: grid; grid-template-columns: 90px minmax(0, 1fr) 70px; gap: 12px; align-items: center; }
+.lg-row { position: relative; z-index: 1; }
+.lg-label { font-family: var(--font-display); font-size: 0.85rem; color: var(--ink-2); }
+.lg-track { position: relative; height: 12px; }
+.lg-line { position: absolute; top: 5px; height: 2px; background: var(--rule-2); }
+.lg-dot { position: absolute; top: 0; width: 12px; height: 12px; border-radius: 50%; transform: translateX(-6px); box-shadow: 0 0 0 2px var(--surface); }
+.lg-dot.astra { background: var(--astra); }
+.lg-dot.opus { background: var(--opus); }
+.lg-v { position: absolute; top: -16px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-2); white-space: nowrap; }
+.lg-v.a { transform: translateX(calc(-100% - 2px)); }
+.lg-v.o { transform: translateX(2px); }
+.lg-v.o.end { transform: translateX(calc(-100% - 8px)); }
+.lg-ratio { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink); text-align: right; }
+.lg-grid { position: absolute; top: 0; bottom: 0; left: 102px; right: 82px; pointer-events: none; }
+.lg-grid i { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--rule); }
+.lg-ticks { position: relative; height: 16px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); }
+.lg-ticks span { position: absolute; transform: translateX(-50%); }
+
 /* death causes */
 .sb-row { display: grid; grid-template-columns: 190px minmax(0, 1fr) 84px; gap: 12px; align-items: center; margin-bottom: 8px; }
 .sb-label { font-family: var(--font-display); font-size: 0.85rem; color: var(--ink-2); }
@@ -226,6 +262,8 @@ footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--rule);
   .db-grid { left: 0; }
   .db-label { margin-bottom: 14px; }
   .minis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lg-row, .lg-axis { grid-template-columns: 70px minmax(0, 1fr) 52px; gap: 8px; }
+  .lg-grid { left: 78px; right: 60px; }
 }
 </style>
 
@@ -965,6 +1003,79 @@ def program():
 <div class="lm-mlp"><div class="lm-bar" style="width:19.3%" data-tip="layer 11: MLP with 4 hidden units in use"></div><span>4</span></div></div></div>
 <div class="arch-facts"><dl><dt>Layers</dt><dd>11</dd><dt>Attention heads, total</dt><dd>12 (at most 7 in a layer)</dd><dt>Key size</dt><dd>29</dd><dt>Widest MLP</dt><dd>507 hidden units</dd><dt>Residual stream</dt><dd>449 dimensions</dd><dt>SOps</dt><dd>33 categorical, 36 numerical</dd><dt>Parameters</dt><dd>9,121,139 dense, 6,080 nonzero</dd><dt>MLP_EXACTNESS</dt><dd>100</dd><dt>Compile time</dt><dd>13 s</dd><dt>Speed</dt><dd>6.4 s per 1,000 positions</dd></dl><p class="vs">Astra's network for the same game: 600 → 32 → 32 → 6 tanh, 20,486 parameters, 637 nonzero.</p></div></div>
 </section></div>
+
+<section class="col">
+  <h2>Two very different networks</h2>
+  <p>Astra writes into one fixed shape for all three games: 600 inputs, two hidden layers of 32 tanh units and 6 outputs. That is 20,486 weights in three matrices, applied once per move. It sets about 800 of those weights. Its Breakout network uses only 6 and 8 of the hidden units and reads 208 of the 600 inputs.</p>
+  <p>Tracr builds a new shape for each program. Every program becomes a transformer of 7 to 11 layers, each an attention block followed by an MLP, and every layer runs at all 107 token positions. At each position a residual stream of 358 to 599 numbers carries the program's values. Most of them are one-hot codes: 106 dimensions say which position it is, 72 say which token, and each categorical value the program computes gets one dimension per possible value. The compiler stores a dense matrix for every block, so the networks have 2.3 to 57 million parameters, of which only 0.04% to 0.22% are nonzero. Astra's networks are 3% to 4% nonzero.</p>
+</section>
+
+<figure class="wide">
+  <div class="fig-title">Breakout's two networks, drawn to one scale</div>
+  <div class="fig-sub">Heights are layer widths in units, 0.2 px per unit for both networks.</div>
+  <div class="scroll"><svg class="schem" viewBox="0 0 920 470" role="img" aria-label="Breakout: Astra's 600-32-32-6 MLP and the 7-layer Tracr transformer, drawn with one unit scale"><rect x="880" y="20" width="8" height="20.0" class="sv-ruler"/><text x="874" y="34.0" class="sv-small" text-anchor="end">100 units</text><text x="0" y="22" class="sv-title">Astra · MLP weights</text><text x="0" y="40" class="sv-small">20,486 parameters, 815 set · one pass per move</text><polygon points="87,52.0 353,108.8 353,115.2 87,172.0" class="sv-fan-a" data-tip="W1 · 600 × 32 · 769 set"/><text x="180.0" y="116" class="sv-small" text-anchor="middle">W1 · 600 × 32 · 769 set</text><polygon points="367,108.8 553,108.8 553,115.2 367,115.2" class="sv-fan-a" data-tip="W2 · 32 × 32 · 24 set"/><text x="460.0" y="96" class="sv-small" text-anchor="middle">W2 · 32 × 32 · 24 set</text><polygon points="567,108.8 733,111.0 733,113.0 567,115.2" class="sv-fan-a" data-tip="W3 · 32 × 6 · 8 set"/><text x="650.0" y="96" class="sv-small" text-anchor="middle">W3 · 32 × 6 · 8 set</text><rect x="73" y="52.0" width="14" height="120.0" rx="2" class="sv-astra" data-tip="600 inputs, 208 read"/><text x="80" y="190.0" class="sv-label" text-anchor="middle">600 inputs</text><text x="80" y="206.0" class="sv-small" text-anchor="middle">208 read</text><rect x="353" y="108.8" width="14" height="6.4" rx="2" class="sv-astra" data-tip="32 tanh, 6 used"/><text x="360" y="134.0" class="sv-label" text-anchor="middle">32 tanh</text><text x="360" y="150.0" class="sv-small" text-anchor="middle">6 used</text><rect x="553" y="108.8" width="14" height="6.4" rx="2" class="sv-astra" data-tip="32 tanh, 8 used"/><text x="560" y="134.0" class="sv-label" text-anchor="middle">32 tanh</text><text x="560" y="150.0" class="sv-small" text-anchor="middle">8 used</text><rect x="733" y="111.0" width="14" height="2" rx="2" class="sv-astra" data-tip="6 logits"/><text x="740" y="134.0" class="sv-label" text-anchor="middle">6 logits</text><text x="0" y="246" class="sv-title">Opus 5.5 · RASP program compiled by Tracr</text><text x="0" y="264" class="sv-small">2,328,064 parameters, 5,195 nonzero · every block runs at all 107 positions</text><rect x="94" y="302.2" width="720" height="71.60000000000001" rx="3" class="sv-ghost"/><rect x="87" y="309.2" width="720" height="71.60000000000001" rx="3" class="sv-ghost"/><rect x="80" y="316.2" width="720" height="71.60000000000001" rx="3" class="sv-band" data-tip="residual stream: 358 numbers per position (106 encode the position, 72 the token, the rest the program&#x27;s own values)"/><text x="818" y="312.2" class="sv-small">× 107 positions</text><rect x="134.0" y="349.1" width="12" height="5.800000000000001" rx="2" class="sv-opus" data-tip="layer 1: MLP with 29 hidden units"/><text x="140.0" y="405.8" class="sv-label" text-anchor="middle">L1</text><text x="140.0" y="421.8" class="sv-small" text-anchor="middle">29</text><rect x="234.0" y="319.0" width="12" height="66.0" rx="2" class="sv-opus" data-tip="layer 2: MLP with 330 hidden units, after 5 attention heads"/><rect x="214.0" y="294.2" width="8" height="8" rx="1.5" class="sv-opus" data-tip="layer 2: attention head 1 of 5, mixing information across the 107 positions"/><rect x="225.0" y="294.2" width="8" height="8" rx="1.5" class="sv-opus" data-tip="layer 2: attention head 2 of 5, mixing information across the 107 positions"/><rect x="236.0" y="294.2" width="8" height="8" rx="1.5" class="sv-opus" data-tip="layer 2: attention head 3 of 5, mixing information across the 107 positions"/><rect x="247.0" y="294.2" width="8" height="8" rx="1.5" class="sv-opus" data-tip="layer 2: attention head 4 of 5, mixing information across the 107 positions"/><rect x="258.0" y="294.2" width="8" height="8" rx="1.5" class="sv-opus" data-tip="layer 2: attention head 5 of 5, mixing information across the 107 positions"/><text x="240.0" y="405.8" class="sv-label" text-anchor="middle">L2</text><text x="240.0" y="421.8" class="sv-small" text-anchor="middle">330</text><rect x="334.0" y="348.2" width="12" height="7.6000000000000005" rx="2" class="sv-opus" data-tip="layer 3: MLP with 38 hidden units"/><text x="340.0" y="405.8" class="sv-label" text-anchor="middle">L3</text><text x="340.0" y="421.8" class="sv-small" text-anchor="middle">38</text><rect x="434.0" y="338.4" width="12" height="27.200000000000003" rx="2" class="sv-opus" data-tip="layer 4: MLP with 136 hidden units"/><text x="440.0" y="405.8" class="sv-label" text-anchor="middle">L4</text><text x="440.0" y="421.8" class="sv-small" text-anchor="middle">136</text><rect x="534.0" y="330.0" width="12" height="44.0" rx="2" class="sv-opus" data-tip="layer 5: MLP with 220 hidden units"/><text x="540.0" y="405.8" class="sv-label" text-anchor="middle">L5</text><text x="540.0" y="421.8" class="sv-small" text-anchor="middle">220</text><rect x="634.0" y="319.0" width="12" height="66.0" rx="2" class="sv-opus" data-tip="layer 6: MLP with 330 hidden units"/><text x="640.0" y="405.8" class="sv-label" text-anchor="middle">L6</text><text x="640.0" y="421.8" class="sv-small" text-anchor="middle">330</text><rect x="734.0" y="351.0" width="12" height="2" rx="2" class="sv-opus" data-tip="layer 7: MLP with 1 hidden units"/><text x="740.0" y="405.8" class="sv-label" text-anchor="middle">L7</text><text x="740.0" y="421.8" class="sv-small" text-anchor="middle">1</text><text x="70" y="356" class="sv-small" text-anchor="end">358</text><text x="440.0" y="443.8" class="sv-small" text-anchor="middle">squares: attention heads · bars: MLP hidden units per layer (numbers below) · band: the residual stream each block reads and writes</text></svg></div>
+  <figcaption>Astra's bars are its layer widths and the shaded fans are its three weight matrices. The transformer's band is its residual stream at one position; the shadow copies stand for the other 106 positions, which run the same blocks. Squares are attention heads, the only place where positions exchange information. Hover any part for its size.</figcaption>
+</figure>
+
+<figure class="wide">
+  <div class="fig-title">Size and work, per network</div>
+  <div class="fig-sub">One log scale for all four panels. Right: how many times larger the transformer is.</div>
+  <div class="legend"><span><i style="background:var(--astra)"></i>Astra, MLP weights</span><span><i style="background:var(--opus)"></i>Opus 5.5, Tracr transformer</span></div>
+  <div class="lg-panel"><div class="lg-title">Parameters <span>every number in the weight matrices</span></div><div class="lg-rows"><div class="lg-row"><div class="lg-label">Breakout</div><div class="lg-track">
+<div class="lg-line" style="left:28.89%;width:25.69%"></div>
+<div class="lg-dot astra" style="left:28.89%" tabindex="0" data-tip="Breakout, Astra · MLP&lt;br&gt;Parameters: &lt;b&gt;20,486&lt;/b&gt;"></div><span class="lg-v a" style="left:28.89%">20K</span>
+<div class="lg-dot opus" style="left:54.59%" tabindex="0" data-tip="Breakout, Opus · Tracr transformer&lt;br&gt;Parameters: &lt;b&gt;2,328,064&lt;/b&gt;"></div><span class="lg-v o" style="left:54.59%">2.3M</span>
+</div><div class="lg-ratio">×114</div></div><div class="lg-row"><div class="lg-label">Seaquest</div><div class="lg-track">
+<div class="lg-line" style="left:28.89%;width:43.09%"></div>
+<div class="lg-dot astra" style="left:28.89%" tabindex="0" data-tip="Seaquest, Astra · MLP&lt;br&gt;Parameters: &lt;b&gt;20,486&lt;/b&gt;"></div><span class="lg-v a" style="left:28.89%">20K</span>
+<div class="lg-dot opus" style="left:71.98%" tabindex="0" data-tip="Seaquest, Opus · Tracr transformer&lt;br&gt;Parameters: &lt;b&gt;57,314,351&lt;/b&gt;"></div><span class="lg-v o" style="left:71.98%">57M</span>
+</div><div class="lg-ratio">×2,798</div></div><div class="lg-row"><div class="lg-label">Asterix</div><div class="lg-track">
+<div class="lg-line" style="left:28.89%;width:33.11%"></div>
+<div class="lg-dot astra" style="left:28.89%" tabindex="0" data-tip="Asterix, Astra · MLP&lt;br&gt;Parameters: &lt;b&gt;20,486&lt;/b&gt;"></div><span class="lg-v a" style="left:28.89%">20K</span>
+<div class="lg-dot opus" style="left:62.00%" tabindex="0" data-tip="Asterix, Opus · Tracr transformer&lt;br&gt;Parameters: &lt;b&gt;9,121,139&lt;/b&gt;"></div><span class="lg-v o" style="left:62.00%">9.1M</span>
+</div><div class="lg-ratio">×445</div></div><div class="lg-grid"><i style="left:0.00%"></i><i style="left:12.50%"></i><i style="left:25.00%"></i><i style="left:37.50%"></i><i style="left:50.00%"></i><i style="left:62.50%"></i><i style="left:75.00%"></i><i style="left:87.50%"></i><i style="left:100.00%"></i></div></div></div><div class="lg-panel"><div class="lg-title">Nonzero parameters <span>the weights that are actually set</span></div><div class="lg-rows"><div class="lg-row"><div class="lg-label">Breakout</div><div class="lg-track">
+<div class="lg-line" style="left:11.39%;width:10.06%"></div>
+<div class="lg-dot astra" style="left:11.39%" tabindex="0" data-tip="Breakout, Astra · MLP&lt;br&gt;Nonzero parameters: &lt;b&gt;815&lt;/b&gt;"></div><span class="lg-v a" style="left:11.39%">815</span>
+<div class="lg-dot opus" style="left:21.44%" tabindex="0" data-tip="Breakout, Opus · Tracr transformer&lt;br&gt;Nonzero parameters: &lt;b&gt;5,195&lt;/b&gt;"></div><span class="lg-v o" style="left:21.44%">5.2K</span>
+</div><div class="lg-ratio">×6.4</div></div><div class="lg-row"><div class="lg-label">Seaquest</div><div class="lg-track">
+<div class="lg-line" style="left:11.31%;width:18.16%"></div>
+<div class="lg-dot astra" style="left:11.31%" tabindex="0" data-tip="Seaquest, Astra · MLP&lt;br&gt;Nonzero parameters: &lt;b&gt;803&lt;/b&gt;"></div><span class="lg-v a" style="left:11.31%">803</span>
+<div class="lg-dot opus" style="left:29.46%" tabindex="0" data-tip="Seaquest, Opus · Tracr transformer&lt;br&gt;Nonzero parameters: &lt;b&gt;22,758&lt;/b&gt;"></div><span class="lg-v o" style="left:29.46%">23K</span>
+</div><div class="lg-ratio">×28</div></div><div class="lg-row"><div class="lg-label">Asterix</div><div class="lg-track">
+<div class="lg-line" style="left:10.05%;width:12.25%"></div>
+<div class="lg-dot astra" style="left:10.05%" tabindex="0" data-tip="Asterix, Astra · MLP&lt;br&gt;Nonzero parameters: &lt;b&gt;637&lt;/b&gt;"></div><span class="lg-v a" style="left:10.05%">637</span>
+<div class="lg-dot opus" style="left:22.30%" tabindex="0" data-tip="Asterix, Opus · Tracr transformer&lt;br&gt;Nonzero parameters: &lt;b&gt;6,080&lt;/b&gt;"></div><span class="lg-v o" style="left:22.30%">6.1K</span>
+</div><div class="lg-ratio">×9.5</div></div><div class="lg-grid"><i style="left:0.00%"></i><i style="left:12.50%"></i><i style="left:25.00%"></i><i style="left:37.50%"></i><i style="left:50.00%"></i><i style="left:62.50%"></i><i style="left:75.00%"></i><i style="left:87.50%"></i><i style="left:100.00%"></i></div></div></div><div class="lg-panel"><div class="lg-title">Multiply-adds per move <span>counting only nonzero weights, plus attention over position pairs</span></div><div class="lg-rows"><div class="lg-row"><div class="lg-label">Breakout</div><div class="lg-track">
+<div class="lg-line" style="left:11.30%;width:40.02%"></div>
+<div class="lg-dot astra" style="left:11.30%" tabindex="0" data-tip="Breakout, Astra · MLP&lt;br&gt;Multiply-adds per move: &lt;b&gt;801&lt;/b&gt;"></div><span class="lg-v a" style="left:11.30%">801</span>
+<div class="lg-dot opus" style="left:51.31%" tabindex="0" data-tip="Breakout, Opus · Tracr transformer&lt;br&gt;Multiply-adds per move: &lt;b&gt;1,273,300&lt;/b&gt;"></div><span class="lg-v o" style="left:51.31%">1.3M</span>
+</div><div class="lg-ratio">×1,590</div></div><div class="lg-row"><div class="lg-label">Seaquest</div><div class="lg-track">
+<div class="lg-line" style="left:10.87%;width:48.39%"></div>
+<div class="lg-dot astra" style="left:10.87%" tabindex="0" data-tip="Seaquest, Astra · MLP&lt;br&gt;Multiply-adds per move: &lt;b&gt;740&lt;/b&gt;"></div><span class="lg-v a" style="left:10.87%">740</span>
+<div class="lg-dot opus" style="left:59.26%" tabindex="0" data-tip="Seaquest, Opus · Tracr transformer&lt;br&gt;Multiply-adds per move: &lt;b&gt;5,503,010&lt;/b&gt;"></div><span class="lg-v o" style="left:59.26%">5.5M</span>
+</div><div class="lg-ratio">×7,436</div></div><div class="lg-row"><div class="lg-label">Asterix</div><div class="lg-track">
+<div class="lg-line" style="left:9.42%;width:48.28%"></div>
+<div class="lg-dot astra" style="left:9.42%" tabindex="0" data-tip="Asterix, Astra · MLP&lt;br&gt;Multiply-adds per move: &lt;b&gt;567&lt;/b&gt;"></div><span class="lg-v a" style="left:9.42%">567</span>
+<div class="lg-dot opus" style="left:57.70%" tabindex="0" data-tip="Asterix, Opus · Tracr transformer&lt;br&gt;Multiply-adds per move: &lt;b&gt;4,127,204&lt;/b&gt;"></div><span class="lg-v o" style="left:57.70%">4.1M</span>
+</div><div class="lg-ratio">×7,279</div></div><div class="lg-grid"><i style="left:0.00%"></i><i style="left:12.50%"></i><i style="left:25.00%"></i><i style="left:37.50%"></i><i style="left:50.00%"></i><i style="left:62.50%"></i><i style="left:75.00%"></i><i style="left:87.50%"></i><i style="left:100.00%"></i></div></div></div><div class="lg-panel"><div class="lg-title">Multiply-adds per move, as assembled <span>every matrix entry, zeros included</span></div><div class="lg-rows"><div class="lg-row"><div class="lg-label">Breakout</div><div class="lg-track">
+<div class="lg-line" style="left:28.87%;width:51.12%"></div>
+<div class="lg-dot astra" style="left:28.87%" tabindex="0" data-tip="Breakout, Astra · MLP&lt;br&gt;Multiply-adds per move, as assembled: &lt;b&gt;20,416&lt;/b&gt;"></div><span class="lg-v a" style="left:28.87%">20K</span>
+<div class="lg-dot opus" style="left:79.99%" tabindex="0" data-tip="Breakout, Opus · Tracr transformer&lt;br&gt;Multiply-adds per move, as assembled: &lt;b&gt;250,944,960&lt;/b&gt;"></div><span class="lg-v o" style="left:79.99%">251M</span>
+</div><div class="lg-ratio">×12,292</div></div><div class="lg-row"><div class="lg-label">Seaquest</div><div class="lg-track">
+<div class="lg-line" style="left:28.87%;width:68.51%"></div>
+<div class="lg-dot astra" style="left:28.87%" tabindex="0" data-tip="Seaquest, Astra · MLP&lt;br&gt;Multiply-adds per move, as assembled: &lt;b&gt;20,416&lt;/b&gt;"></div><span class="lg-v a" style="left:28.87%">20K</span>
+<div class="lg-dot opus" style="left:97.39%" tabindex="0" data-tip="Seaquest, Opus · Tracr transformer&lt;br&gt;Multiply-adds per move, as assembled: &lt;b&gt;6,179,731,500&lt;/b&gt;"></div><span class="lg-v o end" style="left:97.39%">6.2B</span>
+</div><div class="lg-ratio">×302,691</div></div><div class="lg-row"><div class="lg-label">Asterix</div><div class="lg-track">
+<div class="lg-line" style="left:28.87%;width:58.71%"></div>
+<div class="lg-dot astra" style="left:28.87%" tabindex="0" data-tip="Asterix, Astra · MLP&lt;br&gt;Multiply-adds per move, as assembled: &lt;b&gt;20,416&lt;/b&gt;"></div><span class="lg-v a" style="left:28.87%">20K</span>
+<div class="lg-dot opus" style="left:87.59%" tabindex="0" data-tip="Asterix, Opus · Tracr transformer&lt;br&gt;Multiply-adds per move, as assembled: &lt;b&gt;1,016,122,932&lt;/b&gt;"></div><span class="lg-v o" style="left:87.59%">1.0B</span>
+</div><div class="lg-ratio">×49,771</div></div><div class="lg-grid"><i style="left:0.00%"></i><i style="left:12.50%"></i><i style="left:25.00%"></i><i style="left:37.50%"></i><i style="left:50.00%"></i><i style="left:62.50%"></i><i style="left:75.00%"></i><i style="left:87.50%"></i><i style="left:100.00%"></i></div></div></div><div class="lg-axis"><div></div><div class="lg-ticks"><span style="left:0.00%">100</span><span style="left:25.00%">10K</span><span style="left:50.00%">1M</span><span style="left:75.00%">100M</span><span style="left:100.00%">10B</span></div><div></div></div>
+  <figcaption>A multiply-add count covers one forward pass, which decides one move. For the transformer that pass covers all 107 positions, and each attention head adds a term for every pair of positions. "As assembled" counts every entry of Tracr's dense matrices, zeros included, which is what Tracr's own Haiku model computes.</figcaption>
+</figure>
+
+<section class="col">
+  <p>The work per move differs even more than the size. Per move, Breakout's transformer does about 1.3 million multiply-adds with nonzero weights, against 801 for Astra's network: each block runs at every position, and each attention head compares every pair of positions. Counting the zeros Tracr stores, it does 251 million. The program behind it is 120 lines, which Tracr expands into 2.3 million numbers.</p>
+</section>
 
 <section class="col">
   <h2>Did Tracr compile what Opus wrote?</h2>

@@ -1,0 +1,110 @@
+{
+ "breakout": {
+  "astra": {
+   "dense_params": 20486,
+   "nonzero_params": 815,
+   "mac_dense": 20416,
+   "mac_nonzero": 801,
+   "inputs_used": 208,
+   "units_used": [
+    6,
+    8
+   ],
+   "layers": [
+    600,
+    32,
+    32,
+    6
+   ],
+   "w_nnz": [
+    769,
+    24,
+    8
+   ]
+  },
+  "opus": {
+   "dense_params": 2328064,
+   "nonzero_params": 5195,
+   "mac_dense": 250944960,
+   "mac_nonzero": 1273300,
+   "layers": 7,
+   "residual": 358,
+   "heads": 5,
+   "key_size": 12,
+   "mlp_max": 330,
+   "positions": 107
+  }
+ },
+ "seaquest": {
+  "astra": {
+   "dense_params": 20486,
+   "nonzero_params": 803,
+   "mac_dense": 20416,
+   "mac_nonzero": 740,
+   "inputs_used": 245,
+   "units_used": [
+    32,
+    26
+   ],
+   "layers": [
+    600,
+    32,
+    32,
+    6
+   ],
+   "w_nnz": [
+    364,
+    350,
+    26
+   ]
+  },
+  "opus": {
+   "dense_params": 57314351,
+   "nonzero_params": 22758,
+   "mac_dense": 6179731500,
+   "mac_nonzero": 5503010,
+   "layers": 10,
+   "residual": 599,
+   "heads": 9,
+   "key_size": 57,
+   "mlp_max": 4200,
+   "positions": 107
+  }
+ },
+ "asterix": {
+  "astra": {
+   "dense_params": 20486,
+   "nonzero_params": 637,
+   "mac_dense": 20416,
+   "mac_nonzero": 567,
+   "inputs_used": 216,
+   "units_used": [
+    32,
+    32
+   ],
+   "layers": [
+    600,
+    32,
+    32,
+    6
+   ],
+   "w_nnz": [
+    468,
+    53,
+    46
+   ]
+  },
+  "opus": {
+   "dense_params": 9121139,
+   "nonzero_params": 6080,
+   "mac_dense": 1016122932,
+   "mac_nonzero": 4127204,
+   "layers": 11,
+   "residual": 449,
+   "heads": 12,
+   "key_size": 29,
+   "mlp_max": 507,
+   "positions": 107
+  }
+ }
+}

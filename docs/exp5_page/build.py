@@ -141,6 +141,94 @@ def dumbbell():
     grid = "".join(f'<i style="left:{100 * t / S:.2f}%"></i>' for t in (0, 40, 80, 120, 160))
     return f'<div class="db">{"".join(rows)}<div class="db-grid">{grid}</div></div><div class="db-axis"><div></div><div class="db-ticks">{ticks}</div></div>'
 
+# ---------- architecture comparison
+AC = json.load(open(f"{A}/arch_compare.json"))
+
+def schematic_breakout():
+    sc = 0.2  # px per unit, the same for both networks
+    a, o = AC["breakout"]["astra"], AC["breakout"]["opus"]
+    lay = D["breakout"]["layers"]
+    res = D["breakout"]["residual"]
+    W = 920
+    out = [f'<svg class="schem" viewBox="0 0 {W} 470" role="img" aria-label="Breakout: Astra\'s 600-32-32-6 MLP and the 7-layer Tracr transformer, drawn with one unit scale">']
+    # scale ruler
+    out.append(f'<rect x="{W - 40}" y="20" width="8" height="{100 * sc}" class="sv-ruler"/><text x="{W - 46}" y="{20 + 100 * sc / 2 + 4}" class="sv-small" text-anchor="end">100 units</text>')
+    # ---- Astra row
+    cy = 112
+    out.append(f'<text x="0" y="22" class="sv-title">Astra · MLP weights</text><text x="0" y="40" class="sv-small">20,486 parameters, 815 set · one pass per move</text>')
+    st = [(80, 600, "600 inputs", f"{a['inputs_used']} read"), (360, 32, "32 tanh", f"{a['units_used'][0]} used"),
+          (560, 32, "32 tanh", f"{a['units_used'][1]} used"), (740, 6, "6 logits", "")]
+    fan = [f"W1 · 600 × 32 · {a['w_nnz'][0]} set", f"W2 · 32 × 32 · {a['w_nnz'][1]} set", f"W3 · 32 × 6 · {a['w_nnz'][2]} set"]
+    for i in range(3):
+        x1, u1 = st[i][0], st[i][1]; x2, u2 = st[i + 1][0], st[i + 1][1]
+        h1, h2 = max(2, u1 * sc), max(2, u2 * sc)
+        out.append(f'<polygon points="{x1 + 7},{cy - h1 / 2} {x2 - 7},{cy - h2 / 2} {x2 - 7},{cy + h2 / 2} {x1 + 7},{cy + h1 / 2}" class="sv-fan-a" data-tip="{esc(fan[i])}"/>')
+        tx, ty = ((x1 + x2) / 2 - 40, cy + 4) if i == 0 else ((x1 + x2) / 2, cy - 16)
+        out.append(f'<text x="{tx}" y="{ty}" class="sv-small" text-anchor="middle">{esc(fan[i])}</text>')
+    for x, u, lab, used in st:
+        h = max(2, u * sc)
+        out.append(f'<rect x="{x - 7}" y="{cy - h / 2}" width="14" height="{h}" rx="2" class="sv-astra" data-tip="{esc(lab + (", " + used if used else ""))}"/>')
+        out.append(f'<text x="{x}" y="{cy + max(h, 8) / 2 + 18}" class="sv-label" text-anchor="middle">{esc(lab)}</text>')
+        if used:
+            out.append(f'<text x="{x}" y="{cy + max(h, 8) / 2 + 34}" class="sv-small" text-anchor="middle">{esc(used)}</text>')
+    # ---- Opus row
+    cy = 352
+    x0, x1 = 80, 800
+    bh = res["dims"] * sc
+    out.append(f'<text x="0" y="246" class="sv-title">Opus 5.5 · RASP program compiled by Tracr</text><text x="0" y="264" class="sv-small">{o["dense_params"]:,} parameters, {o["nonzero_params"]:,} nonzero · every block runs at all {o["positions"]} positions</text>')
+    for k in (2, 1):
+        out.append(f'<rect x="{x0 + 7 * k}" y="{cy - bh / 2 - 7 * k}" width="{x1 - x0}" height="{bh}" rx="3" class="sv-ghost"/>')
+    out.append(f'<rect x="{x0}" y="{cy - bh / 2}" width="{x1 - x0}" height="{bh}" rx="3" class="sv-band" data-tip="{esc(f'residual stream: {res["dims"]} numbers per position ({res["input_dims"]["indices"]} encode the position, {res["input_dims"]["tokens"]} the token, the rest the program\'s own values)')}"/>')
+    out.append(f'<text x="{x1 + 18}" y="{cy - bh / 2 - 4}" class="sv-small">× {o["positions"]} positions</text>')
+    n = len(lay)
+    xs = [x0 + 60 + i * (x1 - x0 - 120) / (n - 1) for i in range(n)]
+    for i, (x, L) in enumerate(zip(xs, lay)):
+        h = max(2, L["mlp"] * sc)
+        out.append(f'<rect x="{x - 6}" y="{cy - h / 2}" width="12" height="{h}" rx="2" class="sv-opus" data-tip="{esc(f'layer {i + 1}: MLP with {L["mlp"]:,} hidden units' + (f', after {L["heads"]} attention heads' if L["heads"] else ''))}"/>')
+        for j in range(L["heads"]):
+            out.append(f'<rect x="{x - 26 + j * 11}" y="{cy - bh / 2 - 22}" width="8" height="8" rx="1.5" class="sv-opus" data-tip="{esc(f'layer {i + 1}: attention head {j + 1} of {L["heads"]}, mixing information across the {o["positions"]} positions')}"/>')
+        out.append(f'<text x="{x}" y="{cy + bh / 2 + 18}" class="sv-label" text-anchor="middle">L{i + 1}</text><text x="{x}" y="{cy + bh / 2 + 34}" class="sv-small" text-anchor="middle">{L["mlp"]:,}</text>')
+    out.append(f'<text x="{x0 - 10}" y="{cy + 4}" class="sv-small" text-anchor="end">{res["dims"]}</text>')
+    out.append(f'<text x="{(x0 + x1) / 2}" y="{cy + bh / 2 + 56}" class="sv-small" text-anchor="middle">squares: attention heads · bars: MLP hidden units per layer (numbers below) · band: the residual stream each block reads and writes</text>')
+    out.append("</svg>")
+    return "".join(out)
+
+LOG_LO, LOG_HI = 2, 10
+def lpos(v):
+    return 100 * (math.log10(v) - LOG_LO) / (LOG_HI - LOG_LO)
+
+def fmt_big(v):
+    for div, suf in ((1e9, "B"), (1e6, "M"), (1e3, "K")):
+        if v >= div:
+            x = v / div
+            return f"{x:.1f}{suf}" if x < 10 else f"{x:.0f}{suf}"
+    return f"{v:,.0f}"
+
+def size_chart():
+    measures = [("dense_params", "Parameters", "every number in the weight matrices"),
+                ("nonzero_params", "Nonzero parameters", "the weights that are actually set"),
+                ("mac_nonzero", "Multiply-adds per move", "counting only nonzero weights, plus attention over position pairs"),
+                ("mac_dense", "Multiply-adds per move, as assembled", "every matrix entry, zeros included")]
+    panels = []
+    for key, title, sub in measures:
+        rows = []
+        for g in G:
+            a, o = AC[g]["astra"][key], AC[g]["opus"][key]
+            pa, po = lpos(a), lpos(o)
+            ratio = f"{o / a:.1f}" if o / a < 10 else f"{o / a:,.0f}"
+            ta = esc(f"{NAME[g]}, Astra · MLP<br>{title}: <b>{a:,}</b>")
+            to = esc(f"{NAME[g]}, Opus · Tracr transformer<br>{title}: <b>{o:,}</b>")
+            rows.append(f'''<div class="lg-row"><div class="lg-label">{NAME[g]}</div><div class="lg-track">
+<div class="lg-line" style="left:{pa:.2f}%;width:{po - pa:.2f}%"></div>
+<div class="lg-dot astra" style="left:{pa:.2f}%" tabindex="0" data-tip="{ta}"></div><span class="lg-v a" style="left:{pa:.2f}%">{fmt_big(a)}</span>
+<div class="lg-dot opus" style="left:{po:.2f}%" tabindex="0" data-tip="{to}"></div><span class="lg-v o{' end' if po > 88 else ''}" style="left:{po:.2f}%">{fmt_big(o)}</span>
+</div><div class="lg-ratio">×{ratio}</div></div>''')
+        grid = "".join(f'<i style="left:{lpos(10 ** e):.2f}%"></i>' for e in range(LOG_LO, LOG_HI + 1))
+        panels.append(f'''<div class="lg-panel"><div class="lg-title">{esc(title)} <span>{esc(sub)}</span></div><div class="lg-rows">{"".join(rows)}<div class="lg-grid">{grid}</div></div></div>''')
+    labels = {2: "100", 3: "1K", 4: "10K", 5: "100K", 6: "1M", 7: "10M", 8: "100M", 9: "1B", 10: "10B"}
+    ticks = "".join(f'<span style="left:{lpos(10 ** e):.2f}%">{labels[e]}</span>' for e in range(LOG_LO, LOG_HI + 1, 2))
+    return "".join(panels) + f'<div class="lg-axis"><div></div><div class="lg-ticks">{ticks}</div><div></div></div>'
+
 # ---------- tables
 def results_table():
     rows = []
@@ -222,6 +310,7 @@ for k, v in {
     "%%DEATHS%%": deaths(), "%%DUMBBELL%%": dumbbell(), "%%BEHAVIOUR_ROWS%%": behaviour_rows(),
     "%%EFFORT_ROWS%%": effort_rows(), "%%REPO%%": REPO, "%%POST%%": POST, "%%LOGS%%": LOGS,
     "%%BK_STEP%%": str(D["breakout"]["frame"]["step"]),
+    "%%ARCH_SCHEMATIC%%": schematic_breakout(), "%%SIZE_CHART%%": size_chart(),
 }.items():
     page = page.replace(k, v)
 assert "%%" not in page, re.findall("%%[A-Z_]+%%", page)

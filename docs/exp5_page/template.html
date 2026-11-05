@@ -8,7 +8,7 @@
 :root {
   --bg: #f3f5f8; --surface: #fbfcfd; --surface-2: #e8ecf1; --ink: #0f141b; --ink-2: #455062; --muted: #6f7888;
   --rule: #d8dde5; --rule-2: #c3cad5;
-  --opus: #2a78d6; --opus-soft: #b7d3f6; --astra: #eb6834; --ppo: #aab1bb;
+  --opus: #2a78d6; --opus-soft: #b7d3f6; --astra: #eb6834; --ppo: #aab1bb; --opus-wash: #dfeafa; --astra-wash: #fbe3d8;
   --s-sticky: #6250d6; --s-policy: #1baf7a; --s-none: #aab1bb;
   --ch-player: #008300; --ch-danger: #e34948; --ch-reward: #eda100; --ch-projectile: #6250d6; --ch-gauge: #9aa2ad;
   --code-bg: #edf0f4; --tk-key: #5b45c9; --tk-str: #17734b; --tk-num: #a84a0c; --tk-com: #6f7888; --tk-fn: #1c5cab; --tk-bi: #9b2f70;
@@ -21,7 +21,7 @@
   :root:not([data-theme="light"]) {
     --bg: #0e1116; --surface: #151a21; --surface-2: #1e252e; --ink: #e8edf3; --ink-2: #b1bac6; --muted: #858e9b;
     --rule: #252c35; --rule-2: #343c47;
-    --opus: #3987e5; --opus-soft: #1c3f6e; --astra: #d95926; --ppo: #58606b;
+    --opus: #3987e5; --opus-soft: #1c3f6e; --astra: #d95926; --ppo: #58606b; --opus-wash: #17283e; --astra-wash: #3d2218;
     --s-sticky: #9085e9; --s-policy: #199e70; --s-none: #58606b;
     --ch-player: #008300; --ch-danger: #e34948; --ch-reward: #c98500; --ch-projectile: #9085e9; --ch-gauge: #5f6772;
     --code-bg: #11161c; --tk-key: #ab9ff2; --tk-str: #5cc49a; --tk-num: #f0a064; --tk-com: #7f8896; --tk-fn: #6da7ec; --tk-bi: #e58ab0;
@@ -32,7 +32,7 @@
 :root[data-theme="dark"] {
   --bg: #0e1116; --surface: #151a21; --surface-2: #1e252e; --ink: #e8edf3; --ink-2: #b1bac6; --muted: #858e9b;
   --rule: #252c35; --rule-2: #343c47;
-  --opus: #3987e5; --opus-soft: #1c3f6e; --astra: #d95926; --ppo: #58606b;
+  --opus: #3987e5; --opus-soft: #1c3f6e; --astra: #d95926; --ppo: #58606b; --opus-wash: #17283e; --astra-wash: #3d2218;
   --s-sticky: #9085e9; --s-policy: #199e70; --s-none: #58606b;
   --ch-player: #008300; --ch-danger: #e34948; --ch-reward: #c98500; --ch-projectile: #9085e9; --ch-gauge: #5f6772;
   --code-bg: #11161c; --tk-key: #ab9ff2; --tk-str: #5cc49a; --tk-num: #f0a064; --tk-com: #7f8896; --tk-fn: #6da7ec; --tk-bi: #e58ab0;
@@ -49,8 +49,8 @@ body {
 }
 .paper { max-width: 1080px; margin: 0 auto; background: var(--surface); border-inline: 1px solid var(--rule);
   padding-block: 56px 40px; padding-inline: clamp(16px, 5vw, 64px); }
-.col { max-width: 700px; margin: 0 auto; }
-.wide { max-width: 940px; margin: 0 auto; }
+.col { max-width: 700px; margin-inline: auto; }
+.wide { max-width: 940px; margin-inline: auto; }
 h1, h2, h3, h4 { font-family: var(--font-display); text-wrap: balance; color: var(--ink); line-height: 1.12; }
 h1 { font-size: clamp(2.4rem, 6vw, 3.9rem); font-weight: 700; letter-spacing: -0.02em; margin: 10px 0 18px; }
 h2 { font-size: 1.85rem; font-weight: 700; margin: 64px 0 14px; letter-spacing: -0.01em; }
@@ -168,6 +168,42 @@ details.code code { font-family: inherit; font-size: inherit; }
 .arch-facts dd { margin: 0; font-variant-numeric: tabular-nums; }
 .arch-facts .vs { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--rule); font-family: var(--font-display); font-size: 0.85rem; color: var(--ink-2); }
 
+
+/* architecture comparison */
+.scroll { overflow-x: auto; }
+.schem { width: 100%; min-width: 700px; height: auto; display: block; }
+.schem text { font-family: var(--font-display); }
+.sv-title { fill: var(--ink); font-size: 15px; font-weight: 700; }
+.sv-label { fill: var(--ink-2); font-size: 12px; }
+.sv-small { fill: var(--muted); font-size: 11px; }
+.sv-astra { fill: var(--astra); }
+.sv-opus { fill: var(--opus); }
+.sv-fan-a { fill: var(--astra-wash); }
+.sv-band { fill: var(--opus-wash); }
+.sv-ghost { fill: var(--surface); stroke: var(--rule-2); stroke-width: 1; }
+.sv-ruler { fill: var(--ink-2); }
+.lg-panel { margin-bottom: 22px; }
+.lg-title { font-family: var(--font-display); font-weight: 700; font-size: 0.92rem; margin-bottom: 8px; }
+.lg-title span { font-weight: 400; color: var(--muted); font-size: 0.82rem; margin-left: 6px; }
+.lg-rows { position: relative; display: grid; gap: 14px; padding-top: 14px; }
+.lg-row, .lg-axis { display: grid; grid-template-columns: 90px minmax(0, 1fr) 70px; gap: 12px; align-items: center; }
+.lg-row { position: relative; z-index: 1; }
+.lg-label { font-family: var(--font-display); font-size: 0.85rem; color: var(--ink-2); }
+.lg-track { position: relative; height: 12px; }
+.lg-line { position: absolute; top: 5px; height: 2px; background: var(--rule-2); }
+.lg-dot { position: absolute; top: 0; width: 12px; height: 12px; border-radius: 50%; transform: translateX(-6px); box-shadow: 0 0 0 2px var(--surface); }
+.lg-dot.astra { background: var(--astra); }
+.lg-dot.opus { background: var(--opus); }
+.lg-v { position: absolute; top: -16px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-2); white-space: nowrap; }
+.lg-v.a { transform: translateX(calc(-100% - 2px)); }
+.lg-v.o { transform: translateX(2px); }
+.lg-v.o.end { transform: translateX(calc(-100% - 8px)); }
+.lg-ratio { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink); text-align: right; }
+.lg-grid { position: absolute; top: 0; bottom: 0; left: 102px; right: 82px; pointer-events: none; }
+.lg-grid i { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--rule); }
+.lg-ticks { position: relative; height: 16px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); }
+.lg-ticks span { position: absolute; transform: translateX(-50%); }
+
 /* death causes */
 .sb-row { display: grid; grid-template-columns: 190px minmax(0, 1fr) 84px; gap: 12px; align-items: center; margin-bottom: 8px; }
 .sb-label { font-family: var(--font-display); font-size: 0.85rem; color: var(--ink-2); }
@@ -226,6 +262,8 @@ footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--rule);
   .db-grid { left: 0; }
   .db-label { margin-bottom: 14px; }
   .minis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lg-row, .lg-axis { grid-template-columns: 70px minmax(0, 1fr) 52px; gap: 8px; }
+  .lg-grid { left: 78px; right: 60px; }
 }
 </style>
 
@@ -302,6 +340,31 @@ footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--rule);
   <p>Each reply opens with a short design and then a single Python block. The blocks are 120 to 259 lines of ordinary RASP built with <code>Map</code>, <code>SequenceMap</code>, <code>Select</code> and <code>Aggregate</code>. Each section shows the plan in Opus's own words beside Astra's, then the full program and the transformer Tracr built from it.</p>
 </section>
 <div class="wide">%%GAMES%%</div>
+
+<section class="col">
+  <h2>Two very different networks</h2>
+  <p>Astra writes into one fixed shape for all three games: 600 inputs, two hidden layers of 32 tanh units and 6 outputs. That is 20,486 weights in three matrices, applied once per move. It sets about 800 of those weights. Its Breakout network uses only 6 and 8 of the hidden units and reads 208 of the 600 inputs.</p>
+  <p>Tracr builds a new shape for each program. Every program becomes a transformer of 7 to 11 layers, each an attention block followed by an MLP, and every layer runs at all 107 token positions. At each position a residual stream of 358 to 599 numbers carries the program's values. Most of them are one-hot codes: 106 dimensions say which position it is, 72 say which token, and each categorical value the program computes gets one dimension per possible value. The compiler stores a dense matrix for every block, so the networks have 2.3 to 57 million parameters, of which only 0.04% to 0.22% are nonzero. Astra's networks are 3% to 4% nonzero.</p>
+</section>
+
+<figure class="wide">
+  <div class="fig-title">Breakout's two networks, drawn to one scale</div>
+  <div class="fig-sub">Heights are layer widths in units, 0.2 px per unit for both networks.</div>
+  <div class="scroll">%%ARCH_SCHEMATIC%%</div>
+  <figcaption>Astra's bars are its layer widths and the shaded fans are its three weight matrices. The transformer's band is its residual stream at one position; the shadow copies stand for the other 106 positions, which run the same blocks. Squares are attention heads, the only place where positions exchange information. Hover any part for its size.</figcaption>
+</figure>
+
+<figure class="wide">
+  <div class="fig-title">Size and work, per network</div>
+  <div class="fig-sub">One log scale for all four panels. Right: how many times larger the transformer is.</div>
+  <div class="legend"><span><i style="background:var(--astra)"></i>Astra, MLP weights</span><span><i style="background:var(--opus)"></i>Opus 5.5, Tracr transformer</span></div>
+  %%SIZE_CHART%%
+  <figcaption>A multiply-add count covers one forward pass, which decides one move. For the transformer that pass covers all 107 positions, and each attention head adds a term for every pair of positions. "As assembled" counts every entry of Tracr's dense matrices, zeros included, which is what Tracr's own Haiku model computes.</figcaption>
+</figure>
+
+<section class="col">
+  <p>The work per move differs even more than the size. Per move, Breakout's transformer does about 1.3 million multiply-adds with nonzero weights, against 801 for Astra's network: each block runs at every position, and each attention head compares every pair of positions. Counting the zeros Tracr stores, it does 251 million. The program behind it is 120 lines, which Tracr expands into 2.3 million numbers.</p>
+</section>
 
 <section class="col">
   <h2>Did Tracr compile what Opus wrote?</h2>
