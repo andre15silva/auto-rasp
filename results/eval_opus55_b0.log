@@ -4,3 +4,5 @@ opus55_b0 vs astra_b0: 0.5450 (B 0.410 W 0.680) [1660.7s]
 opus55_b0 vs astra_b10: 0.4960 (B 0.456 W 0.536) [1854.3s]
 opus55_b0 vs random: 0.9965 (B 0.996 W 0.997) [4107.7s]
 opus55_b0 vs astra_b25: 0.4360 (B 0.404 W 0.468) [1808.4s]
+opus55_b0 vs astra_b50: 0.3590 (B 0.318 W 0.400) [1587.5s]
+fast runtime vs reference: {'positions': 256, 'max_abs_logit_diff': 0.0}
