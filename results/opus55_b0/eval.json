@@ -154,7 +154,19 @@
   "max_abs_logit_diff": 0.0
  },
  "faithfulness": {
-  "ok": false,
-  "error": "eturn self._eval_fn_by_expr_type[type(expr)](expr, xs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/rasp/rasp.py\", line 851, in eval_sequence_map\n    fst_values = self.evaluate(sop.fst, xs)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 66, in evaluate\n  File \"/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/rasp/rasp.py\", line 809, in evaluate\n    return self._eval_fn_by_expr_type[type(expr)](expr, xs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/rasp/rasp.py\", line 852, in eval_sequence_map\n    snd_values = self.evaluate(sop.snd, xs)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 66, in evaluate\n  File \"/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/rasp/rasp.py\", line 809, in evaluate\n    return self._eval_fn_by_expr_type[type(expr)](expr, xs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/rasp/rasp.py\", line 885, in eval_aggregate\n    return [\n           ^\n  File \"/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/rasp/rasp.py\", line 886, in <listcomp>\n    _mean(_get_selected(row, values), default) for row in selector_value\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/venvs/sandbox/lib/python3.11/site-packages/tracr/rasp/rasp.py\", line 944, in _mean\n    raise ValueError(\nValueError: Only types int, bool, and float are supported for aggregation. Received sequence: ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'x', 'o', 'o', '.', '.', '.', '.', '.', '.', 'x', 'x', 'o', 'o', '.', '.', '.', '.', 'x', 'x', 'x', 'x', 'o', 'o', '.', '.', '.', '.', 'x', 'x', 'x', 'x', 'o', 'o', '.', '.', 'x', 'o', 'o', 'x', 'o', '.', '.', '.', '.', 'x', 'x', 'o', 'o', 'o', 'o', '.', '.', '.', 'x', 'o', 'o', '.', 'o', 'x', 'o', '.', '.', '.', '.', '.', '.', '.', '.', 'x', 'B']\n"
+  "ok": true,
+  "positions": 256,
+  "rasp_seconds": 1.3,
+  "rasp_sops": 61,
+  "rasp_sops_failed": 46,
+  "rasp_output_failed": true,
+  "rasp_first_error": "ValueError: Only types int, bool, and float are supported for aggregation. Received sequence: ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'o', 'x', 'o', 'o', 'x', '.', '.', '.', '.', 'o', 'x', 'o', 'x', 'x', '.', '.', '.', '.', 'x', '.', 'o', 'x', '.', 'x', '.', '.', 'x', '.', 'x', 'o', ",
+  "legal_entries_rasp_defined": 0.0,
+  "positions_rasp_defined_on_all_legal_moves": 0,
+  "mean_abs_logit_diff": null,
+  "max_abs_logit_diff": null,
+  "argmax_agreement": null,
+  "mean_total_variation": null,
+  "positions_from": "64 games vs ppo_s0 (seed 777), sampled"
  }
 }
